@@ -1,25 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const homeRouter = require('../routes/home');
 const userRouter = require('../routes/user');
 
+const { setDatabaseConnection } = require('../db/connection');
+
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
-// set up database connection
-const url = 'mongodb://localhost';
-const portNum = '27017';
-const dbName = 'db';
-
-mongoose
-   .connect(`${url}:${portNum}/${dbName}`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-   })
-   .then(() => console.log('Connected successfully!'))
-   .catch(err => console.log('Unable to connect', err));
+// set database connection
+setDatabaseConnection();
 
 // use routers
 app.use(bodyParser.json());
