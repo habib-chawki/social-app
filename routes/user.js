@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 });
 
 // add a new user
-router.post('/', async (req, res) => {
+router.post('/signup', async (req, res) => {
    const { name, email, password } = req.body;
    const salt = 8;
 
@@ -27,6 +27,27 @@ router.post('/', async (req, res) => {
       res.status(201).send(`User created successfuly: ${user}`);
    } catch (e) {
       res.status(400).send(`Error: could not create user: ${e.message}`);
+   }
+});
+
+// user login
+router.get('/login', async (req, res) => {
+   const { email, password } = req.body;
+   try {
+      // find user by email
+      const user = await userModel.findOne({ email });
+      if (user) {
+         // check password validity
+         const same = await bcrypt.compare(password, user.password);
+         if (same) {
+            return res.status(200).send('User logged-in successfuly');
+         }
+      }
+
+      // reject login in case of incorrect email or password
+      throw new Error(`Unable to login user`);
+   } catch (e) {
+      res.status(400).send(e.message);
    }
 });
 
