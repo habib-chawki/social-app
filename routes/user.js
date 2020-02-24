@@ -26,9 +26,9 @@ router.post('/signup', async (req, res) => {
       });
 
       // generate an auth token when user is created
-      await user.generateAuthToken();
+      user.generateAuthToken();
 
-      res.status(201).send(`User created successfuly: ${user}`);
+      res.status(201).send(`User created successfuly !`);
    } catch (e) {
       res.status(400).send(`Error: could not create user: ${e.message}`);
    }
@@ -52,6 +52,16 @@ router.post('/login', async (req, res) => {
       throw new Error(`Unable to login user, wrong email and / or password`);
    } catch (e) {
       res.status(400).send(e.message);
+   }
+});
+
+// user log-out
+router.post('/logout', async (req, res) => {
+   try {
+      await userModel.updateOne({ _id: req.body.id }, { token: '' });
+      res.status(200).send('User logged out successfuly !');
+   } catch (e) {
+      res.status(400).send('Error: ' + e.message);
    }
 });
 
