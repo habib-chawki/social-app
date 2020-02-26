@@ -17,4 +17,4 @@ async function setDatabaseConnection() {
    }
 }
 
-module.exports = { setDatabaseConnection };
+module.exports = setDatabaseConnection;

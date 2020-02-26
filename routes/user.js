@@ -1,34 +1,33 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 
 const userModel = require('../models/user');
+const auth = require('../utils/authentication');
 
 const router = express.Router();
-router.use(bodyParser.json());
 
-// get user information
-router.get('/', (req, res) => {
-   res.status(200).send(req.body);
+// get user profile
+router.get('/profile', auth, (req, res) => {
+   res.status(200).send(req.body.user);
 });
 
-// add a new user
+// user signup
 router.post('/signup', async (req, res) => {
    const { name, email, password } = req.body;
    const salt = 8;
 
    try {
-      // create the new user
+      // create the new user with a hashed password
       const user = await userModel.create({
          name,
          email,
          password: await bcrypt.hash(password, salt)
       });
 
-      // generate an auth token when user is created
+      // generate an auth token when the user is created successfuly
       user.generateAuthToken();
 
-      res.status(201).send(`User created successfuly !`);
+      res.status(201).send(`User created successfuly.`);
    } catch (e) {
       res.status(400).send(`Error: could not create user: ${e.message}`);
    }
@@ -49,17 +48,18 @@ router.post('/login', async (req, res) => {
          }
       }
       // reject login in case of incorrect email or password
-      throw new Error(`Unable to login user, wrong email and / or password`);
+      throw new Error(`Unable to login. Incorrect email or password`);
    } catch (e) {
       res.status(400).send(e.message);
    }
 });
 
-// user log-out
+// user logout
 router.post('/logout', async (req, res) => {
    try {
+      // log user out by _id
       await userModel.updateOne({ _id: req.body.id }, { token: '' });
-      res.status(200).send('User logged out successfuly !');
+      res.status(200).send('Logged out successfuly.');
    } catch (e) {
       res.status(400).send('Error: ' + e.message);
    }

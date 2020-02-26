@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const homeRouter = require('../routes/home');
 const userRouter = require('../routes/user');
 
-const { setDatabaseConnection } = require('../db/connection');
+const setDatabaseConnection = require('../db/connection');
 
 const app = express();
 const port = process.env.PORT;
@@ -13,7 +13,8 @@ const port = process.env.PORT;
 setDatabaseConnection();
 
 // use routers
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 app.use('/', homeRouter);
 app.use('/user', userRouter);
 
