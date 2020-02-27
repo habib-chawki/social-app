@@ -27,8 +27,10 @@ router.post('/signup', async (req, res) => {
       // generate an auth token when the user is created successfuly
       user.generateAuthToken();
 
+      // 201 - created
       res.status(201).send(`User created successfuly.`);
    } catch (e) {
+      // 400 - bad request
       res.status(400).send(`Error: could not create user: ${e.message}`);
    }
 });
@@ -50,18 +52,38 @@ router.post('/login', async (req, res) => {
       // reject login in case of incorrect email or password
       throw new Error(`Unable to login. Incorrect email or password`);
    } catch (e) {
-      res.status(400).send(e.message);
+      res.status(401).send(e.message);
    }
 });
 
 // user logout
 router.post('/logout', async (req, res) => {
    try {
-      // log user out by _id
+      // log user out by id
       await userModel.updateOne({ _id: req.body.id }, { token: '' });
       res.status(200).send('Logged out successfuly.');
    } catch (e) {
-      res.status(400).send('Error: ' + e.message);
+      // 500 - internal Server Error
+      res.status(500).send('Error: ' + e.message);
+   }
+});
+
+// delete user
+router.delete('/remove', auth, async (req, res) => {
+   try {
+      // remove user by email
+      const user = await userModel.findOneAndDelete({ email: req.body.email });
+
+      if (user) {
+         return res
+            .status(200)
+            .send(`User profile removed successfuly: ${user}`);
+      }
+
+      throw new Error('Could not remove user profile');
+   } catch (e) {
+      // 500 - internal Server Error
+      res.status(500).send(`Error: ${e.message}`);
    }
 });
 

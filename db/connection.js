@@ -13,7 +13,7 @@ async function setDatabaseConnection() {
          useCreateIndex: true
       });
    } catch (e) {
-      throw new Error('Unable to connect to database', e.message);
+      throw new Error(`Unable to connect to database ${e.message}`);
    }
 }
 

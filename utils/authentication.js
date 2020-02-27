@@ -16,7 +16,8 @@ async function auth(req, res, next) {
       // throw an error in case of incorrect email or invalid token
       throw new Error('Authentication error');
    } catch (e) {
-      res.status(400).send(e.message);
+      // 401 - unauthorized
+      res.status(401).send(e.message);
    }
 }
 
