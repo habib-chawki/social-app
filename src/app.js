@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 
 const homeRouter = require('../routes/home');
 const userRouter = require('../routes/user');
+const postRouter = require('../routes/post');
 
 const setDatabaseConnection = require('../db/connection');
 
@@ -12,13 +13,15 @@ const port = process.env.PORT;
 // set database connection
 setDatabaseConnection();
 
-// use routers
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(bodyParser.json());
+
+// use routers
 app.use('/', homeRouter);
 app.use('/user', userRouter);
+app.use('/post', postRouter);
 
 // set up server connection
 app.listen(port, () => {
-   console.log(`Up and running on port ${port}`);
+   console.log(`Server up and running on port ${port}`);
 });

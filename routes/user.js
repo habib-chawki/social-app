@@ -28,7 +28,9 @@ router.post('/signup', async (req, res) => {
       user.generateAuthToken();
 
       // 201 - created
-      res.status(201).send(`User created successfuly.`);
+      res.status(201).send(
+         `User created successfuly: ${user.email} ${user._id} ${user.token}`
+      );
    } catch (e) {
       // 400 - bad request
       res.status(400).send(`Error: could not create user: ${e.message}`);
@@ -46,7 +48,11 @@ router.post('/login', async (req, res) => {
          const same = await bcrypt.compare(password, user.password);
          if (same) {
             user.generateAuthToken();
-            return res.status(200).send(`User logged-in successfuly: ${user}`);
+            return res
+               .status(200)
+               .send(
+                  `User logged-in successfuly: ${user.email} ${user._id} ${user.token}`
+               );
          }
       }
       // reject login in case of incorrect email or password
@@ -57,9 +63,9 @@ router.post('/login', async (req, res) => {
 });
 
 // user logout
-router.post('/logout', async (req, res) => {
+router.post('/logout', auth, async (req, res) => {
    try {
-      // log user out by id
+      // log user out by id (delete auth token)
       await userModel.updateOne({ _id: req.body.id }, { token: '' });
       res.status(200).send('Logged out successfuly.');
    } catch (e) {
