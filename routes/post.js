@@ -1,6 +1,8 @@
 const express = require('express');
+
 const auth = require('../utils/authentication');
 const postModel = require('../models/post');
+const userModel = require('../models/user');
 
 const router = express.Router();
 
@@ -15,12 +17,17 @@ router.post('/', auth, async (req, res) => {
    const { content } = req.body;
 
    try {
+      const owner = await userModel.findById(req.body.user._id);
       const post = await postModel.create({
          owner: req.body.user._id,
          content
       });
 
-      if (post) {
+      // post created successfuly and owner found
+      if (post && owner) {
+         // add new post to user's posts list
+         owner.posts.push(post._id);
+         await owner.save();
          return res.status(201).send(`Post created successfuly ${post}`);
       }
 
