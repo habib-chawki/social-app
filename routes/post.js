@@ -6,9 +6,29 @@ const userModel = require('../models/user');
 
 const router = express.Router();
 
-// get posts
-router.get('/posts', auth, (req, res) => {
-   res.status(200).send('Posts !');
+// get all posts
+router.get('/', auth, (req, res) => {
+   if (req.body.user.posts) {
+      res.status(200).send(`Posts: ${req.body.user.posts}`);
+   } else {
+      res.status(404).send('Posts not found');
+   }
+});
+
+// get a single post by id
+router.get('/:id', auth, async (req, res) => {
+   try {
+      // find post by id
+      const post = await postModel.findById(req.params.id);
+      if (post) {
+         return res.status(200).send(post.content);
+      }
+
+      // throw error if post not found
+      throw new Error('Post not found !');
+   } catch (e) {
+      res.status(404).send(e.message);
+   }
 });
 
 // add new post
@@ -17,6 +37,7 @@ router.post('/', auth, async (req, res) => {
    const { content } = req.body;
 
    try {
+      // create post and get owner info
       const owner = await userModel.findById(req.body.user._id);
       const post = await postModel.create({
          owner: req.body.user._id,
