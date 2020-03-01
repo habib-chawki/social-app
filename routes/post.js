@@ -38,7 +38,8 @@ router.post('/', auth, async (req, res) => {
 
    try {
       // create post and get owner info
-      const owner = await userModel.findById(req.body.user._id);
+      // const owner = await userModel.findById(req.body.user._id);
+      const owner = req.body.user;
       const post = await postModel.create({
          owner: req.body.user._id,
          content
