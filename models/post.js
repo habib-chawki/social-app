@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-// define post Schema (owner, content & list of comments)
+// define post Schema (owner and content)
+//TODO: add a list of comments
 const postSchema = mongoose.Schema({
    owner: {
       type: mongoose.Types.ObjectId,
@@ -10,11 +11,7 @@ const postSchema = mongoose.Schema({
       type: String,
       required: true,
       trim: true
-   },
-   comments: {
-      type: [String],
-      trim: true
    }
 });
 
-module.export = mongoose.model('post', postSchema);
+module.exports = mongoose.model('post', postSchema);

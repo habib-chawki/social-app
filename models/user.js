@@ -36,7 +36,8 @@ const userSchema = mongoose.Schema({
             throw new Error('Invalid token !');
          }
       }
-   }
+   },
+   posts: [{ type: mongoose.Types.ObjectId, ref: 'post' }]
 });
 
 // add instance method to userSchema to generate authentication token
