@@ -8,11 +8,9 @@ const router = express.Router();
 
 // get all posts
 router.get('/', auth, (req, res) => {
-   if (req.body.user.posts) {
-      res.status(200).send(`Posts: ${req.body.user.posts}`);
-   } else {
-      res.status(404).send('Posts not found');
-   }
+   req.body.user.posts
+      ? res.status(200).send(`Posts: ${req.body.user.posts}`)
+      : res.status(404).send('Posts not found');
 });
 
 // get a single post by id

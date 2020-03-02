@@ -3,8 +3,12 @@ const userModel = require('../models/user');
 async function auth(req, res, next) {
    const { email, token } = req.body;
    try {
-      // find user by email
-      const user = await userModel.findOne({ email });
+      // find user by email and populate posts
+      const user = await userModel
+         .findOne({ email })
+         .populate('posts')
+         .exec();
+
       if (user) {
          // check token validity
          if (user.token === token) {
@@ -14,7 +18,7 @@ async function auth(req, res, next) {
       }
 
       // throw an error in case of incorrect email or invalid token
-      throw new Error('Authentication error');
+      throw new Error('Authentication error.');
    } catch (e) {
       // 401 - unauthorized
       res.status(401).send(e.message);
