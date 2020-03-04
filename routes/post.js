@@ -1,5 +1,6 @@
 const express = require('express');
 const validator = require('validator');
+const mongoose = require('mongoose');
 
 const auth = require('../utils/authentication');
 const postModel = require('../models/post');
@@ -63,23 +64,43 @@ router.post('/', auth, async (req, res) => {
 
 // delete post by id
 router.delete('/:id', auth, async (req, res) => {
+   const { user } = req.body;
    try {
       // validate id
       if (!validator.isMongoId(req.params.id)) {
          throw new Error('Invalid id');
       }
 
-      // find and delete post by id
-      const deletedPost = await postModel.findByIdAndDelete(req.params.id);
-      if (deletedPost) {
-         return res.status(200).send(`Post deleted successfuly ${deletedPost}`);
+      // find post by id
+      const postToDelete = await postModel.findById(req.params.id);
+
+      // validate post existence
+      if (postToDelete) {
+         // validate that post belongs to logged-in user
+         // find if post is in current user's posts list
+         const belongsToCurrentUser = user.posts.find(post =>
+            post._id.equals(postToDelete._id)
+         );
+
+         if (belongsToCurrentUser) {
+            await postModel.deleteOne({ _id: req.params.id });
+         } else {
+            throw new Error('Can not delete posts of others');
+         }
+
+         return res
+            .status(200)
+            .send(`Post deleted successfuly ${postToDelete}`);
       }
 
       // Error deleting post
-      throw new Error('Can not delete post');
+      throw new Error('Error deleting post');
    } catch (e) {
       res.status(404).send(e.message);
    }
 });
+
+// delete all posts
+router.delete('/all', async (req, res) => {});
 
 module.exports = router;
