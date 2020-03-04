@@ -32,14 +32,13 @@ router.get('/:id', auth, async (req, res) => {
 // add new post
 router.post('/', auth, async (req, res) => {
    //req.body contains the post content and the user info (returned from the auth middleware)
-   const { content } = req.body;
+   const { content, user } = req.body;
 
    try {
-      // create post and get owner info
-      // const owner = await userModel.findById(req.body.user._id);
-      const owner = req.body.user;
+      // create and associate post with owner
+      const owner = user;
       const post = await postModel.create({
-         owner: req.body.user._id,
+         owner: user._id,
          content
       });
 
