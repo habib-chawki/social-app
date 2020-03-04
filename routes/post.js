@@ -77,7 +77,6 @@ router.delete('/:id', auth, async (req, res) => {
       // validate post existence
       if (postToDelete) {
          // validate that post belongs to logged-in user
-         // find if post is in current user's posts list
          const belongsToCurrentUser = user.posts.find(post =>
             post._id.equals(postToDelete._id)
          );
@@ -88,12 +87,13 @@ router.delete('/:id', auth, async (req, res) => {
             throw new Error('Can not delete posts of others');
          }
 
+         // post exists and user has the right to delete it
          return res
             .status(200)
             .send(`Post deleted successfuly ${postToDelete}`);
       }
 
-      // Error deleting post
+      // post does not exist
       throw new Error('Error deleting post');
    } catch (e) {
       res.status(404).send(e.message);
