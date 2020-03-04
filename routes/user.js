@@ -7,7 +7,7 @@ const auth = require('../utils/authentication');
 const router = express.Router();
 
 // get user profile
-router.get('/profile', auth, (req, res) => {
+router.get('/me', auth, (req, res) => {
    res.status(200).send(req.body.user);
 });
 

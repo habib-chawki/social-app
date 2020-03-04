@@ -2,12 +2,11 @@ const express = require('express');
 
 const auth = require('../utils/authentication');
 const postModel = require('../models/post');
-const userModel = require('../models/user');
 
 const router = express.Router();
 
 // get all posts
-router.get('/', auth, (req, res) => {
+router.get('/all', auth, (req, res) => {
    req.body.user.posts
       ? res.status(200).send(`Posts: ${req.body.user.posts}`)
       : res.status(404).send('Posts not found');
@@ -32,7 +31,8 @@ router.get('/:id', auth, async (req, res) => {
 // add new post
 router.post('/', auth, async (req, res) => {
    // req.body contains the post content and the user (owner) info (returned from the auth middleware)
-   const { content, owner } = req.body;
+   const { content } = req.body;
+   const owner = req.body.user;
 
    try {
       // create and associate post with owner
@@ -52,6 +52,22 @@ router.post('/', auth, async (req, res) => {
       throw new Error('Error creating post');
    } catch (e) {
       res.status(500).send(e.message);
+   }
+});
+
+// delete post by id
+router.delete('/:id', auth, async (req, res) => {
+   try {
+      // find and delete post by id
+      const deletedPost = await postModel.findByIdAndDelete(req.params.id);
+      if (deletedPost) {
+         return res.status(200).send(`Post deleted successfuly ${deletedPost}`);
+      }
+
+      // Error deleting post
+      throw new Error('Can not delete post');
+   } catch (e) {
+      res.status(404).send(e.message);
    }
 });
 
