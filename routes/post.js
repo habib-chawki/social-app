@@ -41,8 +41,8 @@ router.post('/', auth, async (req, res) => {
          content
       });
 
-      // post created successfuly and owner found
-      if (post && owner) {
+      // post created successfuly
+      if (post) {
          // add new post to user's posts list
          owner.posts.push(post._id);
          await owner.save();
