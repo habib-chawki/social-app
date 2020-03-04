@@ -1,4 +1,5 @@
 const express = require('express');
+const validator = require('validator');
 
 const auth = require('../utils/authentication');
 const postModel = require('../models/post');
@@ -15,6 +16,11 @@ router.get('/all', auth, (req, res) => {
 // get a single post by id
 router.get('/:id', auth, async (req, res) => {
    try {
+      // validate id
+      if (!validator.isMongoId(req.params.id)) {
+         throw new Error('Invalid id');
+      }
+
       // find post by id
       const post = await postModel.findById(req.params.id);
       if (post) {
@@ -58,6 +64,11 @@ router.post('/', auth, async (req, res) => {
 // delete post by id
 router.delete('/:id', auth, async (req, res) => {
    try {
+      // validate id
+      if (!validator.isMongoId(req.params.id)) {
+         throw new Error('Invalid id');
+      }
+
       // find and delete post by id
       const deletedPost = await postModel.findByIdAndDelete(req.params.id);
       if (deletedPost) {
