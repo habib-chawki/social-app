@@ -70,6 +70,10 @@ router.delete('/all', auth, async (req, res) => {
       // empty user's posts list
       user.posts = [];
       await user.save();
+
+      // remove posts from post schema
+      await postModel.deleteMany({ owner: user._id });
+
       res.status(200).send(`Posts list is empty: ${user.posts}`);
    } catch (e) {
       res.status(400).send(e.message);
