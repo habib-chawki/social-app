@@ -77,13 +77,16 @@ router.delete('/:id', auth, async (req, res) => {
       // validate post existence
       if (postToDelete) {
          // validate that post belongs to logged-in user (find the post position in the list of posts)
-         const postToDeletePosition = user.posts.findIndex(post =>
+         const postToDeleteIndex = user.posts.findIndex(post =>
             post._id.equals(postToDelete._id)
          );
 
          // -1 => logged-in user is not the post owner
-         if (postToDeletePosition != -1) {
+         if (postToDeleteIndex != -1) {
+            // delete post from posts schema and from the user's posts list
             await postModel.deleteOne({ _id: req.params.id });
+            user.posts.splice(postToDeleteIndex, 1);
+            await user.save();
          } else {
             throw new Error('Can not delete posts of others');
          }
