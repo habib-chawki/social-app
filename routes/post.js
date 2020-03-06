@@ -62,6 +62,20 @@ router.post('/', auth, async (req, res) => {
    }
 });
 
+// delete all posts
+router.delete('/all', auth, async (req, res) => {
+   const { user } = req.body;
+
+   try {
+      // empty user's posts list
+      user.posts = [];
+      await user.save();
+      res.status(200).send(`Posts list is empty: ${user.posts}`);
+   } catch (e) {
+      res.status(400).send(e.message);
+   }
+});
+
 // delete post by id
 router.delete('/:id', auth, async (req, res) => {
    const { user } = req.body;
@@ -103,8 +117,5 @@ router.delete('/:id', auth, async (req, res) => {
       res.status(404).send(e.message);
    }
 });
-
-// delete all posts
-router.delete('/all', async (req, res) => {});
 
 module.exports = router;
