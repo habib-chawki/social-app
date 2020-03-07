@@ -3,42 +3,47 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 
 // define user Schema
-const userSchema = mongoose.Schema({
-   name: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 5,
-      maxlength: 30,
-      match: /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/i
-   },
-   email: {
-      type: String,
-      required: true,
-      trim: true,
-      unique: true,
-      lowercase: true,
-      validate(value) {
-         if (!validator.isEmail(value)) {
-            throw new Error('Invalid Email !');
+const userSchema = mongoose.Schema(
+   {
+      name: {
+         type: String,
+         required: true,
+         trim: true,
+         minlength: 5,
+         maxlength: 30,
+         match: /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/i
+      },
+      email: {
+         type: String,
+         required: true,
+         trim: true,
+         unique: true,
+         lowercase: true,
+         validate(value) {
+            if (!validator.isEmail(value)) {
+               throw new Error('Invalid Email !');
+            }
          }
-      }
-   },
-   password: {
-      type: String,
-      required: true,
-      minlength: 5
-   },
-   token: {
-      type: String,
-      validate(value) {
-         if (!validator.isJWT(value)) {
-            throw new Error('Invalid token !');
+      },
+      password: {
+         type: String,
+         required: true,
+         minlength: 5
+      },
+      token: {
+         type: String,
+         validate(value) {
+            if (!validator.isJWT(value)) {
+               throw new Error('Invalid token !');
+            }
          }
-      }
+      },
+      posts: [{ type: mongoose.Types.ObjectId, ref: 'post' }]
    },
-   posts: [{ type: mongoose.Types.ObjectId, ref: 'post' }]
-});
+   {
+      timestamps: true
+   }
+);
 
 // add instance method to userSchema to generate authentication token
 userSchema.methods.generateAuthToken = async function() {

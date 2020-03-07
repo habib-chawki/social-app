@@ -34,7 +34,7 @@ router.post('/', auth, async (req, res) => {
    }
 });
 
-// get all posts
+// get all posts of current user
 router.get('/all', auth, (req, res) => {
    req.body.user.posts
       ? res.status(200).send(`Posts: ${req.body.user.posts}`)
@@ -61,6 +61,9 @@ router.get('/:id', auth, async (req, res) => {
       res.status(404).send(e.message);
    }
 });
+
+// update post
+router.put();
 
 // delete all posts
 router.delete('/all', auth, async (req, res) => {
