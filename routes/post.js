@@ -62,8 +62,27 @@ router.get('/:id', auth, async (req, res) => {
    }
 });
 
-// update post
-router.put();
+// update posts
+router.put('/:id', auth, async (req, res) => {
+   if (!validator.isMongoId(id)) {
+      throw new Error('Invalid id.');
+   }
+   try {
+      const postToUpdate = await postModel.findByIdAndUpdate(id, {
+         content: req.body.content
+      });
+      if (postToUpdate) {
+         return res
+            .status(200)
+            .send(`Post updated successfuly ${postToUpdate}`);
+      }
+
+      // throw an error if post can not be found
+      throw new Error(`Can not update post.`);
+   } catch (e) {
+      res.status(400).send(e.message);
+   }
+});
 
 // delete all posts
 router.delete('/all', auth, async (req, res) => {
