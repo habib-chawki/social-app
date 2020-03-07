@@ -7,6 +7,33 @@ const postModel = require('../models/post');
 
 const router = express.Router();
 
+// create post
+router.post('/', auth, async (req, res) => {
+   // req.body contains the post content and the user (owner) info (returned from the auth middleware)
+   const { content } = req.body;
+   const owner = req.body.user;
+
+   try {
+      // create and associate post with owner
+      const post = await postModel.create({
+         owner: owner._id,
+         content
+      });
+
+      // post created successfuly
+      if (post) {
+         // add new post to user's posts list
+         owner.posts.push(post._id);
+         await owner.save();
+         return res.status(201).send(`Post created successfuly ${post}`);
+      }
+
+      throw new Error('Error creating post');
+   } catch (e) {
+      res.status(500).send(e.message);
+   }
+});
+
 // get all posts
 router.get('/all', auth, (req, res) => {
    req.body.user.posts
@@ -35,33 +62,6 @@ router.get('/:id', auth, async (req, res) => {
    }
 });
 
-// add new post
-router.post('/', auth, async (req, res) => {
-   // req.body contains the post content and the user (owner) info (returned from the auth middleware)
-   const { content } = req.body;
-   const owner = req.body.user;
-
-   try {
-      // create and associate post with owner
-      const post = await postModel.create({
-         owner: owner._id,
-         content
-      });
-
-      // post created successfuly
-      if (post) {
-         // add new post to user's posts list
-         owner.posts.push(post._id);
-         await owner.save();
-         return res.status(201).send(`Post created successfuly ${post}`);
-      }
-
-      throw new Error('Error creating post');
-   } catch (e) {
-      res.status(500).send(e.message);
-   }
-});
-
 // delete all posts
 router.delete('/all', auth, async (req, res) => {
    const { user } = req.body;
@@ -71,7 +71,7 @@ router.delete('/all', auth, async (req, res) => {
       user.posts = [];
       await user.save();
 
-      // remove posts from post schema
+      // remove posts from collection
       await postModel.deleteMany({ owner: user._id });
 
       res.status(200).send(`Posts list is empty: ${user.posts}`);
@@ -101,7 +101,7 @@ router.delete('/:id', auth, async (req, res) => {
 
          // -1 => logged-in user is not the post owner
          if (postToDeleteIndex != -1) {
-            // delete post from posts schema and from the user's posts list
+            // delete post from posts collection and from the user's posts list
             await postModel.deleteOne({ _id: req.params.id });
             user.posts.splice(postToDeleteIndex, 1);
             await user.save();
