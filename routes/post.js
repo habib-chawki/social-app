@@ -64,13 +64,14 @@ router.get('/:id', auth, async (req, res) => {
 
 // update posts
 router.put('/:id', auth, async (req, res) => {
-   if (!validator.isMongoId(id)) {
+   if (!validator.isMongoId(req.params.id)) {
       throw new Error('Invalid id.');
    }
    try {
-      const postToUpdate = await postModel.findByIdAndUpdate(id, {
+      const postToUpdate = await postModel.findByIdAndUpdate(req.params.id, {
          content: req.body.content
       });
+
       if (postToUpdate) {
          return res
             .status(200)

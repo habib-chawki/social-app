@@ -10,7 +10,8 @@ async function setDatabaseConnection() {
       await mongoose.connect(`${url}:${dbPort}/${dbName}`, {
          useNewUrlParser: true,
          useUnifiedTopology: true,
-         useCreateIndex: true
+         useCreateIndex: true,
+         useFindAndModify: false
       });
    } catch (e) {
       throw new Error(`Unable to connect to database ${e.message}`);
