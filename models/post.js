@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 // define post Schema (owner and content)
-//TODO: add a list of comments
 const postSchema = mongoose.Schema(
    {
       owner: {
@@ -12,6 +11,9 @@ const postSchema = mongoose.Schema(
          type: String,
          required: true,
          trim: true
+      },
+      comments: {
+         type: [String]
       }
    },
    {

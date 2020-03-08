@@ -14,7 +14,6 @@ const port = process.env.PORT;
 setDatabaseConnection();
 
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
 
 // use routers
 app.use('/', homeRouter);
