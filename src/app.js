@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const homeRouter = require('../routes/home');
 const userRouter = require('../routes/user');
 const postRouter = require('../routes/post');
+const commentRouter = require('../routes/comment');
 
 const setDatabaseConnection = require('../db/connection');
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', homeRouter);
 app.use('/user', userRouter);
 app.use('/post', postRouter);
+app.use('/comment', commentRouter);
 
 // set up server connection
 app.listen(port, () => {
