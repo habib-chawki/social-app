@@ -18,13 +18,12 @@ router.post('/', async (req, res) => {
       // find which post the comment belongs to
       const post = await postModel.findById(req.body.postId);
 
-      console.log(req.body.comment);
       // check if post exists and add comment to post's comments list
       if (post) {
-         post.comments.push(req.body.comment);
+         post.comments.push({ comment: req.body.comment });
          await post.save();
          return res
-            .status(200)
+            .status(201)
             .send(`Comment added successfuly to post: ${post.content}`);
       }
 
@@ -35,8 +34,28 @@ router.post('/', async (req, res) => {
 });
 
 // edit a comment by id
-router.put('/:id', (req, res) => {});
+router.put('/:id', async (req, res) => {
+   try {
+      // validate comment id
+      if (!validator.isMongoId(id)) {
+         throw new Error('Invalid id.');
+      }
+
+      // find which post the comment belongs to
+      const post = await postModel.findById(req.body.id);
+
+      if (post) {
+         //TODO: find comment index and remove it
+         return res.status(200).send('Comment edited successfuly.');
+      }
+
+      throw new Error('Unable to edit comment.');
+   } catch (e) {
+      res.status(400).send(e.message);
+   }
+});
 
 // delete a comment by id
 router.delete('/:id', (req, res) => {});
+
 module.exports = router;
