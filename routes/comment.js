@@ -33,19 +33,31 @@ router.post('/', async (req, res) => {
    }
 });
 
-// edit a comment by id
-router.put('/:id', async (req, res) => {
+// delete a comment by id
+router.delete('/:id', async (req, res) => {
    try {
-      // validate comment id
-      if (!validator.isMongoId(id)) {
+      // validate both comment and post ids
+      if (
+         !validator.isMongoId(req.params.id) ||
+         !validator.isMongoId(req.body.postId)
+      ) {
          throw new Error('Invalid id.');
       }
 
       // find which post the comment belongs to
-      const post = await postModel.findById(req.body.id);
+      const post = await postModel.findById(req.body.postId);
 
       if (post) {
-         //TODO: find comment index and remove it
+         // find comment's position in the comments' list by id
+         // TODO: Fix => last comment is always deleted !
+         const commentToEditIndex = post.comments.findIndex(
+            comment => comment.id === req.params.id
+         );
+
+         // remove comment and save changes
+         post.comments.splice(commentToEditIndex, 1);
+         await post.save();
+
          return res.status(200).send('Comment edited successfuly.');
       }
 
@@ -55,7 +67,7 @@ router.put('/:id', async (req, res) => {
    }
 });
 
-// delete a comment by id
-router.delete('/:id', (req, res) => {});
+// TODO: edit a comment by id
+router.put('/:id', (req, res) => {});
 
 module.exports = router;
