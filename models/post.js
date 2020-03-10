@@ -13,7 +13,12 @@ const postSchema = mongoose.Schema(
          trim: true
       },
       comments: {
-         type: [{ id: mongoose.Types.ObjectId, comment: String }]
+         type: [
+            {
+               id: mongoose.Types.ObjectId,
+               comment: String
+            }
+         ]
       }
    },
    {
