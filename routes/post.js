@@ -6,9 +6,10 @@ const auth = require('../utils/authentication');
 const postModel = require('../models/post');
 
 const router = express.Router();
+router.use(auth);
 
 // create post
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
    // req.body contains the post content and the user (owner) info (returned from the auth middleware)
    const { content } = req.body;
    const owner = req.body.user;
@@ -35,14 +36,14 @@ router.post('/', auth, async (req, res) => {
 });
 
 // get all posts of current user
-router.get('/all', auth, (req, res) => {
+router.get('/all', (req, res) => {
    req.body.user.posts
       ? res.status(200).send(`Posts: ${req.body.user.posts}`)
       : res.status(404).send('Posts not found');
 });
 
 // get a single post by id
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
    try {
       // validate id
       if (!validator.isMongoId(req.params.id)) {
@@ -63,7 +64,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // update posts by id
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
    if (!validator.isMongoId(req.params.id)) {
       throw new Error('Invalid id.');
    }
@@ -87,7 +88,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // delete all posts
-router.delete('/all', auth, async (req, res) => {
+router.delete('/all', async (req, res) => {
    const { user } = req.body;
 
    try {
@@ -105,7 +106,7 @@ router.delete('/all', auth, async (req, res) => {
 });
 
 // delete post by id
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
    const { user } = req.body;
    try {
       // validate id

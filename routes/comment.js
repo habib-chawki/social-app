@@ -53,6 +53,7 @@ router.put('/:id', async (req, res) => {
    const postId = req.body.postId;
    const commentId = req.params.id;
    const newComment = req.body.newComment;
+
    try {
       editComment({ postId, commentId, newComment });
       res.status(200).send('Comment edited successfuly.');
