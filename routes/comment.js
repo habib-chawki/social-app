@@ -68,7 +68,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // edit a comment by id
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
    try {
       // validate both comment and post ids
       if (
@@ -81,22 +81,20 @@ router.put('/:id', (req, res) => {
       // find the post
       const post = await postModel.findById(req.body.postId);
 
-      
-   if (post) {
-      // find comment
-      const commentToEditIndex = post.comments.findIndex(
-         comment => comment.id === req.params.id
-      );
+      if (post) {
+         // find comment
+         const commentToEditIndex = post.comments.findIndex(
+            comment => comment.id === req.params.id
+         );
 
-      // replace comment with new comment and save changes
-      post.comments.splice(commentToEditIndex, 1, req.body.newComment);
-      await post.save();
+         // replace comment with new comment and save changes
+         post.comments.splice(commentToEditIndex, 1, req.body.newComment);
+         await post.save();
 
-      return res.status(200).send('Comment edited successfuly.');
-   }
+         return res.status(200).send('Comment edited successfuly.');
+      }
 
-   throw new Error('Unable to delete comment');
-
+      throw new Error('Unable to delete comment');
    } catch (e) {
       res.status(400).send(e.message);
    }
