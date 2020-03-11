@@ -83,12 +83,12 @@ router.put('/:id', async (req, res) => {
 
       if (post) {
          // find comment
-         const commentToEditIndex = post.comments.findIndex(
-            comment => comment._id === req.params.id
+         const commentToEditIndex = post.comments.findIndex(comment =>
+            comment._id.equals(req.params.id)
          );
 
          // replace comment with new comment and save changes
-         post.comments.splice(commentToEditIndex, 1, req.body.newComment);
+         post.comments[commentToEditIndex].comment = req.body.newComment;
          await post.save();
 
          return res.status(200).send('Comment edited successfuly.');
