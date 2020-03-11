@@ -3,6 +3,7 @@ const validator = require('validator');
 
 const postModel = require('../models/post');
 const auth = require('../utils/authentication');
+const editComment = require('../utils/edit-comment');
 
 const router = express.Router();
 router.use(auth);
@@ -35,32 +36,13 @@ router.post('/', async (req, res) => {
 
 // delete a comment by id
 router.delete('/:id', async (req, res) => {
+   const postId = req.body.postId;
+   const commentId = req.params.id;
+   const toDelete = true;
+
    try {
-      // validate both comment and post ids
-      if (
-         !validator.isMongoId(req.params.id) ||
-         !validator.isMongoId(req.body.postId)
-      ) {
-         throw new Error('Invalid id.');
-      }
-
-      // find which post the comment belongs to
-      const post = await postModel.findById(req.body.postId);
-
-      if (post) {
-         // find comment's position in the comments' list by id
-         const commentToDeleteIndex = post.comments.findIndex(comment =>
-            comment._id.equals(req.params.id)
-         );
-
-         // remove comment and save changes
-         post.comments.splice(commentToDeleteIndex, 1);
-         await post.save();
-
-         return res.status(200).send('Comment deleted successfuly.');
-      }
-
-      throw new Error('Unable to delete comment.');
+      editComment({ postId, commentId, toDelete });
+      res.status(200).send('Comment edited successfuly.');
    } catch (e) {
       res.status(400).send(e.message);
    }
@@ -68,32 +50,12 @@ router.delete('/:id', async (req, res) => {
 
 // edit a comment by id
 router.put('/:id', async (req, res) => {
+   const postId = req.body.postId;
+   const commentId = req.params.id;
+   const newComment = req.body.newComment;
    try {
-      // validate both comment and post ids
-      if (
-         !validator.isMongoId(req.params.id) ||
-         !validator.isMongoId(req.body.postId)
-      ) {
-         throw new Error('Invalid id.');
-      }
-
-      // find the post
-      const post = await postModel.findById(req.body.postId);
-
-      if (post) {
-         // find comment
-         const commentToEditIndex = post.comments.findIndex(comment =>
-            comment._id.equals(req.params.id)
-         );
-
-         // replace comment with new comment and save changes
-         post.comments[commentToEditIndex].comment = req.body.newComment;
-         await post.save();
-
-         return res.status(200).send('Comment edited successfuly.');
-      }
-
-      throw new Error('Unable to delete comment');
+      editComment({ postId, commentId, newComment });
+      res.status(200).send('Comment edited successfuly.');
    } catch (e) {
       res.status(400).send(e.message);
    }
