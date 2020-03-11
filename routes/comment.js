@@ -51,7 +51,7 @@ router.delete('/:id', async (req, res) => {
          // find comment's position in the comments' list by id
          // TODO: Fix => last comment is always deleted
          const commentToDeleteIndex = post.comments.findIndex(
-            comment => comment.id === req.params.id
+            comment => comment._id === req.params.id
          );
 
          // remove comment and save changes
@@ -84,7 +84,7 @@ router.put('/:id', async (req, res) => {
       if (post) {
          // find comment
          const commentToEditIndex = post.comments.findIndex(
-            comment => comment.id === req.params.id
+            comment => comment._id === req.params.id
          );
 
          // replace comment with new comment and save changes
