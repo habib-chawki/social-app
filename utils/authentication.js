@@ -1,7 +1,10 @@
 const userModel = require('../models/user');
 
+// authentication middleware
 async function auth(req, res, next) {
+   // authenticate users with email (unique) and token
    const { email, token } = req.body;
+
    try {
       // find user by email and populate posts
       const user = await userModel
@@ -12,6 +15,9 @@ async function auth(req, res, next) {
       if (user) {
          // check token validity
          if (user.token === token) {
+            // send back user information (exclude password)
+            delete user.password;
+
             req.body.user = user;
             return next();
          }
