@@ -38,7 +38,12 @@ const userSchema = mongoose.Schema(
             }
          }
       },
-      posts: [{ type: mongoose.Types.ObjectId, ref: 'post' }]
+      posts: [
+         {
+            type: mongoose.Types.ObjectId,
+            ref: 'post'
+         }
+      ]
    },
    {
       timestamps: true

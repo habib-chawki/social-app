@@ -1,11 +1,12 @@
 const express = require('express');
 const validator = require('validator');
-const mongoose = require('mongoose');
 
-const auth = require('../utils/authentication');
 const postModel = require('../models/post');
+const auth = require('../utils/authentication');
 
 const router = express.Router();
+
+// require authentication for all incoming requests
 router.use(auth);
 
 // create post
@@ -25,21 +26,22 @@ router.post('/', async (req, res) => {
       if (post) {
          // add new post to user's posts list
          owner.posts.push(post._id);
+
          await owner.save();
          return res.status(201).send(`Post created successfuly ${post}`);
       }
 
-      throw new Error('Error creating post');
+      throw new Error('Error creating post.');
    } catch (e) {
       res.status(500).send(e.message);
    }
 });
 
-// get all posts of current user
+// get current user's posts
 router.get('/all', (req, res) => {
    req.body.user.posts
       ? res.status(200).send(`Posts: ${req.body.user.posts}`)
-      : res.status(404).send('Posts not found');
+      : res.status(404).send('No posts.');
 });
 
 // get a single post by id
@@ -47,7 +49,7 @@ router.get('/:id', async (req, res) => {
    try {
       // validate id
       if (!validator.isMongoId(req.params.id)) {
-         throw new Error('Invalid id');
+         throw new Error('Invalid id.');
       }
 
       // find post by id
@@ -57,7 +59,7 @@ router.get('/:id', async (req, res) => {
       }
 
       // throw error if post not found
-      throw new Error('Post not found !');
+      throw new Error('Post not found.');
    } catch (e) {
       res.status(404).send(e.message);
    }
@@ -83,7 +85,7 @@ router.put('/:id', async (req, res) => {
       // throw an error if post can not be found
       throw new Error(`Can not update post.`);
    } catch (e) {
-      res.status(400).send(e.message);
+      res.status(500).send(e.message);
    }
 });
 
@@ -101,7 +103,7 @@ router.delete('/all', async (req, res) => {
 
       res.status(200).send(`Posts list is empty: ${user.posts}`);
    } catch (e) {
-      res.status(400).send(e.message);
+      res.status(500).send(e.message);
    }
 });
 
@@ -131,7 +133,7 @@ router.delete('/:id', async (req, res) => {
             user.posts.splice(postToDeleteIndex, 1);
             await user.save();
          } else {
-            throw new Error('Can not delete posts of others');
+            throw new Error('Can not delete posts of others.');
          }
 
          // post exists and user has the right to delete it
@@ -141,7 +143,7 @@ router.delete('/:id', async (req, res) => {
       }
 
       // post does not exist
-      throw new Error('Error deleting post');
+      throw new Error('Error deleting post.');
    } catch (e) {
       res.status(404).send(e.message);
    }

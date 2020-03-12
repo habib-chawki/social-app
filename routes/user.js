@@ -40,6 +40,7 @@ router.post('/signup', async (req, res) => {
 // user login
 router.post('/login', async (req, res) => {
    const { email, password } = req.body;
+
    try {
       // find user by email
       const user = await userModel.findOne({ email });
@@ -55,8 +56,9 @@ router.post('/login', async (req, res) => {
                );
          }
       }
+
       // reject login in case of incorrect email or password
-      throw new Error(`Unable to login. Incorrect email or password`);
+      throw new Error(`Unable to login. Incorrect email or password.`);
    } catch (e) {
       res.status(401).send(e.message);
    }

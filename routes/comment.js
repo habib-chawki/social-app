@@ -6,6 +6,8 @@ const auth = require('../utils/authentication');
 const editComment = require('../utils/edit-comment');
 
 const router = express.Router();
+
+// require authentication for all incoming requests
 router.use(auth);
 
 // create a comment
@@ -30,7 +32,7 @@ router.post('/', async (req, res) => {
 
       throw new Error('Error adding comment.');
    } catch (e) {
-      res.status(404).send(e.message);
+      res.status(400).send(e.message);
    }
 });
 
@@ -42,7 +44,7 @@ router.delete('/:id', async (req, res) => {
 
    try {
       editComment({ postId, commentId, toDelete });
-      res.status(200).send('Comment edited successfuly.');
+      res.status(200).send('Comment deleted successfuly.');
    } catch (e) {
       res.status(400).send(e.message);
    }

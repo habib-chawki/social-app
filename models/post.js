@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// define post Schema (owner and content)
+// define post Schema (owner, content and a list of comments)
 const postSchema = mongoose.Schema(
    {
       owner: {
