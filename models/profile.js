@@ -33,6 +33,17 @@ const profileSchema = mongoose.Schema({
    },
    experience: [
       {
+         startDate: {
+            type: Date,
+            required: true
+         },
+         endDate: {
+            type: Date
+         },
+         current: {
+            type: Boolean,
+            default: false
+         },
          title: {
             type: String,
             required: true
@@ -41,6 +52,14 @@ const profileSchema = mongoose.Schema({
             type: String,
             required: true
          },
+         description: {
+            type: String,
+            maxLength: 150
+         }
+      }
+   ],
+   education: [
+      {
          startDate: {
             type: Date,
             required: true
@@ -48,9 +67,17 @@ const profileSchema = mongoose.Schema({
          endDate: {
             type: Date
          },
+         current: {
+            type: Boolean,
+            default: false
+         },
+         major: {
+            type: String,
+            required: true
+         },
          description: {
             type: String,
-            maxLength: 100
+            maxLength: 150
          }
       }
    ]
