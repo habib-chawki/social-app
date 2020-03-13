@@ -76,6 +76,23 @@ router.post('/logout', auth, async (req, res) => {
    }
 });
 
+// update user password
+router.put('/update', auth, async (req, res) => {
+   try {
+      const user = await userModel.findByIdAndUpdate(req.body.user._id, {
+         password: req.body.newPassword
+      });
+
+      if (user) {
+         return res.status(200).send('Password updated successfuly.');
+      }
+
+      throw new Error('Unable to update password');
+   } catch (e) {
+      res.status(500).send(e.message);
+   }
+});
+
 // delete user
 router.delete('/remove', auth, async (req, res) => {
    try {

@@ -2,7 +2,7 @@ const userModel = require('../models/user');
 
 // authentication middleware
 async function auth(req, res, next) {
-   // authenticate users with email (unique) and token
+   // authenticate users with unique email and token
    const { email, token } = req.body;
 
    try {
