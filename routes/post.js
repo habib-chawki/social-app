@@ -13,7 +13,7 @@ router.use(auth);
 router.post('/', async (req, res) => {
    // req.body contains the post content and the user (owner) info (returned from the auth middleware)
    const { content } = req.body;
-   const owner = req.body.user;
+   const owner = req.user;
 
    try {
       // create and associate post with owner
@@ -39,8 +39,8 @@ router.post('/', async (req, res) => {
 
 // get current user's posts
 router.get('/all', (req, res) => {
-   req.body.user.posts
-      ? res.status(200).send(`Posts: ${req.body.user.posts}`)
+   req.user.posts
+      ? res.status(200).send(`Posts: ${req.user.posts}`)
       : res.status(404).send('No posts.');
 });
 
