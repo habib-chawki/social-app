@@ -13,13 +13,12 @@ router.get('/me', auth, (req, res) => {
 
 // user signup
 router.post('/signup', async (req, res) => {
-   const { name, email, password } = req.body;
+   const { email, password } = req.body;
    const salt = 8;
 
    try {
       // create the new user with a hashed password
       const user = await userModel.create({
-         name,
          email,
          password: await bcrypt.hash(password, salt)
       });

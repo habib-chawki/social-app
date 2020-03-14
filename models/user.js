@@ -5,14 +5,6 @@ const jwt = require('jsonwebtoken');
 // define user Schema
 const userSchema = mongoose.Schema(
    {
-      name: {
-         type: String,
-         required: true,
-         trim: true,
-         minlength: 5,
-         maxlength: 30,
-         match: /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/i
-      },
       email: {
          type: String,
          required: true,
