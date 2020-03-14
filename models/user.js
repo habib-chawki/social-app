@@ -45,14 +45,11 @@ const userSchema = mongoose.Schema(
 // add instance method to userSchema to generate authentication token
 userSchema.methods.generateAuthToken = async function() {
    try {
-      // sign the token with the user id and email
-      this.token = await jwt.sign(
-         { id: this._id.toString(), email: this.email },
-         process.env.SECRET_KEY
-      );
+      // sign the token with the user id
+      this.token = await jwt.sign({ id: this._id }, process.env.SECRET_KEY);
       await this.save();
    } catch (e) {
-      throw new Error('Unable to generate authentication token: ' + e.message);
+      throw new Error('Unable to generate token: ' + e.message);
    }
 };
 
