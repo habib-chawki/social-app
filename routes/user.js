@@ -8,7 +8,7 @@ const router = express.Router();
 
 // get user profile
 router.get('/me', auth, (req, res) => {
-   res.status(200).send(req.body.user);
+   res.status(200).send(req.user);
 });
 
 // user signup
@@ -78,7 +78,7 @@ router.post('/logout', auth, async (req, res) => {
 // update user password
 router.put('/update', auth, async (req, res) => {
    try {
-      const user = await userModel.findByIdAndUpdate(req.body.user._id, {
+      const user = await userModel.findByIdAndUpdate(req.user._id, {
          password: req.body.newPassword
       });
 
