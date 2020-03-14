@@ -42,7 +42,7 @@ const userSchema = mongoose.Schema(
    }
 );
 
-// add instance method to userSchema to generate authentication token
+// instance method to generate authentication token
 userSchema.methods.generateAuthToken = async function() {
    try {
       // sign the token with the user id
