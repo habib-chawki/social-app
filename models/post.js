@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const postSchema = mongoose.Schema(
    {
       owner: {
-         type: mongoose.Types.ObjectId,
+         type: mongoose.Schema.Types.ObjectId,
          ref: 'user'
       },
       content: {
@@ -15,8 +15,8 @@ const postSchema = mongoose.Schema(
       comments: {
          type: [
             {
-               id: mongoose.Types.ObjectId,
-               owner: mongoose.Types.ObjectId,
+               id: mongoose.Schema.Types.ObjectId,
+               owner: mongoose.Schema.Types.ObjectId,
                comment: String
             }
          ]

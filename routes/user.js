@@ -100,13 +100,12 @@ router.delete('/remove', auth, async (req, res) => {
       const user = await userModel.findByIdAndDelete(req.user._id);
 
       if (user) {
+         // TODO: consider keeping the user posts
          // delete user's posts
-         const posts = await postModel.deleteMany({ owner: req.user._id });
+         await postModel.deleteMany({ owner: req.user._id });
          return res
             .status(200)
-            .send(
-               `User profile removed successfuly: ${user} with their posts: ${posts}`
-            );
+            .send(`User profile removed successfuly: ${user}`);
       }
 
       throw new Error('Could not remove user profile.');
