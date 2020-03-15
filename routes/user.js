@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 
 const userModel = require('../models/user');
+const postModel = require('../models/post');
 const auth = require('../utils/auth');
 
 const router = express.Router();
@@ -99,12 +100,16 @@ router.delete('/remove', auth, async (req, res) => {
       const user = await userModel.findByIdAndDelete(req.user._id);
 
       if (user) {
+         // delete user's posts
+         const posts = await postModel.deleteMany({ owner: req.user._id });
          return res
             .status(200)
-            .send(`User profile removed successfuly: ${user}`);
+            .send(
+               `User profile removed successfuly: ${user} with their posts: ${posts}`
+            );
       }
 
-      throw new Error('Could not remove user profile');
+      throw new Error('Could not remove user profile.');
    } catch (e) {
       // 500 - internal Server Error
       res.status(500).send(`Error: ${e.message}`);
