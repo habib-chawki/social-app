@@ -11,7 +11,6 @@ router.use(auth);
 
 // create post
 router.post('/', async (req, res) => {
-   // req.body contains the post content and the user (owner) info (returned from the auth middleware)
    const { content } = req.body;
    const owner = req.user;
 
@@ -91,7 +90,7 @@ router.put('/:id', async (req, res) => {
 
 // delete all posts
 router.delete('/all', async (req, res) => {
-   const { user } = req.body;
+   const { user } = req;
 
    try {
       // empty user's posts list

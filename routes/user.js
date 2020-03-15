@@ -95,8 +95,8 @@ router.put('/update', auth, async (req, res) => {
 // delete user
 router.delete('/remove', auth, async (req, res) => {
    try {
-      // remove user by email
-      const user = await userModel.findOneAndDelete({ email: req.body.email });
+      // remove user by id
+      const user = await userModel.findByIdAndDelete(req.user._id);
 
       if (user) {
          return res
