@@ -42,6 +42,21 @@ router.get('/', async (req, res) => {
    }
 });
 
+// get user's profile by id
+router.get('/:userId', async (req, res) => {
+   try {
+      const profile = await profileModel.findOne({ owner: req.params.userId });
+
+      if (profile) {
+         return res.status(200).send(`Profile found: ${profile}`);
+      }
+
+      throw new Error('Unable to fetch profile.');
+   } catch (e) {
+      res.status(500).send(e.message);
+   }
+});
+
 // update profile
 router.put('/', async (req, res) => {
    try {
