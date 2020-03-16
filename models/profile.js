@@ -6,29 +6,26 @@ const profileSchema = mongoose.Schema(
          type: mongoose.Schema.Types.ObjectId,
          required: true
       },
-      firstName: {
-         type: String,
-         minLength: 3,
-         maxLength: 30,
-         required: true,
-         trim: true
-      },
-      middleName: {
+      firstname: {
          type: String,
          minLength: 3,
          maxLength: 30,
          trim: true
       },
-      lastName: {
+      middlename: {
          type: String,
          minLength: 3,
          maxLength: 30,
-         required: true,
+         trim: true
+      },
+      lastname: {
+         type: String,
+         minLength: 3,
+         maxLength: 30,
          trim: true
       },
       birthday: {
-         type: Date,
-         required: true
+         type: Date
       },
       location: String,
       bio: {
@@ -37,11 +34,12 @@ const profileSchema = mongoose.Schema(
       },
       experience: [
          {
-            startDate: {
+            _id: false,
+            startdate: {
                type: Date,
                required: true
             },
-            endDate: {
+            enddate: {
                type: Date
             },
             current: {
@@ -64,11 +62,12 @@ const profileSchema = mongoose.Schema(
       ],
       education: [
          {
-            startDate: {
+            _id: false,
+            startdate: {
                type: Date,
                required: true
             },
-            endDate: {
+            enddate: {
                type: Date
             },
             current: {

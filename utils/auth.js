@@ -6,6 +6,10 @@ async function auth(req, res, next) {
    try {
       // get token from request header
       const { authorization } = req.headers;
+
+      if (!authorization) {
+         throw new Error('Not authorized.');
+      }
       const token = authorization.replace('Bearer ', '');
 
       // verify token validity
@@ -26,7 +30,7 @@ async function auth(req, res, next) {
       }
 
       // throw an error if token is invalid or user not found
-      throw new Error('Authentication error.');
+      throw new Error('Not authorized.');
    } catch (e) {
       res.status(401).send(e.message);
    }

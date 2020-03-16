@@ -27,13 +27,13 @@ router.post('/', async (req, res) => {
    }
 });
 
-// get current user profile
+// get current user's profile
 router.get('/', async (req, res) => {
    try {
-      const profile = await profileModel.findById(req.user._id);
+      const profile = await profileModel.findOne({ owner: req.user._id });
 
       if (profile) {
-         return res.status(200).send(`Profile found: ${profile}`);
+         return res.status(200).send(`Profile found.`);
       }
 
       throw new Error('Unable to fetch profile.');
@@ -66,7 +66,7 @@ router.put('/', async (req, res) => {
       );
 
       if (profile) {
-         return res.status(200).send(`Profile updated: ${profile}`);
+         return res.status(200).send(`Profile updated.`);
       }
 
       throw new Error('Unable to update profile.');
