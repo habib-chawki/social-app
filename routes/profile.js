@@ -27,28 +27,16 @@ router.post('/', async (req, res) => {
    }
 });
 
-// get current user's profile
-router.get('/', async (req, res) => {
+// get user's profile by id (userId is optional)
+router.get('/:userId?', async (req, res) => {
+   const userId = req.params.userId ? req.params.userId : req.user._id;
    try {
-      const profile = await profileModel.findOne({ owner: req.user._id });
+      const profile = await profileModel.findOne({ owner: userId });
 
       if (profile) {
-         return res.status(200).send(`Profile found.`);
-      }
-
-      throw new Error('Unable to fetch profile.');
-   } catch (e) {
-      res.status(500).send(e.message);
-   }
-});
-
-// get user's profile by id
-router.get('/:userId', async (req, res) => {
-   try {
-      const profile = await profileModel.findOne({ owner: req.params.userId });
-
-      if (profile) {
-         return res.status(200).send(`Profile found: ${profile}`);
+         return res
+            .status(200)
+            .send(`Profile found: ${JSON.stringify(profile)}`);
       }
 
       throw new Error('Unable to fetch profile.');
