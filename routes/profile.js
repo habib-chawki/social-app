@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
       });
 
       if (profile) {
-         return res.status(201).send(`Profile created ${profile}`);
+         return res.status(201).send(`Profile created: ${profile}`);
       }
 
       throw new Error('Unable to create profile.');
@@ -31,6 +31,21 @@ router.post('/', async (req, res) => {
 router.get('/', (req, res) => {});
 
 // update profile
-router.post('/', (req, res) => {});
+router.put('/', async (req, res) => {
+   try {
+      const profile = await profileModel.replaceOne(
+         { owner: req.user._id },
+         { owner: req.user._id, ...req.body }
+      );
+
+      if (profile) {
+         return res.status(200).send(`Profile updated: ${profile}`);
+      }
+
+      throw new Error('Unable to update profile.');
+   } catch (e) {
+      res.status(500).send(e.message);
+   }
+});
 
 module.exports = router;
