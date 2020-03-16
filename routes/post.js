@@ -108,7 +108,7 @@ router.delete('/all', async (req, res) => {
 
 // delete post by id
 router.delete('/:id', async (req, res) => {
-   const { user } = req.body;
+   const { user } = req;
    try {
       // validate id
       if (!validator.isMongoId(req.params.id)) {

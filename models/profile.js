@@ -16,7 +16,6 @@ const profileSchema = mongoose.Schema(
          type: String,
          minLength: 3,
          maxLength: 30,
-         required: false,
          trim: true
       },
       lastName: {
@@ -58,7 +57,7 @@ const profileSchema = mongoose.Schema(
             },
             description: {
                type: String,
-               maxLength: 150
+               maxLength: 200
             }
          }
       ],
@@ -81,7 +80,7 @@ const profileSchema = mongoose.Schema(
             },
             description: {
                type: String,
-               maxLength: 150
+               maxLength: 200
             }
          }
       ]
