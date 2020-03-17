@@ -29,8 +29,9 @@ router.post('/', async (req, res) => {
 
 // get user's profile by id (userId is optional)
 router.get('/:userId?', async (req, res) => {
-   const userId = req.params.userId ? req.params.userId : req.user._id;
    try {
+      // check if userId is provided
+      const userId = req.params.userId ? req.params.userId : req.user._id;
       const profile = await profileModel.findOne({ owner: userId });
 
       if (profile) {

@@ -6,28 +6,27 @@ const profileSchema = mongoose.Schema(
          type: mongoose.Schema.Types.ObjectId,
          required: true
       },
-      firstname: {
+      firstName: {
          type: String,
          minLength: 3,
          maxLength: 30,
          trim: true
       },
-      middlename: {
+      middleName: {
          type: String,
          minLength: 3,
          maxLength: 30,
          trim: true
       },
-      lastname: {
+      lastName: {
          type: String,
          minLength: 3,
          maxLength: 30,
          trim: true
       },
-      birthday: {
-         type: Date
-      },
-      location: String,
+      address: String,
+      birthday: Date,
+      gender: String,
       bio: {
          type: String,
          maxLength: 100
@@ -35,18 +34,16 @@ const profileSchema = mongoose.Schema(
       experience: [
          {
             _id: false,
-            startdate: {
+            startDate: {
                type: Date,
                required: true
             },
-            enddate: {
-               type: Date
-            },
+            endDate: Date,
             current: {
                type: Boolean,
                default: false
             },
-            title: {
+            position: {
                type: String,
                required: true
             },
@@ -63,13 +60,11 @@ const profileSchema = mongoose.Schema(
       education: [
          {
             _id: false,
-            startdate: {
+            startDate: {
                type: Date,
                required: true
             },
-            enddate: {
-               type: Date
-            },
+            endDate: Date,
             current: {
                type: Boolean,
                default: false
@@ -78,12 +73,21 @@ const profileSchema = mongoose.Schema(
                type: String,
                required: true
             },
+            school: {
+               type: String,
+               required: true
+            },
             description: {
                type: String,
                maxLength: 200
             }
          }
-      ]
+      ],
+      skills: {
+         technical: [String],
+         organizational: [String]
+      },
+      languages: [String]
    },
    {
       timestamps: true
