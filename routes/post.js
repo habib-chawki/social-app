@@ -65,7 +65,8 @@ router.get('/:postId', async (req, res) => {
 });
 
 // update posts by id
-router.put('/:postId', async (req, res) => {
+router.patch('/:postId', async (req, res) => {
+   // validate id
    if (!validator.isMongoId(req.params.postId)) {
       throw new Error('Invalid id.');
    }

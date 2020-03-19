@@ -77,8 +77,9 @@ router.post('/logout', auth, async (req, res) => {
 });
 
 // update user password
-router.put('/update', auth, async (req, res) => {
+router.patch('/update', auth, async (req, res) => {
    try {
+      // find user by id and patch the password
       const user = await User.findByIdAndUpdate(req.user._id, {
          password: req.body.newPassword
       });
