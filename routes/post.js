@@ -1,7 +1,7 @@
 const express = require('express');
 const validator = require('validator');
 
-const postModel = require('../models/post');
+const Post = require('../models/post');
 const auth = require('../utils/auth');
 
 const router = express.Router();
@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
 
    try {
       // create and associate post with owner
-      const post = await postModel.create({
+      const post = await Post.create({
          owner: owner._id,
          content
       });
@@ -52,7 +52,7 @@ router.get('/:postId', async (req, res) => {
       }
 
       // find post by id
-      const post = await postModel.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId);
       if (post) {
          return res.status(200).send(post.content);
       }
@@ -71,12 +71,9 @@ router.put('/:postId', async (req, res) => {
    }
 
    try {
-      const postToUpdate = await postModel.findByIdAndUpdate(
-         req.params.postId,
-         {
-            content: req.body.content
-         }
-      );
+      const postToUpdate = await Post.findByIdAndUpdate(req.params.postId, {
+         content: req.body.content
+      });
 
       if (postToUpdate) {
          return res
@@ -101,7 +98,7 @@ router.delete('/all', async (req, res) => {
       await user.save();
 
       // remove posts from collection
-      await postModel.deleteMany({ owner: user._id });
+      await Post.deleteMany({ owner: user._id });
 
       res.status(200).send(`Posts list is empty: ${user.posts}`);
    } catch (e) {
@@ -119,7 +116,7 @@ router.delete('/:postId', async (req, res) => {
       }
 
       // find post by id
-      const postToDelete = await postModel.findById(req.params.postId);
+      const postToDelete = await Post.findById(req.params.postId);
 
       // validate post existence
       if (postToDelete) {
@@ -131,7 +128,7 @@ router.delete('/:postId', async (req, res) => {
          // -1 => logged-in user is not the post owner
          if (postToDeleteIndex != -1) {
             // delete post from posts collection and from the user's posts list
-            await postModel.deleteOne({ _id: req.params.postId });
+            await Post.deleteOne({ _id: req.params.postId });
             user.posts.splice(postToDeleteIndex, 1);
             await user.save();
          } else {

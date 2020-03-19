@@ -1,7 +1,7 @@
 const express = require('express');
 const validator = require('validator');
 
-const postModel = require('../models/post');
+const Post = require('../models/post');
 const auth = require('../utils/auth');
 const editComment = require('../utils/edit-comment');
 
@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
       }
 
       // find which post the comment belongs to
-      const post = await postModel.findById(req.body.postId);
+      const post = await Post.findById(req.body.postId);
 
       // check if post exists and add comment to post's comments list
       if (post) {

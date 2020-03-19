@@ -1,7 +1,7 @@
 const express = require('express');
 
 const auth = require('../utils/auth');
-const profileModel = require('../models/profile');
+const Profile = require('../models/profile');
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.use(auth);
 router.post('/', async (req, res) => {
    try {
       // create profile with current user's id
-      const profile = await profileModel.create({
+      const profile = await Profile.create({
          owner: req.user._id,
          ...req.body
       });
@@ -32,7 +32,7 @@ router.get('/:userId?', async (req, res) => {
    try {
       // check if userId is provided
       const userId = req.params.userId ? req.params.userId : req.user._id;
-      const profile = await profileModel.findOne({ owner: userId });
+      const profile = await Profile.findOne({ owner: userId });
 
       if (profile) {
          return res
@@ -49,7 +49,7 @@ router.get('/:userId?', async (req, res) => {
 // update profile
 router.put('/', async (req, res) => {
    try {
-      const profile = await profileModel.replaceOne(
+      const profile = await Profile.replaceOne(
          { owner: req.user._id },
          { owner: req.user._id, ...req.body }
       );

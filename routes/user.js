@@ -1,8 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 
-const userModel = require('../models/user');
-const postModel = require('../models/post');
+const User = require('../models/user');
+const Post = require('../models/post');
 const auth = require('../utils/auth');
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.post('/signup', async (req, res) => {
 
    try {
       // create the new user with a hashed password
-      const user = await userModel.create({
+      const user = await User.create({
          email,
          password: await bcrypt.hash(password, salt)
       });
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
 
    try {
       // find user by email
-      const user = await userModel.findOne({ email });
+      const user = await User.findOne({ email });
       if (user) {
          // check password validity
          const same = await bcrypt.compare(password, user.password);
@@ -68,7 +68,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', auth, async (req, res) => {
    try {
       // log user out by id (delete auth token)
-      await userModel.updateOne({ _id: req.body.id }, { token: '' });
+      await User.updateOne({ _id: req.body.id }, { token: '' });
       res.status(200).send('Logged out successfuly.');
    } catch (e) {
       // 500 - internal Server Error
@@ -79,7 +79,7 @@ router.post('/logout', auth, async (req, res) => {
 // update user password
 router.put('/update', auth, async (req, res) => {
    try {
-      const user = await userModel.findByIdAndUpdate(req.user._id, {
+      const user = await User.findByIdAndUpdate(req.user._id, {
          password: req.body.newPassword
       });
 
@@ -97,12 +97,12 @@ router.put('/update', auth, async (req, res) => {
 router.delete('/remove', auth, async (req, res) => {
    try {
       // remove user by id
-      const user = await userModel.findByIdAndDelete(req.user._id);
+      const user = await User.findByIdAndDelete(req.user._id);
 
       if (user) {
          // TODO: consider keeping the user posts
          // delete user's posts
-         await postModel.deleteMany({ owner: req.user._id });
+         await Post.deleteMany({ owner: req.user._id });
          return res
             .status(200)
             .send(`User profile removed successfuly: ${user}`);
