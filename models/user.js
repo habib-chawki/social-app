@@ -44,6 +44,17 @@ const userSchema = mongoose.Schema(
    }
 );
 
+// hash password before saving
+userSchema.pre('save', async function() {
+   try {
+      // hash password only if it has been modified
+      if (this.isModified('password'))
+         this.password = await bcrypt.hash(this.password, 8);
+   } catch (e) {
+      throw new Error('Encryption failed.');
+   }
+});
+
 // instance method to generate authentication token
 userSchema.methods.generateAuthToken = async function() {
    try {
@@ -54,15 +65,5 @@ userSchema.methods.generateAuthToken = async function() {
       throw new Error('Unable to generate token: ' + e.message);
    }
 };
-
-// hash password before saving
-userSchema.pre('save', async function() {
-   try {
-      // set salt to be 8
-      this.password = await bcrypt.hash(this.password, 8);
-   } catch (e) {
-      throw new Error('Encryption failed.');
-   }
-});
 
 module.exports = mongoose.model('User', userSchema);
