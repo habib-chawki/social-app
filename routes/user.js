@@ -24,7 +24,7 @@ router.post('/signup', async (req, res) => {
       });
 
       // generate an auth token when the user is created successfuly
-      user.generateAuthToken();
+      await user.generateAuthToken();
 
       // 201 - created
       res.status(201).send(
@@ -47,7 +47,7 @@ router.post('/login', async (req, res) => {
          // check password validity
          const same = await bcrypt.compare(password, user.password);
          if (same) {
-            user.generateAuthToken();
+            await user.generateAuthToken();
             return res
                .status(200)
                .send(
