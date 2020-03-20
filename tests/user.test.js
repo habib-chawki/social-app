@@ -10,7 +10,7 @@ beforeEach(async () => {
 
 // test sign up route
 test('Should sign up user successfuly', async () => {
-   const user = await request(app)
+   await request(app)
       .post('/user/signup')
       .send({
          email: 'habib@test.com',
