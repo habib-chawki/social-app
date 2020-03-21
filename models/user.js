@@ -28,7 +28,7 @@ const userSchema = mongoose.Schema(
          type: String,
          validate(value) {
             if (!validator.isJWT(value)) {
-               throw new Error('Invalid token !');
+               throw new Error('Invalid token.');
             }
          }
       },

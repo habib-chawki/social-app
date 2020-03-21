@@ -7,11 +7,6 @@ const auth = require('../utils/auth');
 
 const router = express.Router();
 
-// get user profile
-router.get('/me', auth, (req, res) => {
-   res.status(200).send(req.user);
-});
-
 // user signup
 router.post('/signup', async (req, res) => {
    const { email, password } = req.body;
@@ -101,7 +96,7 @@ router.delete('/remove', auth, async (req, res) => {
 
       if (user) {
          // TODO: consider keeping the user posts
-         // TODO: consider useing mongoose pre middleware to delete posts instead
+         // TODO: consider using mongoose pre middleware to delete posts instead
 
          // delete user's posts
          await Post.deleteMany({ owner: req.user._id });

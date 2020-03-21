@@ -7,6 +7,7 @@ async function auth(req, res, next) {
       // get token from request header
       const { authorization } = req.headers;
 
+      // ensure authorization header is populated
       if (!authorization) {
          throw new Error('Not authorized.');
       }

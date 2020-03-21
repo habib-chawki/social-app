@@ -3,16 +3,25 @@ const request = require('supertest');
 const app = require('../src/app');
 const User = require('../models/user');
 
+// user credentials for testing
+const user = {
+   email: 'chawki@email.com',
+   password: 'p@ssw0rd'
+};
+
+// set up all possible sign up fail cases
 const invalidCredentials = [
-   { email: 'habib@gmail.com', password: '' },
+   { email: 'habib@email.com', password: '' },
    { email: '', password: 'thisisavalidpass' },
-   { email: 'habibgmail.com', password: 'thisisavalidpass' },
-   { email: 'habib@gmail.com', password: 'th' }
+   { email: 'habibemail.com', password: 'thisisavalidpass' },
+   { email: 'habib@email.com', password: 'th' }
 ];
 
 beforeEach(async () => {
    // delete all users before testing
    await User.deleteMany({});
+   // add a user
+   await User.create(user);
 });
 
 // successful sign up
@@ -20,7 +29,7 @@ test('Should sign up user successfuly', async () => {
    await request(app)
       .post('/user/signup')
       .send({
-         email: 'habib@test.com',
+         email: 'habib@email.com',
          password: 'thisismypass'
       })
       .expect(201);
