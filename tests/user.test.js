@@ -3,9 +3,9 @@ const request = require('supertest');
 const app = require('../src/app');
 const User = require('../models/user');
 
-// user credentials for testing
-const user = {
-   email: 'chawki@email.com',
+// user for testing
+const userOne = {
+   email: 'habib@email.com',
    password: 'p@ssw0rd'
 };
 
@@ -17,21 +17,16 @@ const invalidCredentials = [
    { email: 'habib@email.com', password: 'th' }
 ];
 
-beforeEach(async () => {
+afterAll(async () => {
    // delete all users before testing
    await User.deleteMany({});
-   // add a user
-   await User.create(user);
 });
 
 // successful sign up
 test('Should sign up user successfuly', async () => {
    await request(app)
       .post('/user/signup')
-      .send({
-         email: 'habib@email.com',
-         password: 'thisismypass'
-      })
+      .send(userOne)
       .expect(201);
 });
 

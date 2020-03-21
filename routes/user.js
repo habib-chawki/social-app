@@ -9,14 +9,9 @@ const router = express.Router();
 
 // user signup
 router.post('/signup', async (req, res) => {
-   const { email, password } = req.body;
-
    try {
-      // create the new user with a hashed password
-      const user = await User.create({
-         email,
-         password
-      });
+      // create the new user (req.body == email and password)
+      const user = await User.create(req.body);
 
       // generate an auth token when the user is created successfuly
       await user.generateAuthToken();
