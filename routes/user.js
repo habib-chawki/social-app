@@ -17,9 +17,8 @@ router.post('/signup', async (req, res) => {
       await user.generateAuthToken();
 
       // 201 - created
-      res.status(201).send(
-         `User created successfuly: ${user.email} ${user._id} ${user.token}`
-      );
+      // send back user id and generated auth token
+      res.status(201).send({ id: user._id, token: user.token });
    } catch (e) {
       // 400 - bad request
       res.status(400).send(`Error: could not create user: ${e.message}`);

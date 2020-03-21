@@ -3,7 +3,7 @@ const request = require('supertest');
 const app = require('../src/app');
 const User = require('../models/user');
 
-// user for testing
+// user credentials for testing
 const userOne = {
    email: 'habib@email.com',
    password: 'p@ssw0rd'
