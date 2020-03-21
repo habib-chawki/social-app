@@ -1,4 +1,5 @@
 const request = require('supertest');
+const validator = require('validator');
 
 const app = require('../src/app');
 const User = require('../models/user');
@@ -24,10 +25,14 @@ afterAll(async () => {
 
 // successful sign up
 test('Should sign up user successfuly', async () => {
-   await request(app)
+   const res = await request(app)
       .post('/user/signup')
       .send(userOne)
       .expect(201);
+
+   // retrieve token and ensure its validity
+   const token = JSON.parse(res.text).token;
+   expect(validator.isJWT(token)).toBe(true);
 });
 
 // sign up fail
