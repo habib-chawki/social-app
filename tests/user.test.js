@@ -6,7 +6,6 @@ const User = require('../models/user');
 
 // clean up database
 afterAll(async () => {
-   // delete all users before testing
    await User.deleteMany({});
 });
 

@@ -1,24 +1,24 @@
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/user');
+const User = require('../models/user');
 
 // authentication middleware
 async function auth(req, res, next) {
    try {
-      // get token from request header
+      // retrieve token from request header
       const { authorization } = req.headers;
 
       // ensure authorization header is populated
       if (!authorization) {
-         throw new Error('Not authorized.');
+         throw new Error('Unauthorized.');
       }
       const token = authorization.replace('Bearer ', '');
 
-      // verify token validity
+      // verify token validity (originally signed with user id)
       const payload = await jwt.verify(token, process.env.SECRET_KEY);
 
       if (payload) {
          // find user by id
-         let user = await userModel.findById(payload.id);
+         const user = await User.findById(payload.id);
 
          if (user) {
             // TODO: exclude password
@@ -32,7 +32,7 @@ async function auth(req, res, next) {
       }
 
       // throw an error if token is invalid or user not found
-      throw new Error('Not authorized.');
+      throw new Error('Unauthorized.');
    } catch (e) {
       res.status(401).send(e.message);
    }
