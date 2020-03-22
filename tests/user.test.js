@@ -4,19 +4,22 @@ const validator = require('validator');
 const app = require('../src/app');
 const User = require('../models/user');
 
-// clean up database
-afterAll(async () => {
-   await User.deleteMany({});
-});
-
-// user credentials for testing
+// mock-up user
 const userOne = {
    email: 'habib@email.com',
    password: 'p@ssw0rd'
 };
 
+// signup / login fail cases
+const invalidCredentials = [
+   { email: 'habib@email.com', password: '' },
+   { email: '', password: 'thisisavalidpass' },
+   { email: 'habibemail.com', password: 'thisisavalidpass' },
+   { email: 'habib@email.com', password: 'th' }
+];
+
 // successful sign up
-test('Should sign up user successfuly', async () => {
+test('Should sign up user', async () => {
    const res = await request(app)
       .post('/user/signup')
       .send(userOne)
@@ -27,24 +30,16 @@ test('Should sign up user successfuly', async () => {
    expect(validator.isJWT(token)).toBe(true);
 });
 
-// set up all possible sign up fail cases
-const invalidCredentials = [
-   { email: 'habib@email.com', password: '' },
-   { email: '', password: 'thisisavalidpass' },
-   { email: 'habibemail.com', password: 'thisisavalidpass' },
-   { email: 'habib@email.com', password: 'th' }
-];
-
-// sign up fail
-test.each(invalidCredentials)('Sign up should fail', async credentials => {
+// sign up fail cases
+test.each(invalidCredentials)('Should fail signup', async credentials => {
    await request(app)
       .post('/user/signup')
       .send(credentials)
       .expect(400);
 });
 
-// user login
-test('Should log in user successfuly', async () => {
+// successful user login
+test('Should log in user', async () => {
    const res = await request(app)
       .post('/user/login')
       .send(userOne)
@@ -60,15 +55,15 @@ test('Should log in user successfuly', async () => {
 });
 
 // login fail cases
-test.each(invalidCredentials)('Login should fail', async credentials => {
+test.each(invalidCredentials)('Should fail login', async credentials => {
    await request(app)
       .post('/user/login')
       .send(credentials)
       .expect(400);
 });
 
-// user logout
-test('Should logout successfuly', async () => {
+// successful user logout
+test('Should logout', async () => {
    await request(app)
       .post('/user/logout')
       .set('Authorization', userOne.token)
@@ -77,4 +72,9 @@ test('Should logout successfuly', async () => {
    // token should have been removed
    const user = await User.findById(userOne.id);
    expect(user.token).toBe('');
+});
+
+// cleanup
+afterAll(async () => {
+   await User.deleteMany({});
 });
