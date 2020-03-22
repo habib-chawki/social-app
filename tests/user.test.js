@@ -37,10 +37,10 @@ const invalidCredentials = [
 ];
 
 // sign up fail
-test.each(invalidCredentials)('Sign up should fail', async userCreds => {
+test.each(invalidCredentials)('Sign up should fail', async credentials => {
    await request(app)
       .post('/user/signup')
-      .send(userCreds)
+      .send(credentials)
       .expect(400);
 });
 
@@ -60,9 +60,9 @@ test('Should log in user successfuly', async () => {
 });
 
 // login fail cases
-test.each(invalidCredentials)('Login should fail', async userCreds => {
+test.each(invalidCredentials)('Login should fail', async credentials => {
    await request(app)
       .post('/user/login')
-      .send(userCreds)
+      .send(credentials)
       .expect(400);
 });
