@@ -51,11 +51,12 @@ test('Should log in user successfuly', async () => {
       .expect(200);
 
    // retrieve token and ensure its validity
-   const token = JSON.parse(res.text).token;
+   const { token, id } = JSON.parse(res.text);
    expect(validator.isJWT(token)).toBe(true);
 
-   // add token to mock-up user
+   // add id and token to mock-up user
    userOne['token'] = token;
+   userOne['id'] = id;
 });
 
 // login fail cases
@@ -64,4 +65,16 @@ test.each(invalidCredentials)('Login should fail', async credentials => {
       .post('/user/login')
       .send(credentials)
       .expect(400);
+});
+
+// user logout
+test('Should logout successfuly', async () => {
+   await request(app)
+      .post('/user/logout')
+      .set('Authorization', userOne.token)
+      .expect(200);
+
+   // token should have been removed
+   const user = await User.findById(userOne.id);
+   expect(user.token).toBe('');
 });
