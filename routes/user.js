@@ -36,19 +36,16 @@ router.post('/login', async (req, res) => {
          // check password validity
          const same = await bcrypt.compare(password, user.password);
          if (same) {
+            // generate token and send it back with user id
             await user.generateAuthToken();
-            return res
-               .status(200)
-               .send(
-                  `User logged-in successfuly: ${user.email} ${user._id} ${user.token}`
-               );
+            return res.status(200).send({ id: user._id, token: user.token });
          }
       }
 
       // reject login in case of incorrect email or password
       throw new Error(`Unable to login. Incorrect email or password.`);
    } catch (e) {
-      res.status(401).send(e.message);
+      res.status(400).send(e.message);
    }
 });
 
