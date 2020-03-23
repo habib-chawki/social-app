@@ -70,7 +70,7 @@ router.patch('/update', auth, async (req, res) => {
       });
 
       if (user) {
-         return res.status(200).send('Password updated successfuly.');
+         return res.status(200).send(user.password);
       }
 
       throw new Error('Unable to update password');

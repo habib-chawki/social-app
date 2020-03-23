@@ -1,5 +1,6 @@
 const request = require('supertest');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 const app = require('../src/app');
 const User = require('../models/user');
@@ -30,7 +31,7 @@ test('Should sign up user', async () => {
    expect(validator.isJWT(token)).toBe(true);
 });
 
-// sign up fail cases
+// signup fail cases
 test.each(invalidCredentials)('Should fail signup', async credentials => {
    await request(app)
       .post('/user/signup')
@@ -72,6 +73,15 @@ test('Should logout', async () => {
    // token should have been removed
    const user = await User.findById(userOne.id);
    expect(user.token).toBe('');
+});
+
+// password update
+test('Should update password', async () => {
+   const res = await request(app)
+      .patch('/user/update')
+      .set('Authorization', userOne.token)
+      .send({ newPassword: 'newPassWord' })
+      .expect(200);
 });
 
 // cleanup
