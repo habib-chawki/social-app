@@ -67,7 +67,7 @@ test.each(invalidCredentials)('Should fail login', async credentials => {
 test('Should logout', async () => {
    await request(app)
       .post('/user/logout')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
    // token should have been removed
@@ -77,11 +77,22 @@ test('Should logout', async () => {
 
 // password update
 test('Should update password', async () => {
-   const res = await request(app)
+   await request(app)
       .patch('/user/update')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send({ newPassword: 'newPassWord' })
       .expect(200);
+});
+
+// delete user
+test('Should remove user', async () => {
+   await request(app)
+      .delete('/user/remove/')
+      .set('Authorization', `Bearer ${userOne.token}`)
+      .expect(200);
+
+   const user = await User.findById(userOne.id);
+   expect(user).toBeNull();
 });
 
 // cleanup

@@ -87,13 +87,11 @@ router.delete('/remove', auth, async (req, res) => {
 
       if (user) {
          // TODO: consider keeping the user posts
-         // TODO: consider using mongoose pre middleware to delete posts instead
+         // TODO: use mongoose pre middleware to delete posts instead
 
          // delete user's posts
          await Post.deleteMany({ owner: req.user._id });
-         return res
-            .status(200)
-            .send(`User profile removed successfuly: ${user}`);
+         return res.status(200).send(user);
       }
 
       throw new Error('Could not remove user profile.');
