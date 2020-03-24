@@ -58,7 +58,7 @@ userSchema.pre('save', async function() {
 });
 
 // delete all posts
-userSchema.pre('delete', async function() {
+userSchema.pre('remove', async function() {
    try {
       // delete user's posts
       await Post.deleteMany({ owner: this._id });
