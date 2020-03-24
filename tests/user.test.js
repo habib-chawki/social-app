@@ -80,7 +80,7 @@ test('Should update password', async () => {
    await request(app)
       .patch('/user/update')
       .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ newPassword: 'newPassWord' })
+      .send({ newPassword: 'newPassword' })
       .expect(200);
 });
 
@@ -91,6 +91,7 @@ test('Should remove user', async () => {
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
+   // user should be null
    const user = await User.findById(userOne.id);
    expect(user).toBeNull();
 });

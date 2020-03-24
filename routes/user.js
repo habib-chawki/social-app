@@ -89,8 +89,6 @@ router.delete('/remove', auth, async (req, res) => {
          // TODO: consider keeping the user posts
          // TODO: use mongoose pre middleware to delete posts instead
 
-         // delete user's posts
-         await Post.deleteMany({ owner: req.user._id });
          return res.status(200).send(user);
       }
 

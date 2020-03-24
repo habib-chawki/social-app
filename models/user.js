@@ -3,6 +3,8 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+const Post = require('../models/post');
+
 // define user Schema
 const userSchema = mongoose.Schema(
    {
@@ -52,6 +54,16 @@ userSchema.pre('save', async function() {
          this.password = await bcrypt.hash(this.password, 8);
    } catch (e) {
       throw new Error('Encryption failed.');
+   }
+});
+
+// delete all posts
+userSchema.pre('delete', async function() {
+   try {
+      // delete user's posts
+      await Post.deleteMany({ owner: this._id });
+   } catch (e) {
+      throw new Error('Unable to delete posts.');
    }
 });
 
