@@ -82,6 +82,10 @@ test('Should update password', async () => {
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ newPassword: 'newPassword' })
       .expect(200);
+
+   // password should be updated
+   const user = await User.findById(userOne.id);
+   expect(user.password).toBe('newPassword');
 });
 
 // delete user
