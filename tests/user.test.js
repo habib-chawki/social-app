@@ -77,15 +77,15 @@ test('Should logout', async () => {
 
 // password update
 test('Should update password', async () => {
-   await request(app)
+   const res = await request(app)
       .patch('/user/update')
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ newPassword: 'newPassword' })
       .expect(200);
 
    // password should be updated
-   const user = await User.findById(userOne.id);
-   expect(user.password).toBe('newPassword');
+   const same = await bcrypt.compare('newPassword', res.text);
+   expect(same).toBe(true);
 });
 
 // delete user

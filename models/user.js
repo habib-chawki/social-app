@@ -58,8 +58,10 @@ userSchema.pre('save', async function() {
 });
 
 // delete all posts
-userSchema.pre('remove', async function() {
+userSchema.pre('findByIdAndDelete', async function() {
+   // TODO: delete profile as well
    try {
+      console.log('inside pre findByIdAndDelete');
       // delete user's posts
       await Post.deleteMany({ owner: this._id });
    } catch (e) {

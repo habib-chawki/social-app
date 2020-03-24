@@ -64,13 +64,14 @@ router.post('/logout', auth, async (req, res) => {
 // update user password
 router.patch('/update', auth, async (req, res) => {
    try {
-      // find user by id and patch the password
+      // find user by id and patch the password (after hashing)
+      const hashedPassword = await bcrypt.hash(req.body.newPassword, 8);
       const user = await User.findByIdAndUpdate(req.user._id, {
-         password: req.body.newPassword
+         password: hashedPassword
       });
 
       if (user) {
-         return res.status(200).send(user.password);
+         return res.status(200).send(hashedPassword);
       }
 
       throw new Error('Unable to update password');
@@ -89,10 +90,10 @@ router.delete('/remove', auth, async (req, res) => {
          return res.status(200).send(user);
       }
 
-      throw new Error('Could not remove user profile.');
+      throw new Error('Unable to delete user.');
    } catch (e) {
       // 500 - internal Server Error
-      res.status(500).send(`Error: ${e.message}`);
+      res.status(500).send(e.message);
    }
 });
 
