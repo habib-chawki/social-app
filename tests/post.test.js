@@ -5,33 +5,37 @@ const User = require('../models/user');
 const Post = require('../models/post');
 
 // mock-up users
-let users = [];
+let userOne = {
+   email: 'habib@email.com',
+   password: 'habibPass'
+};
+
+let userTwo = {
+   email: 'chawki@email.com',
+   password: 'chawkiPass'
+};
 
 beforeAll(async () => {
    // create first user
-   await request(app)
+   const resOne = await request(app)
       .post('/user/signup')
-      .send({
-         email: 'habib@email.com',
-         password: 'habibPass'
-      })
-      .expect(200);
+      .send(userOne)
+      .expect(201);
 
    // create second user
-   await request(app)
+   const resTwo = await request(app)
       .post('/user/signup')
-      .send({
-         email: 'chawki@email.com',
-         password: 'chawkiPass'
-      })
-      .expect(200);
+      .send(userTwo)
+      .expect(201);
 
-   // get both users
-   users = await User.find({
-      email: {
-         $in: ['habib@email.com', 'chawki@gmail.com']
-      }
-   });
+   // populate token and id fields
+   userOne = { ...userOne, ...JSON.parse(resOne.text) };
+   userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
+});
+
+// create new post
+test('Should create post', () => {
+   console.log(userOne, userTwo);
 });
 
 afterAll(async () => await User.deleteMany({}));
