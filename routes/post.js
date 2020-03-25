@@ -23,11 +23,11 @@ router.post('/', async (req, res) => {
 
       // post created successfuly
       if (post) {
-         // add new post to user's posts list
+         // add new post to user's posts list and return it
          owner.posts.push(post._id);
 
          await owner.save();
-         return res.status(201).send(`Post created successfuly ${post}`);
+         return res.status(201).send({ posts: owner.posts });
       }
 
       throw new Error('Error creating post.');

@@ -34,8 +34,12 @@ beforeAll(async () => {
 });
 
 // create new post
-test('Should create post', () => {
-   console.log(userOne, userTwo);
+test('Should create post', async () => {
+   await request(app)
+      .post('/post')
+      .set('Authorization', userOne.token)
+      .send({ content: 'userOne post' })
+      .expect(201);
 });
 
 afterAll(async () => await User.deleteMany({}));
