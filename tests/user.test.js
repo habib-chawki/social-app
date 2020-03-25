@@ -84,8 +84,8 @@ test('Should update password', async () => {
       .expect(200);
 
    // password should be updated
-   const same = await bcrypt.compare('newPassword', res.text);
-   expect(same).toBe(true);
+   const match = await bcrypt.compare('newPassword', res.text);
+   expect(match).toBe(true);
 });
 
 // delete user
@@ -101,6 +101,4 @@ test('Should remove user', async () => {
 });
 
 // cleanup
-afterAll(async () => {
-   await User.deleteMany({});
-});
+afterAll(async () => await User.deleteMany({}));
