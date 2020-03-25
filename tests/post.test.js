@@ -7,12 +7,14 @@ const Post = require('../models/post');
 // mock-up users
 let userOne = {
    email: 'habib@email.com',
-   password: 'habibPass'
+   password: 'habibPass',
+   posts: []
 };
 
 let userTwo = {
    email: 'chawki@email.com',
-   password: 'chawkiPass'
+   password: 'chawkiPass',
+   posts: []
 };
 
 beforeAll(async () => {
@@ -35,11 +37,15 @@ beforeAll(async () => {
 
 // create new post
 test('Should create post', async () => {
-   await request(app)
+   const res = await request(app)
       .post('/post')
       .set('Authorization', userOne.token)
       .send({ content: 'userOne post' })
       .expect(201);
+
+   // expect new post to have been added
+   const { posts } = JSON.parse(res.text);
+   expect(posts.length).toBeGreaterThan(0);
 });
 
 afterAll(async () => await User.deleteMany({}));
