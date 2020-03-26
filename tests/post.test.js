@@ -17,6 +17,9 @@ let userTwo = {
    posts: []
 };
 
+// mock-up posts
+const mockPosts = ['post number 1', 'post number 2', 'post number 3'];
+
 beforeAll(async () => {
    // create first user
    const resOne = await request(app)
@@ -35,17 +38,22 @@ beforeAll(async () => {
    userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
 });
 
-// create new post
-test('Should create post', async () => {
-   const res = await request(app)
-      .post('/post')
-      .set('Authorization', userOne.token)
-      .send({ content: 'userOne post' })
-      .expect(201);
+// create new posts for userOne
+describe('Create posts', () => {
+   test.each(mockPosts)('Should create post', async content => {
+      await request(app)
+         .post('/post')
+         .set('Authorization', userOne.token)
+         .send({ content })
+         .expect(201);
+   });
 
-   // expect new post to have been added
-   const { posts } = JSON.parse(res.text);
-   expect(posts.length).toBeGreaterThan(0);
+   afterAll(async () => {
+      // expect new posts to have been added
+      const user = await User.findById(userOne.id);
+      console.log(user.posts);
+      expect(user.posts.length).toBe(mockPosts.length);
+   });
 });
 
 afterAll(async () => await User.deleteMany({}));
