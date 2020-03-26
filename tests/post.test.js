@@ -39,21 +39,27 @@ beforeAll(async () => {
 });
 
 // create new posts for userOne
-describe('Create posts', () => {
-   test.each(mockPosts)('Should create post', async content => {
-      await request(app)
-         .post('/post')
-         .set('Authorization', userOne.token)
-         .send({ content })
-         .expect(201);
-   });
-
-   afterAll(async () => {
-      // expect new posts to have been added
-      const user = await User.findById(userOne.id);
-      console.log(user.posts);
-      expect(user.posts.length).toBe(mockPosts.length);
-   });
+test.each(mockPosts)('Should create post', async content => {
+   await request(app)
+      .post('/post')
+      .set('Authorization', userOne.token)
+      .send({ content })
+      .expect(201);
 });
 
-afterAll(async () => await User.deleteMany({}));
+test('Should add posts', async () => {
+   const user = await User.findById(userOne.id);
+   const posts = await Post.find({});
+
+   // expect new posts to have been added
+   expect(user.posts.length).toBe(mockPosts.length);
+   expect(posts.length).toBe(mockPosts.length);
+
+   // add posts to mock-up user
+   userOne.posts = user.posts;
+});
+
+afterAll(async () => {
+   await User.deleteMany({});
+   await Post.deleteMany({});
+});

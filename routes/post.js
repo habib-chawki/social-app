@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
 // get current user's posts
 router.get('/all', (req, res) => {
    req.user.posts
-      ? res.status(200).send(`Posts: ${req.user.posts}`)
+      ? res.status(200).send(req.user.posts)
       : res.status(404).send('No posts.');
 });
 
