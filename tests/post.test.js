@@ -59,6 +59,17 @@ test('Should add posts', async () => {
    userOne.posts = user.posts;
 });
 
+// should get back all posts
+test('Should get all posts', async () => {
+   const res = await request(app)
+      .get('/post/all')
+      .set('Authorization', userOne.token)
+      .expect(200);
+
+   // expect to get all userOne posts
+   expect(JSON.parse(res.text).length).toBe(userOne.posts.length);
+});
+
 afterAll(async () => {
    await User.deleteMany({});
    await Post.deleteMany({});
