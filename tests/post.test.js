@@ -70,7 +70,21 @@ test('Should get all posts', async () => {
    expect(JSON.parse(res.text).length).toBe(userOne.posts.length);
 });
 
+// should get post by id
+test('Should get post by id', async () => {
+   // get second mock-up post
+   const res = await request(app)
+      .get(`/post/${userOne.posts[1]}`)
+      .set('Authorization', userOne.token)
+      .expect(200);
+
+   // should get the correct post back
+   const post = await Post.findById(userOne.posts[1]);
+   expect(res.text).toEqual(post.content);
+});
+
 afterAll(async () => {
+   // delete all users and posts
    await User.deleteMany({});
    await Post.deleteMany({});
 });
