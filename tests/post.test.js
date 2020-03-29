@@ -87,14 +87,40 @@ test('Should get post by id', async () => {
 // update post by id
 test('Should update post by id', async () => {
    const newPost = 'the new post number 2';
+   const postId = userOne.posts[1];
+
    await request(app)
-      .patch(`/post/${userOne.posts[1]}`)
+      .patch(`/post/${postId}`)
       .set('Authorization', userOne.token)
       .send({ content: newPost })
       .expect(200);
 
-   const post = await Post.findById(userOne.posts[1]);
+   // newPost should be updated
+   const post = await Post.findById(postId);
    expect(post.content).toEqual(newPost);
+});
+
+// delete post by id
+test('Should delete post by id', async () => {
+   const postId = userOne.posts[1];
+
+   await request(app)
+      .delete(`/post/${postId}`)
+      .set('Authorization', userOne.token)
+      .expect(200);
+
+   // post should have been deleted
+   const post = await Post.findById(postId);
+   expect(post).toBeNull();
+});
+
+// attempt to delete other's posts
+test('Should not delete other user post', async () => {
+   // authenticate userTwo and try to delete userOne post
+   await request(app)
+      .delete(`/post/${userOne.posts[0]}`)
+      .set('Authorization', userTwo.token)
+      .expect(404);
 });
 
 afterAll(async () => {
