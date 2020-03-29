@@ -72,14 +72,12 @@ router.patch('/:postId', async (req, res) => {
    }
 
    try {
-      const postToUpdate = await Post.findByIdAndUpdate(req.params.postId, {
+      const post = await Post.findByIdAndUpdate(req.params.postId, {
          content: req.body.content
       });
 
-      if (postToUpdate) {
-         return res
-            .status(200)
-            .send(`Post updated successfuly ${postToUpdate}`);
+      if (post) {
+         return res.status(200).send(post);
       }
 
       // throw an error if post can not be found

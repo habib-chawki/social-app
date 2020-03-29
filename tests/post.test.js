@@ -47,6 +47,7 @@ test.each(mockPosts)('Should create post', async content => {
       .expect(201);
 });
 
+// posts should have been added
 test('Should add posts', async () => {
    const user = await User.findById(userOne.id);
    const posts = await Post.find({});
@@ -59,7 +60,7 @@ test('Should add posts', async () => {
    userOne.posts = user.posts;
 });
 
-// should get back all posts
+// get back all posts
 test('Should get all posts', async () => {
    const res = await request(app)
       .get('/post/all')
@@ -70,7 +71,7 @@ test('Should get all posts', async () => {
    expect(JSON.parse(res.text).length).toBe(userOne.posts.length);
 });
 
-// should get post by id
+// get post by id
 test('Should get post by id', async () => {
    // get second mock-up post
    const res = await request(app)
@@ -81,6 +82,19 @@ test('Should get post by id', async () => {
    // should get the correct post back
    const post = await Post.findById(userOne.posts[1]);
    expect(res.text).toEqual(post.content);
+});
+
+// update post by id
+test('Should update post by id', async () => {
+   const newPost = 'the new post number 2';
+   await request(app)
+      .patch(`/post/${userOne.posts[1]}`)
+      .set('Authorization', userOne.token)
+      .send({ content: newPost })
+      .expect(200);
+
+   const post = await Post.findById(userOne.posts[1]);
+   expect(post.content).toEqual(newPost);
 });
 
 afterAll(async () => {
