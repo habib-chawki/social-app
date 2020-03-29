@@ -73,14 +73,16 @@ test('Should get all posts', async () => {
 
 // get post by id
 test('Should get post by id', async () => {
+   const postId = userOne.posts[1];
+
    // get second mock-up post
    const res = await request(app)
-      .get(`/post/${userOne.posts[1]}`)
+      .get(`/post/${postId}`)
       .set('Authorization', userOne.token)
       .expect(200);
 
    // should get the correct post back
-   const post = await Post.findById(userOne.posts[1]);
+   const post = await Post.findById(postId);
    expect(res.text).toEqual(post.content);
 });
 
@@ -121,6 +123,18 @@ test('Should not delete other user post', async () => {
       .delete(`/post/${userOne.posts[0]}`)
       .set('Authorization', userTwo.token)
       .expect(404);
+});
+
+// delete all posts
+test('Should delete all posts', async () => {
+   await request(app)
+      .delete('/post/all')
+      .set('Authorization', userOne.token)
+      .expect(200);
+
+   // make sure all posts have been deleted
+   const user = await User.findById(userOne.id, 'posts');
+   expect(user.posts.length).toEqual(0);
 });
 
 afterAll(async () => {
