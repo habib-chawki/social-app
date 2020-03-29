@@ -7,14 +7,12 @@ const Post = require('../models/post');
 // mock-up users
 let userOne = {
    email: 'habib@email.com',
-   password: 'habibPass',
-   posts: []
+   password: 'habibPass'
 };
 
 let userTwo = {
    email: 'chawki@email.com',
-   password: 'chawkiPass',
-   posts: []
+   password: 'chawkiPass'
 };
 
 // mock-up posts
@@ -116,7 +114,7 @@ test('Should delete post by id', async () => {
    expect(post).toBeNull();
 });
 
-// attempt to delete other's posts
+// attempt to delete other users' posts
 test('Should not delete other user post', async () => {
    // authenticate userTwo and try to delete userOne post
    await request(app)
@@ -132,7 +130,7 @@ test('Should delete all posts', async () => {
       .set('Authorization', userOne.token)
       .expect(200);
 
-   // make sure all posts have been deleted
+   // all posts have been deleted
    const user = await User.findById(userOne.id, 'posts');
    expect(user.posts.length).toEqual(0);
 });
