@@ -50,7 +50,7 @@ test('Should add posts', async () => {
    const user = await User.findById(userOne.id);
    const posts = await Post.find({});
 
-   // expect new posts to have been added
+   // expect new posts to have been added to posts collection and user's posts list
    expect(user.posts.length).toBe(mockPosts.length);
    expect(posts.length).toBe(mockPosts.length);
 
@@ -86,6 +86,7 @@ test('Should get post by id', async () => {
 
 // update post by id
 test('Should update post by id', async () => {
+   // update post number 2
    const newPost = 'the new post number 2';
    const postId = userOne.posts[1];
 
@@ -95,9 +96,32 @@ test('Should update post by id', async () => {
       .send({ content: newPost })
       .expect(200);
 
-   // newPost should be updated
+   // post should have been updated
    const post = await Post.findById(postId);
    expect(post.content).toEqual(newPost);
+});
+
+// attempt to delete other users' posts
+test('Should not delete other user post', async () => {
+   // authenticate userTwo and try to delete userOne post
+   const postId = userOne.posts[0];
+
+   await request(app)
+      .delete(`/post/${postId}`)
+      .set('Authorization', userTwo.token)
+      .expect(404);
+});
+
+// delete all posts
+test('Should delete all posts', async () => {
+   await request(app)
+      .delete('/post/all')
+      .set('Authorization', userOne.token)
+      .expect(200);
+
+   // all posts should have been deleted
+   const user = await User.findById(userOne.id, 'posts');
+   expect(user.posts.length).toEqual(0);
 });
 
 // delete post by id
@@ -112,27 +136,6 @@ test('Should delete post by id', async () => {
    // post should have been deleted
    const post = await Post.findById(postId);
    expect(post).toBeNull();
-});
-
-// attempt to delete other users' posts
-test('Should not delete other user post', async () => {
-   // authenticate userTwo and try to delete userOne post
-   await request(app)
-      .delete(`/post/${userOne.posts[0]}`)
-      .set('Authorization', userTwo.token)
-      .expect(404);
-});
-
-// delete all posts
-test('Should delete all posts', async () => {
-   await request(app)
-      .delete('/post/all')
-      .set('Authorization', userOne.token)
-      .expect(200);
-
-   // all posts have been deleted
-   const user = await User.findById(userOne.id, 'posts');
-   expect(user.posts.length).toEqual(0);
 });
 
 afterAll(async () => {
