@@ -68,6 +68,7 @@ test('Should add comment to appropriate post', async () => {
       .expect(201);
 });
 
+// should edit comment by id
 test('Should edit comment', async () => {
    // find appropriate post
    const post = await Post.findOne({ content: userTwoPosts[0] });
@@ -80,6 +81,21 @@ test('Should edit comment', async () => {
       .put('/comment')
       .set('Authorization', userOne.token)
       .send({ postId, commentId, newComment })
+      .expect(200);
+});
+
+// should delete comment by id
+test('Should delete comment', async () => {
+   const post = await Post.findOne({ content: userTwoPosts[0] });
+
+   // grab post and comment id
+   const { _id: postId } = post;
+   const commentId = post.comments[0]._id;
+
+   await request(app)
+      .delete('/comment')
+      .set('Authorization', userOne.token)
+      .send({ postId, commentId })
       .expect(200);
 });
 
