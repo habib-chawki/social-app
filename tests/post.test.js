@@ -112,18 +112,6 @@ test('Should not delete other user post', async () => {
       .expect(404);
 });
 
-// delete all posts
-test('Should delete all posts', async () => {
-   await request(app)
-      .delete('/post/all')
-      .set('Authorization', userOne.token)
-      .expect(200);
-
-   // all posts should have been deleted
-   const user = await User.findById(userOne.id, 'posts');
-   expect(user.posts.length).toEqual(0);
-});
-
 // delete post by id
 test('Should delete post by id', async () => {
    const postId = userOne.posts[1];
@@ -136,6 +124,18 @@ test('Should delete post by id', async () => {
    // post should have been deleted
    const post = await Post.findById(postId);
    expect(post).toBeNull();
+});
+
+// delete all posts
+test('Should delete all posts', async () => {
+   await request(app)
+      .delete('/post/all')
+      .set('Authorization', userOne.token)
+      .expect(200);
+
+   // all posts should have been deleted
+   const user = await User.findById(userOne.id, 'posts');
+   expect(user.posts.length).toEqual(0);
 });
 
 afterAll(async () => {

@@ -16,8 +16,8 @@ let userTwo = {
 };
 
 // mock-up posts
-const userOnePosts = ['post number 1', 'post number 2', 'post number 3'];
-const userTwoPosts = ['post number 4', 'post number 5'];
+const userOnePosts = ['post number 1', 'post number 2'];
+const userTwoPosts = ['post number 3'];
 
 beforeAll(async () => {
    // create first user
@@ -56,14 +56,31 @@ test.each(userTwoPosts)('Should create userTwo posts', async content => {
 });
 
 test('Should add comment to appropriate post', async () => {
-   // get post id
-   const { _id: postId } = await Post.findOne({ content: userOnePosts[0] });
+   // setup comment and get post id
+   const comment = `comment number 1 on ${userOnePosts[0]}`;
+   const { _id: postId } = await Post.findOne({ content: userTwoPosts[0] });
 
+   // userOne comments on userTwo's post
    await request(app)
       .post('/comment')
-      .set('Authorization', userTwo.token)
-      .send({ postId, comment: 'comment number 1' })
+      .set('Authorization', userOne.token)
+      .send({ postId, comment })
       .expect(201);
+});
+
+test('Should edit comment', async () => {
+   // find appropriate post
+   const post = await Post.findOne({ content: userTwoPosts[0] });
+
+   const newComment = 'new edited comment number 1';
+   const { _id: postId } = post;
+   const commentId = post.comments[0]._id;
+
+   await request(app)
+      .put('/comment')
+      .set('Authorization', userOne.token)
+      .send({ postId, commentId, newComment })
+      .expect(200);
 });
 
 afterAll(async () => {

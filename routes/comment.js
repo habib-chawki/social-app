@@ -37,9 +37,8 @@ router.post('/', async (req, res) => {
 });
 
 // delete a comment by id
-router.delete('/:commentId', async (req, res) => {
-   const { postId } = req.body;
-   const { commentId } = req.params;
+router.delete('/', async (req, res) => {
+   const { postId, commentId } = req.body;
    const toDelete = true;
 
    try {
@@ -51,9 +50,8 @@ router.delete('/:commentId', async (req, res) => {
 });
 
 // edit a comment by id
-router.put('/:commentId', async (req, res) => {
-   const { postId, newComment } = req.body;
-   const { commentId } = req.params;
+router.put('/', async (req, res) => {
+   const { postId, commentId, newComment } = req.body;
 
    try {
       editComment({ postId, commentId, newComment });
