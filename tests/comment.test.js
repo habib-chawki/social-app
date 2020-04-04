@@ -16,8 +16,8 @@ let userTwo = {
 };
 
 // mock-up posts
-const userOnePosts = ['post number 1', 'post number 2'];
-const userTwoPosts = ['post number 3'];
+const userOnePosts = ['post number 1 by userOne', 'post number 2 by userOne'];
+const userTwoPosts = ['post number 3 by userTwo'];
 
 beforeAll(async () => {
    // create first user
@@ -56,11 +56,11 @@ test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
 });
 
 test('Should add comment to appropriate post', async () => {
-   // setup comment and get post id
-   const comment = `comment number 1 on ${userOnePosts[0]}`;
-   const { _id: postId } = await Post.findOne({ content: userTwoPosts[0] });
+   // userOne comment on userTwo post
+   const post = userTwoPosts[0];
+   const comment = `comment number 1 on ${post}`;
+   const { _id: postId } = await Post.findOne({ content: post });
 
-   // userOne comments on userTwo's post
    await request(app)
       .post('/comment')
       .set('Authorization', userOne.token)
@@ -70,6 +70,7 @@ test('Should add comment to appropriate post', async () => {
 
 // edit comment by id
 test('Should edit comment', async () => {
+   // userOne edit comment on userTwo post
    // find appropriate post
    const post = await Post.findOne({ content: userTwoPosts[0] });
 
@@ -82,6 +83,13 @@ test('Should edit comment', async () => {
       .set('Authorization', userOne.token)
       .send({ postId, commentId, newComment })
       .expect(200);
+
+   // userTwo should not be able to edit userOne comment
+   await request(app)
+      .put('/comment')
+      .set('Authorization', userTwo.token)
+      .send({ postId, commentId, newComment })
+      .expect(400);
 });
 
 // delete comment by id
@@ -97,9 +105,14 @@ test('Should delete comment', async () => {
       .set('Authorization', userOne.token)
       .send({ postId, commentId })
       .expect(200);
-});
 
-// TODO: do not delete comments of others
+   // userTwo should not be able to delete userOne comment
+   await request(app)
+      .delete('/comment')
+      .set('Authorization', userTwo.token)
+      .send({ postId, commentId })
+      .expect(400);
+});
 
 afterAll(async () => {
    await User.deleteMany({});

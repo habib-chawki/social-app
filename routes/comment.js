@@ -37,28 +37,9 @@ router.post('/', async (req, res) => {
 });
 
 // delete a comment by id
-router.delete('/', async (req, res) => {
-   const { postId, commentId } = req.body;
-   const toDelete = true;
-
-   try {
-      await editComment({ postId, commentId, toDelete }, req.user);
-      res.status(200).send('Comment deleted successfuly.');
-   } catch (e) {
-      res.status(400).send(e.message);
-   }
-});
+router.delete('/', editComment);
 
 // edit a comment by id
-router.put('/', async (req, res) => {
-   const { postId, commentId, newComment } = req.body;
-
-   try {
-      await editComment({ postId, commentId, newComment }, req.user);
-      res.status(200).send('Comment edited successfuly.');
-   } catch (e) {
-      res.status(400).send(e.message);
-   }
-});
+router.put('/', editComment);
 
 module.exports = router;
