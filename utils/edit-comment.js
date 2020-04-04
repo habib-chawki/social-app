@@ -22,8 +22,7 @@ async function editComment(
       // comment found
       if (commentIndex != -1) {
          // check if user has right to edit
-         if (post.comments[commentIndex].owner === user._id) {
-            console.log('INSIDE');
+         if (post.comments[commentIndex].owner.equals(user._id)) {
             // check whether the comment is to be deleted or edited
             toDelete
                ? post.comments.splice(commentIndex, 1)

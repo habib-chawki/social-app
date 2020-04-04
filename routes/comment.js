@@ -42,7 +42,7 @@ router.delete('/', async (req, res) => {
    const toDelete = true;
 
    try {
-      editComment({ postId, commentId, toDelete }, req.user);
+      await editComment({ postId, commentId, toDelete }, req.user);
       res.status(200).send('Comment deleted successfuly.');
    } catch (e) {
       res.status(400).send(e.message);
@@ -54,7 +54,7 @@ router.put('/', async (req, res) => {
    const { postId, commentId, newComment } = req.body;
 
    try {
-      editComment({ postId, commentId, newComment }, req.user);
+      await editComment({ postId, commentId, newComment }, req.user);
       res.status(200).send('Comment edited successfuly.');
    } catch (e) {
       res.status(400).send(e.message);
