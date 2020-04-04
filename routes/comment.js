@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
 
       // check if post exists and add comment to post's comments list
       if (post) {
-         post.comments.push({ comment: req.body.comment });
+         post.comments.push({ comment: req.body.comment, owner: req.user._id });
          await post.save();
          return res
             .status(201)
@@ -42,7 +42,7 @@ router.delete('/', async (req, res) => {
    const toDelete = true;
 
    try {
-      editComment({ postId, commentId, toDelete });
+      editComment({ postId, commentId, toDelete }, req.user);
       res.status(200).send('Comment deleted successfuly.');
    } catch (e) {
       res.status(400).send(e.message);
@@ -54,7 +54,7 @@ router.put('/', async (req, res) => {
    const { postId, commentId, newComment } = req.body;
 
    try {
-      editComment({ postId, commentId, newComment });
+      editComment({ postId, commentId, newComment }, req.user);
       res.status(200).send('Comment edited successfuly.');
    } catch (e) {
       res.status(400).send(e.message);

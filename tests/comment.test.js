@@ -7,12 +7,12 @@ const User = require('../models/user');
 //mock-up user
 let userOne = {
    email: 'habib@email.com',
-   password: 'habibPass'
+   password: 'habibPass',
 };
 
 let userTwo = {
    email: 'chawki@email.com',
-   password: 'chawkiPass'
+   password: 'chawkiPass',
 };
 
 // mock-up posts
@@ -38,7 +38,7 @@ beforeAll(async () => {
 });
 
 // create new posts for userOne
-test.each(userOnePosts)('Should create userOne posts', async content => {
+test.each(userOnePosts)('Should create userOne posts', async (content) => {
    await request(app)
       .post('/post')
       .set('Authorization', userOne.token)
@@ -47,7 +47,7 @@ test.each(userOnePosts)('Should create userOne posts', async content => {
 });
 
 // create new posts for userTwo
-test.each(userTwoPosts)('Should create userTwo posts', async content => {
+test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
    await request(app)
       .post('/post')
       .set('Authorization', userTwo.token)
@@ -68,7 +68,7 @@ test('Should add comment to appropriate post', async () => {
       .expect(201);
 });
 
-// should edit comment by id
+// edit comment by id
 test('Should edit comment', async () => {
    // find appropriate post
    const post = await Post.findOne({ content: userTwoPosts[0] });
@@ -84,7 +84,7 @@ test('Should edit comment', async () => {
       .expect(200);
 });
 
-// should delete comment by id
+// delete comment by id
 test('Should delete comment', async () => {
    const post = await Post.findOne({ content: userTwoPosts[0] });
 
@@ -98,6 +98,8 @@ test('Should delete comment', async () => {
       .send({ postId, commentId })
       .expect(200);
 });
+
+// TODO: do not delete comments of others
 
 afterAll(async () => {
    await User.deleteMany({});

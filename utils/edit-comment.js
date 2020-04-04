@@ -1,12 +1,10 @@
 const validator = require('validator');
 const postModel = require('../models/post');
 
-async function editComment({
-   postId,
-   commentId,
-   newComment = '',
-   toDelete = false
-}) {
+async function editComment(
+   { postId, commentId, newComment = '', toDelete = false },
+   user
+) {
    // validate comment and post id
    if (!validator.isMongoId(commentId) || !validator.isMongoId(postId)) {
       throw new Error('Invalid id.');
@@ -17,17 +15,24 @@ async function editComment({
 
    if (post) {
       // find comment
-      const commentIndex = post.comments.findIndex(comment =>
+      const commentIndex = post.comments.findIndex((comment) =>
          comment._id.equals(commentId)
       );
 
-      // check whether the comment is to be deleted or edited
-      toDelete
-         ? post.comments.splice(commentIndex, 1)
-         : (post.comments[commentIndex].comment = newComment);
+      // comment found
+      if (commentIndex != -1) {
+         // check if user has right to edit
+         if (post.comments[commentIndex].owner === user._id) {
+            console.log('INSIDE');
+            // check whether the comment is to be deleted or edited
+            toDelete
+               ? post.comments.splice(commentIndex, 1)
+               : (post.comments[commentIndex].comment = newComment);
 
-      // save changes
-      return await post.save();
+            // save changes
+            return await post.save();
+         }
+      }
    }
 
    // erroneous editing
