@@ -22,7 +22,7 @@ async function editComment(req, res) {
 
          // comment found
          if (commentIndex != -1) {
-            // check if user has right to edit
+            // check if user is authorized to edit (owns the comment)
             if (post.comments[commentIndex].owner.equals(userId)) {
                // check whether the comment is to be deleted or edited
                !newComment

@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
       // create profile with current user's id
       const profile = await Profile.create({
          owner: req.user._id,
-         ...req.body
+         ...req.body,
       });
 
       if (profile) {
@@ -30,14 +30,12 @@ router.post('/', async (req, res) => {
 // get user's profile by id (userId is optional)
 router.get('/:userId?', async (req, res) => {
    try {
-      // check if userId is provided (get profile by id or get current logged in user's profile)
+      // check if userId is provided (get profile by id or get current logged-in user's profile)
       const userId = req.params.userId ? req.params.userId : req.user._id;
       const profile = await Profile.findOne({ owner: userId });
 
       if (profile) {
-         return res
-            .status(200)
-            .send(`Profile found: ${JSON.stringify(profile)}`);
+         return res.status(200).send(JSON.stringify(profile));
       }
 
       throw new Error('Unable to fetch profile.');
