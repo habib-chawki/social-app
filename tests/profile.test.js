@@ -32,10 +32,21 @@ beforeAll(async () => {
    userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
 });
 
+// get logged-in user profile
 test('Should get profile', async () => {
    await request(app)
       .get('/profile')
       .set('Authorization', userOne.token)
+      .expect(200);
+});
+
+// get user profile by id
+test('Should get profile by id', async () => {
+   // get userTwo profile
+   await request(app)
+      .get('/profile')
+      .set('Authorization', userOne.token)
+      .send({ userId: userTwo.id })
       .expect(200);
 });
 

@@ -29,7 +29,7 @@ const profileSchema = mongoose.Schema(
       },
       address: { type: String, default: '' },
       birthday: { type: Date, default: Date.now() },
-      gender: { type: String, default: 'Unkown' },
+      gender: { type: String, default: 'Unknown' },
       bio: {
          type: String,
          maxLength: 100,
