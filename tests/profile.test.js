@@ -33,12 +33,10 @@ beforeAll(async () => {
 });
 
 test('Should get profile', async () => {
-   const res = await request(app)
+   await request(app)
       .get('/profile')
       .set('Authorization', userOne.token)
       .expect(200);
-
-   console.log(res.text);
 });
 
 afterAll(async () => {
