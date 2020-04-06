@@ -4,93 +4,97 @@ const profileSchema = mongoose.Schema(
    {
       owner: {
          type: mongoose.Schema.Types.ObjectId,
-         required: true
+         required: true,
       },
       firstName: {
          type: String,
          minLength: 3,
          maxLength: 30,
-         trim: true
+         trim: true,
+         default: '',
       },
       middleName: {
          type: String,
          minLength: 3,
          maxLength: 30,
-         trim: true
+         trim: true,
+         default: '',
       },
       lastName: {
          type: String,
          minLength: 3,
          maxLength: 30,
-         trim: true
+         trim: true,
+         default: '',
       },
-      address: String,
-      birthday: Date,
-      gender: String,
+      address: { type: String, default: '' },
+      birthday: { type: Date, default: Date.now() },
+      gender: { type: String, default: 'Unkown' },
       bio: {
          type: String,
-         maxLength: 100
+         maxLength: 100,
+         default: '',
       },
       experience: [
          {
             _id: false,
             startDate: {
                type: Date,
-               required: true
+               required: true,
             },
             endDate: Date,
             current: {
                type: Boolean,
-               default: false
+               default: false,
             },
             position: {
                type: String,
-               required: true
+               required: true,
             },
             company: {
                type: String,
-               required: true
+               required: true,
             },
             description: {
                type: String,
-               maxLength: 200
-            }
-         }
+               maxLength: 200,
+            },
+         },
       ],
       education: [
          {
             _id: false,
             startDate: {
                type: Date,
-               required: true
+               required: true,
             },
             endDate: Date,
             current: {
                type: Boolean,
-               default: false
+               default: false,
             },
             major: {
                type: String,
-               required: true
+               required: true,
             },
             school: {
                type: String,
-               required: true
+               required: true,
             },
             description: {
                type: String,
-               maxLength: 200
-            }
-         }
+               maxLength: 200,
+            },
+         },
       ],
       skills: {
          technical: [String],
-         organizational: [String]
+         organizational: [String],
       },
-      languages: [String]
+      languages: [String],
    },
    {
-      timestamps: true
+      timestamps: true,
    }
 );
 
