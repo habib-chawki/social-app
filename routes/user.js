@@ -2,7 +2,8 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
-const Post = require('../models/post');
+const Profile = require('../models/profile');
+
 const auth = require('../utils/auth');
 
 const router = express.Router();
@@ -12,16 +13,21 @@ router.post('/signup', async (req, res) => {
    try {
       // create the new user (req.body == email and password)
       const user = await User.create(req.body);
+      if (user) {
+         await Profile.create({ owner: user._id });
 
-      // generate an auth token when the user is created successfuly
-      await user.generateAuthToken();
+         // generate an auth token when the user is created successfuly
+         await user.generateAuthToken();
 
-      // 201 - created
-      // send back user id and generated auth token
-      res.status(201).send({ id: user._id, token: user.token });
+         // 201 - created
+         // send back user id and generated auth token
+         return res.status(201).send({ id: user._id, token: user.token });
+      }
+
+      throw new Error('Unable to create user');
    } catch (e) {
       // 400 - bad request
-      res.status(400).send(`Error: could not create user: ${e.message}`);
+      res.status(400).send(e.message);
    }
 });
 
@@ -43,7 +49,7 @@ router.post('/login', async (req, res) => {
       }
 
       // reject login in case of incorrect email or password
-      throw new Error(`Unable to login. Incorrect email or password.`);
+      throw new Error('Unable to login. Incorrect email or password.');
    } catch (e) {
       res.status(400).send(e.message);
    }
@@ -67,7 +73,7 @@ router.patch('/update', auth, async (req, res) => {
       // find user by id and patch the password (after hashing)
       const hashedPassword = await bcrypt.hash(req.body.newPassword, 8);
       const user = await User.findByIdAndUpdate(req.user._id, {
-         password: hashedPassword
+         password: hashedPassword,
       });
 
       if (user) {
