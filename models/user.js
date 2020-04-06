@@ -3,8 +3,6 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const Post = require('../models/post');
-
 // define user Schema
 const userSchema = mongoose.Schema(
    {
@@ -18,13 +16,13 @@ const userSchema = mongoose.Schema(
             if (!validator.isEmail(value)) {
                throw new Error('Invalid Email.');
             }
-         }
+         },
       },
       password: {
          type: String,
          trim: true,
          required: true,
-         minlength: 5
+         minlength: 5,
       },
       token: {
          type: String,
@@ -32,22 +30,22 @@ const userSchema = mongoose.Schema(
             if (!validator.isJWT(value)) {
                throw new Error('Invalid token.');
             }
-         }
+         },
       },
       posts: [
          {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'post'
-         }
-      ]
+            ref: 'post',
+         },
+      ],
    },
    {
-      timestamps: true
+      timestamps: true,
    }
 );
 
 // hash password before saving
-userSchema.pre('save', async function() {
+userSchema.pre('save', async function () {
    try {
       // hash password only if it has been modified
       if (this.isModified('password'))
@@ -57,20 +55,8 @@ userSchema.pre('save', async function() {
    }
 });
 
-// delete all posts
-userSchema.pre('findByIdAndDelete', async function() {
-   // TODO: delete profile as well
-   try {
-      console.log('inside pre findByIdAndDelete');
-      // delete user's posts
-      await Post.deleteMany({ owner: this._id });
-   } catch (e) {
-      throw new Error('Unable to delete posts.');
-   }
-});
-
 // instance method to generate authentication token
-userSchema.methods.generateAuthToken = async function() {
+userSchema.methods.generateAuthToken = async function () {
    try {
       // sign the token with the user id
       this.token = await jwt.sign({ id: this._id }, process.env.SECRET_KEY);
