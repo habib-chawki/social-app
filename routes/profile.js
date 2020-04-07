@@ -47,13 +47,15 @@ router.get('/', async (req, res) => {
 // update profile
 router.put('/', async (req, res) => {
    try {
-      const profile = await Profile.replaceOne(
+      // replace old profile with updated new version
+      const response = await Profile.replaceOne(
          { owner: req.user._id },
          { owner: req.user._id, ...req.body }
       );
 
-      if (profile) {
-         return res.status(200).send(`Profile updated.`);
+      // nModified: number of documents modified
+      if (response.nModified === 1) {
+         return res.status(200).send(response);
       }
 
       throw new Error('Unable to update profile.');

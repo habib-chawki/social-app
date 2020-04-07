@@ -15,11 +15,19 @@ let userTwo = {
 };
 
 // mock-up profile
-let userOneProfile = {
+const userOneProfile = {
    firstName: 'Habib',
    lastName: 'Chawki',
    gender: 'male',
    bio: 'This is my bio',
+   skills: {
+      technical: ['Software engineering', 'Network administration'],
+   },
+   languages: ['English', 'French', 'German'],
+};
+
+const userOneUpdatedProfile = {
+   bio: 'This is an updated bio',
    skills: {
       technical: [
          'Software engineering',
@@ -27,7 +35,7 @@ let userOneProfile = {
          'Machine learning',
       ],
    },
-   languages: ['English', 'French', 'German'],
+   languages: ['English', 'French', 'German', 'Spanish'],
 };
 
 beforeAll(async () => {
@@ -75,6 +83,14 @@ test('Should get profile by id', async () => {
       .expect(200);
 });
 
+// update user profile
+test('Should update profile', async () => {
+   await request(app)
+      .put('/profile')
+      .set('Authorization', userOne.token)
+      .send(userOneUpdatedProfile)
+      .expect(200);
+});
 afterAll(async () => {
    await User.deleteMany({});
 });
