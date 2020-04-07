@@ -14,6 +14,22 @@ let userTwo = {
    password: 'chawkiPass',
 };
 
+// mock-up profile
+let userOneProfile = {
+   firstName: 'Habib',
+   lastName: 'Chawki',
+   gender: 'male',
+   bio: 'This is my bio',
+   skills: {
+      technical: [
+         'Software engineering',
+         'Network administration',
+         'Machine learning',
+      ],
+   },
+   languages: ['English', 'French', 'German'],
+};
+
 beforeAll(async () => {
    // create first user
    const resOne = await request(app)
@@ -30,6 +46,15 @@ beforeAll(async () => {
    // populate token and id fields
    userOne = { ...userOne, ...JSON.parse(resOne.text) };
    userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
+});
+
+// create profile
+test('Should create profile', async () => {
+   await request(app)
+      .post('/profile')
+      .set('Authorization', userOne.token)
+      .send(userOneProfile)
+      .expect(201);
 });
 
 // get logged-in user profile

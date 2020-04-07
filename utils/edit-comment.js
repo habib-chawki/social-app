@@ -1,6 +1,7 @@
 const validator = require('validator');
 const postModel = require('../models/post');
 
+// handle comment edits
 async function editComment(req, res) {
    const userId = req.user._id;
    const { postId, commentId, newComment = undefined } = req.body;
