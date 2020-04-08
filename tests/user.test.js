@@ -4,11 +4,12 @@ const bcrypt = require('bcrypt');
 
 const app = require('../src/app');
 const User = require('../models/user');
+const Profile = require('../models/profile');
 
 // mock-up user
 const userOne = {
    email: 'habib@email.com',
-   password: 'p@ssw0rd'
+   password: 'p@ssw0rd',
 };
 
 // signup / login fail cases
@@ -16,7 +17,7 @@ const invalidCredentials = [
    { email: 'habib@email.com', password: '' },
    { email: '', password: 'thisisavalidpass' },
    { email: 'habibemail.com', password: 'thisisavalidpass' },
-   { email: 'habib@email.com', password: 'th' }
+   { email: 'habib@email.com', password: 'th' },
 ];
 
 // successful sign up
@@ -32,19 +33,13 @@ test('Should sign up user', async () => {
 });
 
 // signup fail cases
-test.each(invalidCredentials)('Should fail signup', async credentials => {
-   await request(app)
-      .post('/user/signup')
-      .send(credentials)
-      .expect(400);
+test.each(invalidCredentials)('Should fail signup', async (credentials) => {
+   await request(app).post('/user/signup').send(credentials).expect(400);
 });
 
 // successful user login
 test('Should log in user', async () => {
-   const res = await request(app)
-      .post('/user/login')
-      .send(userOne)
-      .expect(200);
+   const res = await request(app).post('/user/login').send(userOne).expect(200);
 
    // retrieve token and ensure its validity
    const { token, id } = JSON.parse(res.text);
@@ -56,11 +51,8 @@ test('Should log in user', async () => {
 });
 
 // login fail cases
-test.each(invalidCredentials)('Should fail login', async credentials => {
-   await request(app)
-      .post('/user/login')
-      .send(credentials)
-      .expect(400);
+test.each(invalidCredentials)('Should fail login', async (credentials) => {
+   await request(app).post('/user/login').send(credentials).expect(400);
 });
 
 // successful user logout
@@ -101,4 +93,7 @@ test('Should remove user', async () => {
 });
 
 // cleanup
-afterAll(async () => await User.deleteMany({}));
+afterAll(async () => {
+   await User.deleteMany({});
+   await Profile.deleteMany({});
+});

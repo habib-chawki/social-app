@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../src/app');
 const Post = require('../models/post');
 const User = require('../models/user');
+const Profile = require('../models/profile');
 
 //mock-up user
 let userOne = {
@@ -116,5 +117,6 @@ test('Should delete comment', async () => {
 
 afterAll(async () => {
    await User.deleteMany({});
+   await Profile.deleteMany({});
    await Post.deleteMany({});
 });

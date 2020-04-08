@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../src/app');
 const User = require('../models/user');
 const Post = require('../models/post');
+const Profile = require('../models/profile');
 
 // mock-up users
 let userOne = {
@@ -141,5 +142,6 @@ test('Should delete all posts', async () => {
 afterAll(async () => {
    // delete all users and posts
    await User.deleteMany({});
+   await Profile.deleteMany({});
    await Post.deleteMany({});
 });
