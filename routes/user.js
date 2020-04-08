@@ -14,6 +14,7 @@ router.post('/signup', async (req, res) => {
       // create the new user (req.body == email and password)
       const user = await User.create(req.body);
       if (user) {
+         // create user profile
          await Profile.create({ owner: user._id });
 
          // generate an auth token when the user is created successfuly
@@ -89,10 +90,13 @@ router.patch('/update', auth, async (req, res) => {
 // delete user
 router.delete('/remove', auth, async (req, res) => {
    try {
-      // remove user by id
+      // remove user
       const user = await User.findByIdAndDelete(req.user._id);
 
+      // send 200 status code if both user and profile were successfuly deleted
       if (user) {
+         // remove user profile
+         await Profile.deleteOne({ owner: user._id });
          return res.status(200).send(user);
       }
 

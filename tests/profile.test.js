@@ -60,14 +60,14 @@ beforeAll(async () => {
    userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
 });
 
-// create profile
-test('Should create profile', async () => {
-   await request(app)
-      .post('/profile')
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .send(userOneProfile)
-      .expect(201);
-});
+// // create profile
+// test('Should create profile', async () => {
+//    await request(app)
+//       .post('/profile')
+//       .set('Authorization', `Bearer ${userOne.token}`)
+//       .send(userOneProfile)
+//       .expect(201);
+// });
 
 // get logged-in user profile
 test('Should get profile', async () => {
@@ -96,6 +96,19 @@ test('Should update profile', async () => {
       .expect(200);
 });
 
+// should delete profile when user is deleted
+test('Should delete profile', async () => {
+   await request(app)
+      .delete('/user/remove')
+      .set('Authorization', `Bearer ${userOne.token}`)
+      .expect(200);
+
+   // profile should be deleted when user is removed
+   const profile = await Profile.findById(userOne.id);
+   expect(profile).toBeNull();
+});
+
 afterAll(async () => {
    await User.deleteMany({});
+   await Profile.deleteMany({});
 });
