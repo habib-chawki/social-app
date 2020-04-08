@@ -60,15 +60,6 @@ beforeAll(async () => {
    userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
 });
 
-// // create profile
-// test('Should create profile', async () => {
-//    await request(app)
-//       .post('/profile')
-//       .set('Authorization', `Bearer ${userOne.token}`)
-//       .send(userOneProfile)
-//       .expect(201);
-// });
-
 // get logged-in user profile
 test('Should get profile', async () => {
    await request(app)
