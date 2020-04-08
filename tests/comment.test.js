@@ -41,7 +41,7 @@ beforeAll(async () => {
 test.each(userOnePosts)('Should create userOne posts', async (content) => {
    await request(app)
       .post('/post')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content })
       .expect(201);
 });
@@ -50,7 +50,7 @@ test.each(userOnePosts)('Should create userOne posts', async (content) => {
 test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
    await request(app)
       .post('/post')
-      .set('Authorization', userTwo.token)
+      .set('Authorization', `Bearer ${userTwo.token}`)
       .send({ content })
       .expect(201);
 });
@@ -63,7 +63,7 @@ test('Should add comment to appropriate post', async () => {
 
    await request(app)
       .post('/comment')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send({ postId, comment })
       .expect(201);
 });
@@ -80,14 +80,14 @@ test('Should edit comment', async () => {
 
    await request(app)
       .put('/comment')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send({ postId, commentId, newComment })
       .expect(200);
 
    // userTwo should not be able to edit userOne comment
    await request(app)
       .put('/comment')
-      .set('Authorization', userTwo.token)
+      .set('Authorization', `Bearer ${userTwo.token}`)
       .send({ postId, commentId, newComment })
       .expect(400);
 });
@@ -102,14 +102,14 @@ test('Should delete comment', async () => {
 
    await request(app)
       .delete('/comment')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send({ postId, commentId })
       .expect(200);
 
    // userTwo should not be able to delete userOne comment
    await request(app)
       .delete('/comment')
-      .set('Authorization', userTwo.token)
+      .set('Authorization', `Bearer ${userTwo.token}`)
       .send({ postId, commentId })
       .expect(400);
 });

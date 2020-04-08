@@ -28,6 +28,9 @@ const userOneProfile = {
 };
 
 const userOneUpdatedProfile = {
+   firstName: 'Habib',
+   lastName: 'Chawki',
+   gender: 'male',
    bio: 'This is an updated bio',
    skills: {
       technical: [
@@ -61,7 +64,7 @@ beforeAll(async () => {
 test('Should create profile', async () => {
    await request(app)
       .post('/profile')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send(userOneProfile)
       .expect(201);
 });
@@ -70,7 +73,7 @@ test('Should create profile', async () => {
 test('Should get profile', async () => {
    await request(app)
       .get('/profile')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 });
 
@@ -79,7 +82,7 @@ test('Should get profile by id', async () => {
    // get userTwo profile
    await request(app)
       .get('/profile')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send({ userId: userTwo.id })
       .expect(200);
 });
@@ -88,10 +91,11 @@ test('Should get profile by id', async () => {
 test('Should update profile', async () => {
    await request(app)
       .put('/profile')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send(userOneUpdatedProfile)
       .expect(200);
 });
+
 afterAll(async () => {
    await User.deleteMany({});
 });

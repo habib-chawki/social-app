@@ -7,12 +7,12 @@ const Post = require('../models/post');
 // mock-up users
 let userOne = {
    email: 'habib@email.com',
-   password: 'habibPass'
+   password: 'habibPass',
 };
 
 let userTwo = {
    email: 'chawki@email.com',
-   password: 'chawkiPass'
+   password: 'chawkiPass',
 };
 
 // mock-up posts
@@ -37,7 +37,7 @@ beforeAll(async () => {
 });
 
 // create new posts for userOne
-test.each(mockPosts)('Should create post', async content => {
+test.each(mockPosts)('Should create post', async (content) => {
    await request(app)
       .post('/post')
       .set('Authorization', userOne.token)
@@ -62,7 +62,7 @@ test('Should add posts', async () => {
 test('Should get all posts', async () => {
    const res = await request(app)
       .get('/post/all')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
    // expect to get all userOne posts
@@ -76,7 +76,7 @@ test('Should get post by id', async () => {
    // get second mock-up post
    const res = await request(app)
       .get(`/post/${postId}`)
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
    // should get the correct post back
@@ -92,7 +92,7 @@ test('Should update post by id', async () => {
 
    await request(app)
       .patch(`/post/${postId}`)
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content: newPost })
       .expect(200);
 
@@ -108,7 +108,7 @@ test('Should not delete other user post', async () => {
 
    await request(app)
       .delete(`/post/${postId}`)
-      .set('Authorization', userTwo.token)
+      .set('Authorization', `Bearer ${userTwo.token}`)
       .expect(404);
 });
 
@@ -118,7 +118,7 @@ test('Should delete post by id', async () => {
 
    await request(app)
       .delete(`/post/${postId}`)
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
    // post should have been deleted
@@ -130,7 +130,7 @@ test('Should delete post by id', async () => {
 test('Should delete all posts', async () => {
    await request(app)
       .delete('/post/all')
-      .set('Authorization', userOne.token)
+      .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
    // all posts should have been deleted
