@@ -7,7 +7,7 @@ const User = require('../models/user');
 const Profile = require('../models/profile');
 
 // mock-up user
-const userOne = {
+let userOne = {
    email: 'habib@email.com',
    password: 'p@ssw0rd',
 };
@@ -46,8 +46,7 @@ test('Should log in user', async () => {
    expect(validator.isJWT(token)).toBe(true);
 
    // add id and token to mock-up user
-   userOne['token'] = token;
-   userOne['id'] = id;
+   userOne = { ...userOne, token, id };
 });
 
 // login fail cases
@@ -69,14 +68,15 @@ test('Should logout', async () => {
 
 // password update
 test('Should update password', async () => {
-   const res = await request(app)
+   await request(app)
       .patch('/user/update')
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ newPassword: 'newPassword' })
       .expect(200);
 
    // password should be updated
-   const match = await bcrypt.compare('newPassword', res.text);
+   const { password } = await User.findById(userOne.id);
+   const match = await bcrypt.compare('newPassword', password);
    expect(match).toBe(true);
 });
 
