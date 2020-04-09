@@ -15,18 +15,6 @@ let userTwo = {
    password: 'chawkiPass',
 };
 
-// mock-up profile
-const userOneProfile = {
-   firstName: 'Habib',
-   lastName: 'Chawki',
-   gender: 'male',
-   bio: 'This is my bio',
-   skills: {
-      technical: ['Software engineering', 'Network administration'],
-   },
-   languages: ['English', 'French', 'German'],
-};
-
 const userOneUpdatedProfile = {
    firstName: 'Habib',
    lastName: 'Chawki',
