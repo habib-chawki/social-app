@@ -5,19 +5,7 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const Profile = require('../models/profile');
 
-// mock-up users
-let userOne = {
-   email: 'habib@email.com',
-   password: 'habibPass',
-};
-
-let userTwo = {
-   email: 'chawki@email.com',
-   password: 'chawkiPass',
-};
-
-// mock-up posts
-const mockPosts = ['post number 1', 'post number 2', 'post number 3'];
+let { userOne, userTwo, mockPosts } = require('./globals');
 
 beforeAll(async () => {
    // create first user
@@ -56,7 +44,7 @@ test('Should add posts', async () => {
    expect(posts.length).toBe(mockPosts.length);
 
    // add posts to mock-up user
-   userOne.posts = user.posts;
+   userOne = { ...userOne, posts: [...user.posts] };
 });
 
 // get back all posts
@@ -140,7 +128,7 @@ test('Should delete all posts', async () => {
 });
 
 afterAll(async () => {
-   // delete all users and posts
+   // delete all users, posts and profiles
    await User.deleteMany({});
    await Profile.deleteMany({});
    await Post.deleteMany({});
