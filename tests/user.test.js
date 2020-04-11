@@ -6,19 +6,7 @@ const app = require('../src/app');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-// mock-up user
-let userOne = {
-   email: 'habib@email.com',
-   password: 'p@ssw0rd',
-};
-
-// signup / login fail cases
-const invalidCredentials = [
-   { email: 'habib@email.com', password: '' },
-   { email: '', password: 'thisisavalidpass' },
-   { email: 'habibemail.com', password: 'thisisavalidpass' },
-   { email: 'habib@email.com', password: 'th' },
-];
+let { userOne, invalidCredentials } = require('./globals');
 
 // successful sign up
 test('Should sign up user', async () => {
