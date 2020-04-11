@@ -4,31 +4,7 @@ const app = require('../src/app');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-// mock-up users
-let userOne = {
-   email: 'habib@email.com',
-   password: 'habibPass',
-};
-
-let userTwo = {
-   email: 'chawki@email.com',
-   password: 'chawkiPass',
-};
-
-const userOneUpdatedProfile = {
-   firstName: 'Habib',
-   lastName: 'Chawki',
-   gender: 'male',
-   bio: 'This is an updated bio',
-   skills: {
-      technical: [
-         'Software engineering',
-         'Network administration',
-         'Machine learning',
-      ],
-   },
-   languages: ['English', 'French', 'German', 'Spanish'],
-};
+let { userOne, userTwo, userOneUpdatedProfile } = require('./globals');
 
 beforeAll(async () => {
    // create first user
