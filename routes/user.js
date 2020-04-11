@@ -25,7 +25,7 @@ router.post('/signup', async (req, res) => {
          return res.status(201).send({ id: user._id, token: user.token });
       }
 
-      throw new Error('Unable to create user');
+      throw new Error('Unable to create user.');
    } catch (e) {
       // 400 - bad request
       res.status(400).send(e.message);
@@ -81,7 +81,7 @@ router.patch('/update', auth, async (req, res) => {
          return res.status(200).send(hashedPassword);
       }
 
-      throw new Error('Unable to update password');
+      throw new Error('Unable to update password.');
    } catch (e) {
       res.status(500).send(e.message);
    }

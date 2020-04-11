@@ -6,10 +6,13 @@
    "scripts": {
       "start": "node --require dotenv/config ./src/index.js",
       "dev": "nodemon --require dotenv/config ./src/index.js",
-      "test": "jest --setupFiles dotenv/config --watch --runInBand"
+      "test": "jest --watch --runInBand"
    },
    "jest": {
-      "testEnvironment": "node"
+      "testEnvironment": "node",
+      "setupFiles": [
+         "dotenv/config"
+      ]
    },
    "author": "7@b!B",
    "license": "ISC",

@@ -5,8 +5,7 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const Profile = require('../models/profile');
 
-let { userOne, userTwo, mockPosts } = require('./globals');
-
+let { userOne, userTwo, userOnePosts } = require('./globals');
 beforeAll(async () => {
    // create first user
    const resOne = await request(app)
@@ -26,7 +25,7 @@ beforeAll(async () => {
 });
 
 // create new posts for userOne
-test.each(mockPosts)('Should create post', async (content) => {
+test.each(userOnePosts)('Should create post', async (content) => {
    await request(app)
       .post('/post')
       .set('Authorization', userOne.token)
@@ -40,8 +39,8 @@ test('Should add posts', async () => {
    const posts = await Post.find({});
 
    // expect new posts to have been added to posts collection and user's posts list
-   expect(user.posts.length).toBe(mockPosts.length);
-   expect(posts.length).toBe(mockPosts.length);
+   expect(user.posts.length).toBe(userOnePosts.length);
+   expect(posts.length).toBe(userOnePosts.length);
 
    // add posts to mock-up user
    userOne = { ...userOne, posts: [...user.posts] };
