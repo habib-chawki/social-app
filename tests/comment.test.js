@@ -5,20 +5,7 @@ const Post = require('../models/post');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-//mock-up user
-let userOne = {
-   email: 'habib@email.com',
-   password: 'habibPass',
-};
-
-let userTwo = {
-   email: 'chawki@email.com',
-   password: 'chawkiPass',
-};
-
-// mock-up posts
-const userOnePosts = ['post number 1 by userOne', 'post number 2 by userOne'];
-const userTwoPosts = ['post number 3 by userTwo'];
+let { userOne, userTwo, userOnePosts, userTwoPosts } = require('./globals');
 
 beforeAll(async () => {
    // create first user
