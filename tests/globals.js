@@ -1,13 +1,17 @@
 // mock-up users
-let userOne = {
+const userOne = {
    email: 'habib@email.com',
    password: 'habibPass',
 };
 
-let userTwo = {
+const userTwo = {
    email: 'chawki@email.com',
    password: 'chawkiPass',
 };
+
+// mock-up posts
+const userOnePosts = ['post number 1 by userOne', 'post number 2 by userOne'];
+const userTwoPosts = ['post number 3 by userTwo'];
 
 // signup / login fail cases
 const invalidCredentials = [
@@ -16,10 +20,6 @@ const invalidCredentials = [
    { email: 'habibemail.com', password: 'thisisavalidpass' },
    { email: 'habib@email.com', password: 'th' },
 ];
-
-// mock-up posts
-const userOnePosts = ['post number 1 by userOne', 'post number 2 by userOne'];
-const userTwoPosts = ['post number 3 by userTwo'];
 
 const userOneUpdatedProfile = {
    firstName: 'Habib',
