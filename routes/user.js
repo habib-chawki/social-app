@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
 
 const User = require('../models/user');
 const Profile = require('../models/profile');
@@ -56,18 +57,6 @@ router.post('/login', async (req, res) => {
    }
 });
 
-// user logout
-router.post('/logout', auth, async (req, res) => {
-   try {
-      // log user out by id (delete auth token)
-      await User.updateOne({ _id: req.user._id }, { token: '' });
-      res.status(200).send('Logged out successfuly.');
-   } catch (e) {
-      // 500 - internal Server Error
-      res.status(500).send(e.message);
-   }
-});
-
 // update user password
 router.patch('/update', auth, async (req, res) => {
    try {
@@ -83,6 +72,38 @@ router.patch('/update', auth, async (req, res) => {
 
       throw new Error('Unable to update password.');
    } catch (e) {
+      res.status(500).send(e.message);
+   }
+});
+
+// setup multer middleware for file upload
+const upload = multer({ dest: 'avatars/' });
+
+// upload an avatar
+router.post('/avatar', auth, upload.single('avatar'), async (req, res) => {
+   try {
+      // retrieve user profile
+      const profile = await Profile.findOne({ owner: user._id });
+
+      // save avatar to database
+      profile.avatar = req.file.buffer;
+      profile.save();
+
+      res.status(200).send('Avatar uploaded.');
+   } catch (e) {
+      // 500 - internal Server Error
+      res.status(500).send(e.message);
+   }
+});
+
+// user logout
+router.post('/logout', auth, async (req, res) => {
+   try {
+      // log user out by id (delete auth token)
+      await User.updateOne({ _id: req.user._id }, { token: '' });
+      res.status(200).send('Logged out successfuly.');
+   } catch (e) {
+      // 500 - internal Server Error
       res.status(500).send(e.message);
    }
 });
