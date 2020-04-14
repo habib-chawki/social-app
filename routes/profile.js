@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 
 const auth = require('../utils/auth');
 const Profile = require('../models/profile');
@@ -41,6 +42,28 @@ router.put('/', async (req, res) => {
 
       throw new Error('Unable to update profile.');
    } catch (e) {
+      res.status(500).send(e.message);
+   }
+});
+
+// setup multer middleware for file upload
+const upload = multer();
+
+// upload an avatar
+router.post('/avatar', upload.single('avatar'), async (req, res) => {
+   try {
+      // retrieve user profile
+      const profile = await Profile.findOne({ owner: req.user._id });
+
+      // save avatar to database
+      profile.avatar = req.file.buffer;
+      await profile.save();
+
+      console.log(req.file);
+
+      res.status(200).send('Avatar uploaded.');
+   } catch (e) {
+      // 500 - internal Server Error
       res.status(500).send(e.message);
    }
 });

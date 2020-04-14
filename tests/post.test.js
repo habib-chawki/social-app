@@ -6,6 +6,7 @@ const Post = require('../models/post');
 const Profile = require('../models/profile');
 
 let { userOne, userTwo, userOnePosts } = require('./globals');
+
 beforeAll(async () => {
    // create first user
    const resOne = await request(app)

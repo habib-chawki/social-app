@@ -36,6 +36,11 @@ const userOneUpdatedProfile = {
    languages: ['English', 'French', 'German', 'Spanish'],
 };
 
+// TODO: global setup and teardown
+async function setup() {}
+
+async function teardown() {}
+
 module.exports = {
    userOne,
    userTwo,
