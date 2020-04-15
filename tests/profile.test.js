@@ -49,6 +49,10 @@ test('Should upload avatar', async () => {
       .set('Authorization', `Bearer ${userOne.token}`)
       .attach('avatar', process.env.AVATAR)
       .expect(200);
+
+   // file should have been saved as buffer
+   const profile = await Profile.findOne({ owner: userOne.id });
+   expect(profile.avatar).not.toBe(undefined);
 });
 
 // update user profile
