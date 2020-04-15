@@ -42,6 +42,15 @@ test('Should get profile by id', async () => {
       .expect(200);
 });
 
+// upload avatar
+test('Should upload avatar', async () => {
+   await request(app)
+      .post('/profile/avatar')
+      .set('Authorization', `Bearer ${userOne.token}`)
+      .attach('avatar', process.env.AVATAR)
+      .expect(200);
+});
+
 // update user profile
 test('Should update profile', async () => {
    await request(app)

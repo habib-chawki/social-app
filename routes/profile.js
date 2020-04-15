@@ -59,8 +59,6 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
       profile.avatar = req.file.buffer;
       await profile.save();
 
-      console.log(req.file);
-
       res.status(200).send('Avatar uploaded.');
    } catch (e) {
       // 500 - internal Server Error

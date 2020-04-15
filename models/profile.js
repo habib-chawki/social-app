@@ -8,6 +8,7 @@ const profileSchema = mongoose.Schema(
       },
       avatar: {
          type: Buffer,
+         default: undefined,
       },
       firstName: {
          type: String,
