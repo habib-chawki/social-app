@@ -5,24 +5,11 @@ const Post = require('../models/post');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-let { userOne, userTwo, userOnePosts, userTwoPosts } = require('./globals');
+const { setup, userOnePosts, userTwoPosts } = require('./globals');
+let userOne, userTwo;
 
 beforeAll(async () => {
-   // create first user
-   const resOne = await request(app)
-      .post('/user/signup')
-      .send(userOne)
-      .expect(201);
-
-   // create second user
-   const resTwo = await request(app)
-      .post('/user/signup')
-      .send(userTwo)
-      .expect(201);
-
-   // populate token and id fields
-   userOne = { ...userOne, ...JSON.parse(resOne.text) };
-   userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
+   [userOne, userTwo] = await setup();
 });
 
 // create new posts for userOne

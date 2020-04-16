@@ -1,10 +1,13 @@
+const request = require('supertest');
+const app = require('../src/app');
+
 // mock-up users
-const userOne = {
+let userOne = {
    email: 'habib@email.com',
    password: 'habibPass',
 };
 
-const userTwo = {
+let userTwo = {
    email: 'chawki@email.com',
    password: 'chawkiPass',
 };
@@ -36,12 +39,31 @@ const userOneUpdatedProfile = {
    languages: ['English', 'French', 'German', 'Spanish'],
 };
 
-// TODO: global setup and teardown
-async function setup() {}
+// global setup and teardown
+async function setup() {
+   // create first user
+   const resOne = await request(app)
+      .post('/user/signup')
+      .send(userOne)
+      .expect(201);
+
+   // create second user
+   const resTwo = await request(app)
+      .post('/user/signup')
+      .send(userTwo)
+      .expect(201);
+
+   // populate token and id fields
+   userOne = { ...userOne, ...JSON.parse(resOne.text) };
+   userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
+
+   return [userOne, userTwo];
+}
 
 async function teardown() {}
 
 module.exports = {
+   setup,
    userOne,
    userTwo,
    userOnePosts,
