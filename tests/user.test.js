@@ -6,14 +6,11 @@ const app = require('../src/app');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-let { userOne, invalidCredentials } = require('./globals');
+let { user, invalidCredentials } = require('./globals');
 
 // successful sign up
 test('Should sign up user', async () => {
-   const res = await request(app)
-      .post('/user/signup')
-      .send(userOne)
-      .expect(201);
+   const res = await request(app).post('/user/signup').send(user).expect(201);
 
    // retrieve token and ensure its validity
    const token = JSON.parse(res.text).token;
@@ -27,14 +24,14 @@ test.each(invalidCredentials)('Should fail signup', async (credentials) => {
 
 // successful user login
 test('Should log in user', async () => {
-   const res = await request(app).post('/user/login').send(userOne).expect(200);
+   const res = await request(app).post('/user/login').send(user).expect(200);
 
    // retrieve token and ensure its validity
    const { token, id } = JSON.parse(res.text);
    expect(validator.isJWT(token)).toBe(true);
 
    // add id and token to mock-up user
-   userOne = { ...userOne, token, id };
+   user = { ...user, token, id };
 });
 
 // login fail cases
@@ -46,24 +43,24 @@ test.each(invalidCredentials)('Should fail login', async (credentials) => {
 test('Should logout', async () => {
    await request(app)
       .post('/user/logout')
-      .set('Authorization', `Bearer ${userOne.token}`)
+      .set('Authorization', `Bearer ${user.token}`)
       .expect(200);
 
    // token should have been removed
-   const user = await User.findById(userOne.id);
-   expect(user.token).toBe('');
+   const newUser = await User.findById(user.id);
+   expect(newUser.token).toBe('');
 });
 
 // password update
 test('Should update password', async () => {
    await request(app)
       .patch('/user/update')
-      .set('Authorization', `Bearer ${userOne.token}`)
+      .set('Authorization', `Bearer ${user.token}`)
       .send({ newPassword: 'newPassword' })
       .expect(200);
 
    // password should be updated
-   const { password } = await User.findById(userOne.id);
+   const { password } = await User.findById(user.id);
    const match = await bcrypt.compare('newPassword', password);
    expect(match).toBe(true);
 });
@@ -72,12 +69,12 @@ test('Should update password', async () => {
 test('Should remove user', async () => {
    await request(app)
       .delete('/user/remove/')
-      .set('Authorization', `Bearer ${userOne.token}`)
+      .set('Authorization', `Bearer ${user.token}`)
       .expect(200);
 
    // user should be null
-   const user = await User.findById(userOne.id);
-   expect(user).toBeNull();
+   const newUser = await User.findById(user.id);
+   expect(newUser).toBeNull();
 });
 
 // cleanup

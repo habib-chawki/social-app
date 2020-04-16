@@ -1,15 +1,10 @@
 const request = require('supertest');
 const app = require('../src/app');
 
-// mock-up users
-let userOne = {
+// mock-up user
+let user = {
    email: 'habib@email.com',
    password: 'habibPass',
-};
-
-let userTwo = {
-   email: 'chawki@email.com',
-   password: 'chawkiPass',
 };
 
 // mock-up posts
@@ -41,6 +36,17 @@ const userOneUpdatedProfile = {
 
 // global setup and teardown
 async function setup() {
+   // mock-up users
+   let userOne = {
+      email: 'habib@email.com',
+      password: 'habibPass',
+   };
+
+   let userTwo = {
+      email: 'chawki@email.com',
+      password: 'chawkiPass',
+   };
+
    // create first user
    const resOne = await request(app)
       .post('/user/signup')
@@ -64,8 +70,7 @@ async function teardown() {}
 
 module.exports = {
    setup,
-   userOne,
-   userTwo,
+   user,
    userOnePosts,
    userTwoPosts,
    invalidCredentials,
