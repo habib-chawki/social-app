@@ -1,6 +1,10 @@
 const request = require('supertest');
 const app = require('../src/app');
 
+const User = require('../models/user');
+const Profile = require('../models/profile');
+const Post = require('../models/post');
+
 // mock-up user
 let user = {
    email: 'habib@email.com',
@@ -34,7 +38,7 @@ const userOneUpdatedProfile = {
    languages: ['English', 'French', 'German', 'Spanish'],
 };
 
-// global setup and teardown
+// global setup
 async function setup() {
    // mock-up users
    let userOne = {
@@ -66,10 +70,16 @@ async function setup() {
    return [userOne, userTwo];
 }
 
-async function teardown() {}
+// global teardown
+async function teardown() {
+   await User.deleteMany({});
+   await Profile.deleteMany({});
+   await Post.deleteMany({});
+}
 
 module.exports = {
    setup,
+   teardown,
    user,
    userOnePosts,
    userTwoPosts,
