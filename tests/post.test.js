@@ -5,7 +5,7 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const Profile = require('../models/profile');
 
-const { setup, userOnePosts } = require('./globals');
+const { setup, teardown, userOnePosts } = require('./globals');
 let userOne, userTwo;
 
 beforeAll(async () => {
@@ -114,9 +114,4 @@ test('Should delete all posts', async () => {
    expect(user.posts.length).toEqual(0);
 });
 
-afterAll(async () => {
-   // delete all users, posts and profiles
-   await User.deleteMany({});
-   await Profile.deleteMany({});
-   await Post.deleteMany({});
-});
+afterAll(teardown);

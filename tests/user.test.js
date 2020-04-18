@@ -6,7 +6,7 @@ const app = require('../src/app');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-let { user, invalidCredentials } = require('./globals');
+let { user, teardwon, invalidCredentials } = require('./globals');
 
 // successful sign up
 test('Should sign up user', async () => {
@@ -78,7 +78,4 @@ test('Should remove user', async () => {
 });
 
 // cleanup
-afterAll(async () => {
-   await User.deleteMany({});
-   await Profile.deleteMany({});
-});
+afterAll(teardown);

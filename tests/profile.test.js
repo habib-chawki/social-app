@@ -4,7 +4,7 @@ const app = require('../src/app');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-const { setup, userOneUpdatedProfile } = require('./globals');
+const { setup, teardown, userOneUpdatedProfile } = require('./globals');
 let userOne, userTwo;
 
 beforeAll(async () => {
@@ -63,7 +63,4 @@ test('Should delete profile', async () => {
    expect(profile).toBeNull();
 });
 
-afterAll(async () => {
-   await User.deleteMany({});
-   await Profile.deleteMany({});
-});
+afterAll(teardown);

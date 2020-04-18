@@ -5,7 +5,7 @@ const Post = require('../models/post');
 const User = require('../models/user');
 const Profile = require('../models/profile');
 
-const { setup, userOnePosts, userTwoPosts } = require('./globals');
+const { setup, teardown, userOnePosts, userTwoPosts } = require('./globals');
 let userOne, userTwo;
 
 beforeAll(async () => {
@@ -89,8 +89,4 @@ test('Should delete comment', async () => {
       .expect(400);
 });
 
-afterAll(async () => {
-   await User.deleteMany({});
-   await Profile.deleteMany({});
-   await Post.deleteMany({});
-});
+afterAll(teardown);
