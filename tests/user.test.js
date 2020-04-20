@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 
 const app = require('../src/app');
 const User = require('../models/user');
-const Profile = require('../models/profile');
 
 let { user, teardwon, invalidCredentials } = require('./globals');
 

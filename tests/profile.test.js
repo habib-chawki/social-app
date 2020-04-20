@@ -1,7 +1,6 @@
 const request = require('supertest');
 
 const app = require('../src/app');
-const User = require('../models/user');
 const Profile = require('../models/profile');
 
 const { setup, teardown, userOneUpdatedProfile } = require('./globals');
