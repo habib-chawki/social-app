@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const app = require('../src/app');
 const User = require('../models/user');
 
-let { user, teardwon, invalidCredentials } = require('./globals');
+let { user, teardown, invalidCredentials } = require('./globals');
 
 // successful sign up
 test('Should sign up user', async () => {

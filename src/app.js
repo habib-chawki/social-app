@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const homeRouter = require('../routes/home');
 const userRouter = require('../routes/user');
@@ -16,6 +17,9 @@ setDatabaseConnection();
 
 // use body parser for incoming requests
 app.use(bodyParser.json());
+
+// enable cors
+app.use(cors());
 
 // use routers
 app.use('/', homeRouter);
