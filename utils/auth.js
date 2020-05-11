@@ -21,10 +21,6 @@ async function auth(req, res, next) {
          const user = await User.findById(payload.id);
 
          if (user) {
-            // TODO: exclude password
-            // user = user.toObject();
-            // delete user.password;
-
             // send back user information
             req.user = user;
             return next();
