@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
       // create and associate post with owner
       const post = await Post.create({
          owner: owner._id,
-         content
+         content,
       });
 
       // post created successfuly
@@ -27,7 +27,8 @@ router.post('/', async (req, res) => {
          owner.posts.push(post._id);
 
          await owner.save();
-         return res.status(201).send({ posts: owner.posts });
+         // return res.status(201).send({ posts: owner.posts });
+         return res.status(201).send({ id: post._id });
       }
 
       throw new Error('Error creating post.');
@@ -73,7 +74,7 @@ router.patch('/:postId', async (req, res) => {
 
    try {
       const post = await Post.findByIdAndUpdate(req.params.postId, {
-         content: req.body.content
+         content: req.body.content,
       });
 
       if (post) {
@@ -120,7 +121,7 @@ router.delete('/:postId', async (req, res) => {
       // validate post existence
       if (postToDelete) {
          // validate that post belongs to logged-in user (find the post position in the list of posts)
-         const postToDeleteIndex = user.posts.findIndex(post =>
+         const postToDeleteIndex = user.posts.findIndex((post) =>
             post._id.equals(postToDelete._id)
          );
 
