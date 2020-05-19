@@ -1,6 +1,7 @@
 const request = require('supertest');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const app = require('../src/app');
 const User = require('../models/user');
@@ -25,9 +26,12 @@ test.each(invalidCredentials)('Should fail signup', async (credentials) => {
 test('Should log in user', async () => {
    const res = await request(app).post('/user/login').send(user).expect(200);
 
-   // retrieve token and ensure its validity
-   const { token, id } = JSON.parse(res.text);
+   // retrieve token and verify its validity
+   const { token } = JSON.parse(res.text);
    expect(validator.isJWT(token)).toBe(true);
+
+   // decode token and retrieve user id
+   const { id } = await jwt.verify(token, process.env.SECRET_KEY);
 
    // add id and token to mock-up user
    user = { ...user, token, id };
