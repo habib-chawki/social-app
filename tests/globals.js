@@ -1,4 +1,6 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
+
 const app = require('../src/app');
 
 const User = require('../models/user');
@@ -40,11 +42,8 @@ const userOneUpdatedProfile = {
 
 // global setup
 async function setup() {
-   // mock-up users
-   let userOne = {
-      email: 'habib@email.com',
-      password: 'habibPass',
-   };
+   // setup mock-up users
+   let userOne = { ...user };
 
    let userTwo = {
       email: 'chawki@email.com',
@@ -63,9 +62,18 @@ async function setup() {
       .send(userTwo)
       .expect(201);
 
-   // populate token and id fields
-   userOne = { ...userOne, ...JSON.parse(resOne.text) };
-   userTwo = { ...userTwo, ...JSON.parse(resTwo.text) };
+   // retrieve auth tokens
+   const tokenOne = JSON.parse(resOne.text).token;
+   const tokenTwo = JSON.parse(resTwo.text).token;
+
+   console.log('tokenOne:', tokenOne);
+   const idOne = await jwt.verify(tokenOne, process.env.SECRET_KEY).id;
+   const idTwo = await jwt.verify(tokenTwo, process.env.SECRET_KEY).id;
+
+   console.log('idOne: ', idOne);
+   // update mock-up users with token and id fields
+   userOne = { ...userOne, token: tokenOne, id: idOne };
+   userTwo = { ...userTwo, token: tokenTwo, id: idTwo };
 
    return [userOne, userTwo];
 }
