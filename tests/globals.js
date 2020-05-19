@@ -43,39 +43,31 @@ const userOneUpdatedProfile = {
 // global setup
 async function setup() {
    // setup mock-up users
-   let userOne = { ...user };
+   return [
+      await setupMockUser({
+         email: 'habib@email.com',
+         password: 'habibPass',
+      }),
+      await setupMockUser({
+         email: 'chawki@email.com',
+         password: 'chawkiPass',
+      }),
+   ];
+}
 
-   let userTwo = {
-      email: 'chawki@email.com',
-      password: 'chawkiPass',
-   };
-
-   // create first user
-   const resOne = await request(app)
+// update mock-user with token and id
+async function setupMockUser(user) {
+   // signup user
+   const response = await request(app)
       .post('/user/signup')
-      .send(userOne)
+      .send(user)
       .expect(201);
 
-   // create second user
-   const resTwo = await request(app)
-      .post('/user/signup')
-      .send(userTwo)
-      .expect(201);
+   // retrieve and decode auth token
+   const token = JSON.parse(response.text).token;
+   const id = await jwt.verify(token, process.env.SECRET_KEY).id;
 
-   // retrieve auth tokens
-   const tokenOne = JSON.parse(resOne.text).token;
-   const tokenTwo = JSON.parse(resTwo.text).token;
-
-   console.log('tokenOne:', tokenOne);
-   const idOne = await jwt.verify(tokenOne, process.env.SECRET_KEY).id;
-   const idTwo = await jwt.verify(tokenTwo, process.env.SECRET_KEY).id;
-
-   console.log('idOne: ', idOne);
-   // update mock-up users with token and id fields
-   userOne = { ...userOne, token: tokenOne, id: idOne };
-   userTwo = { ...userTwo, token: tokenTwo, id: idTwo };
-
-   return [userOne, userTwo];
+   return { ...user, token, id };
 }
 
 // global teardown
