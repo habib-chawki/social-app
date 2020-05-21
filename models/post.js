@@ -5,25 +5,25 @@ const postSchema = mongoose.Schema(
    {
       owner: {
          type: mongoose.Schema.Types.ObjectId,
-         ref: 'user'
+         ref: 'User',
       },
       content: {
          type: String,
          required: true,
-         trim: true
+         trim: true,
       },
       comments: {
          type: [
             {
                id: mongoose.Schema.Types.ObjectId,
                owner: mongoose.Schema.Types.ObjectId,
-               comment: String
-            }
-         ]
-      }
+               comment: String,
+            },
+         ],
+      },
    },
    {
-      timestamps: true
+      timestamps: true,
    }
 );
 

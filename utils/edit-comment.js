@@ -1,5 +1,5 @@
 const validator = require('validator');
-const postModel = require('../models/post');
+const Post = require('../models/post');
 
 // handle comment edits
 async function editComment(req, res) {
@@ -13,7 +13,7 @@ async function editComment(req, res) {
       }
 
       // find the post
-      const post = await postModel.findById(postId);
+      const post = await Post.findById(postId);
 
       if (post) {
          // find comment
