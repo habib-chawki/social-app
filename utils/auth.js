@@ -17,8 +17,8 @@ async function auth(req, res, next) {
       const payload = await jwt.verify(token, process.env.SECRET_KEY);
 
       if (payload) {
-         // find user by id
-         const user = await User.findById(payload.id);
+         // find user by id and populate posts list
+         const user = await User.findById(payload.id).populate('posts').exec();
 
          if (user) {
             // send back user information
