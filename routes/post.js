@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
       // post created successfuly
       if (post) {
          // add new post to user's posts list and return it
-         owner.posts.push(post._id);
+         owner.posts.unshift(post._id);
          await owner.save();
 
          // return post
