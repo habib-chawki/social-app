@@ -25,9 +25,9 @@ router.post('/', async (req, res) => {
       if (post) {
          post.comments.push({ comment: req.body.comment, owner: req.user._id });
          await post.save();
-         return res
-            .status(201)
-            .send(`Comment added successfuly to post: ${post.content}`);
+
+         // return the newly added comment (the last one in the comments list)
+         return res.status(201).send(post.comments[post.comments.length - 1]);
       }
 
       throw new Error('Error adding comment.');
