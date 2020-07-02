@@ -17,7 +17,7 @@ const postSchema = mongoose.Schema(
             {
                id: mongoose.Schema.Types.ObjectId,
                owner: mongoose.Schema.Types.ObjectId,
-               comment: String,
+               content: String,
             },
          ],
       },
