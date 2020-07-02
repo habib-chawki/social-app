@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
 
       // check if post exists and add comment to post's comments list
       if (post) {
-         post.comments.push({ comment: req.body.comment, owner: req.user._id });
+         post.comments.push({ content: req.body.content, owner: req.user._id });
          await post.save();
 
          // return the newly added comment (the last one in the comments list)
