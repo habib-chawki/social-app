@@ -31,13 +31,13 @@ test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
 test('Should add comment to appropriate post', async () => {
    // userOne comment on userTwo post
    const post = userTwoPosts[0];
-   const comment = `comment number 1 on ${post}`;
+   const content = `comment number 1 on ${post}`;
    const { _id: postId } = await Post.findOne({ content: post });
 
    await request(app)
       .post('/comment')
       .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ postId, comment })
+      .send({ postId, content })
       .expect(201);
 });
 
