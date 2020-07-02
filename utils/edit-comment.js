@@ -28,7 +28,7 @@ async function editComment(req, res) {
                // check whether the comment is to be deleted or edited
                !newComment
                   ? post.comments.splice(commentIndex, 1)
-                  : (post.comments[commentIndex].comment = newComment);
+                  : (post.comments[commentIndex].content = newComment);
 
                // save changes
                await post.save();
