@@ -53,7 +53,8 @@ router.get('/:id', async (req, res) => {
       // find post by id
       const post = await Post.findById(req.params.id);
       if (post) {
-         return res.status(200).send(post.content);
+         // return the whole post
+         return res.status(200).send(post);
       }
 
       // throw error if post not found
