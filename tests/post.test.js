@@ -56,7 +56,7 @@ test('Should get post by id', async () => {
 
    // should get the correct post back
    const post = await Post.findById(postId);
-   expect(res.text).toEqual(post.content);
+   expect(JSON.parse(res.text).content).toEqual(post.content);
 });
 
 // update post by id
