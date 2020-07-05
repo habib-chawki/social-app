@@ -43,15 +43,15 @@ router.get('/all', (req, res) => {
 });
 
 // get a single post by id
-router.get('/:postId', async (req, res) => {
+router.get('/:id', async (req, res) => {
    try {
       // validate id
-      if (!validator.isMongoId(req.params.postId)) {
+      if (!validator.isMongoId(req.params.id)) {
          throw new Error('Invalid id.');
       }
 
       // find post by id
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.id);
       if (post) {
          return res.status(200).send(post.content);
       }
@@ -64,14 +64,14 @@ router.get('/:postId', async (req, res) => {
 });
 
 // update posts by id
-router.patch('/:postId', async (req, res) => {
+router.patch('/:id', async (req, res) => {
    // validate id
-   if (!validator.isMongoId(req.params.postId)) {
+   if (!validator.isMongoId(req.params.id)) {
       throw new Error('Invalid id.');
    }
 
    try {
-      const post = await Post.findByIdAndUpdate(req.params.postId, {
+      const post = await Post.findByIdAndUpdate(req.params.id, {
          content: req.body.content,
       });
 
@@ -105,16 +105,16 @@ router.delete('/all', async (req, res) => {
 });
 
 // delete post by id
-router.delete('/:postId', async (req, res) => {
+router.delete('/:id', async (req, res) => {
    const { user } = req;
    try {
       // validate id
-      if (!validator.isMongoId(req.params.postId)) {
+      if (!validator.isMongoId(req.params.id)) {
          throw new Error('Invalid id');
       }
 
       // find post by id
-      const postToDelete = await Post.findById(req.params.postId);
+      const postToDelete = await Post.findById(req.params.id);
 
       // validate post existence
       if (postToDelete) {
@@ -126,7 +126,7 @@ router.delete('/:postId', async (req, res) => {
          // -1 => logged-in user is not the post owner
          if (postToDeleteIndex != -1) {
             // delete post from posts collection and from the user's posts list
-            await Post.deleteOne({ _id: req.params.postId });
+            await Post.deleteOne({ _id: req.params.id });
             user.posts.splice(postToDeleteIndex, 1);
             await user.save();
          } else {
