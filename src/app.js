@@ -23,9 +23,9 @@ app.use(cors());
 
 // use routers
 app.use('/', homeRouter);
-app.use('/user', userRouter);
-app.use('/profile', profileRouter);
-app.use('/post', postRouter);
-app.use('/comment', commentRouter);
+app.use('/users', userRouter);
+app.use('/profiles', profileRouter);
+app.use('/posts', postRouter);
+app.use('/comments', commentRouter);
 
 module.exports = app;
