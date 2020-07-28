@@ -12,15 +12,6 @@ const postSchema = mongoose.Schema(
          required: true,
          trim: true,
       },
-      comments: {
-         type: [
-            {
-               id: mongoose.Schema.Types.ObjectId,
-               owner: mongoose.Schema.Types.ObjectId,
-               content: String,
-            },
-         ],
-      },
    },
    {
       timestamps: true,
