@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// define post Schema (owner, content and a list of comments)
 const postSchema = mongoose.Schema(
    {
       owner: {
@@ -12,6 +11,13 @@ const postSchema = mongoose.Schema(
          required: true,
          trim: true,
       },
+      comments: [
+         {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment',
+            default: [],
+         },
+      ],
    },
    {
       timestamps: true,
