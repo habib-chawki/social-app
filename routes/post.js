@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
 });
 
 // get current user's posts
-router.get('/all', (req, res) => {
+router.get('/', (req, res) => {
    res.status(200).send(req.user.posts);
 });
 
@@ -53,7 +53,7 @@ router.get('/:id', async (req, res) => {
       // find post by id
       const post = await Post.findById(req.params.id);
       if (post) {
-         // return the whole post
+         // return back the post
          return res.status(200).send(post);
       }
 
@@ -64,7 +64,7 @@ router.get('/:id', async (req, res) => {
    }
 });
 
-// update posts by id
+// update post by id
 router.patch('/:id', async (req, res) => {
    // validate id
    if (!validator.isMongoId(req.params.id)) {
@@ -88,7 +88,7 @@ router.patch('/:id', async (req, res) => {
 });
 
 // delete all posts
-router.delete('/all', async (req, res) => {
+router.delete('/', async (req, res) => {
    const { user } = req;
 
    try {
