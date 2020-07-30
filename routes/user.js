@@ -9,7 +9,7 @@ const auth = require('../utils/auth');
 const router = express.Router();
 
 // user signup
-router.post('/signup', async (req, res) => {
+router.post('/registration', async (req, res) => {
    try {
       // create the new user (req.body == email and password)
       const user = await User.create(req.body);
@@ -33,7 +33,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // user login
-router.post('/login', async (req, res) => {
+router.post('/authentication', async (req, res) => {
    const { email, password } = req.body;
 
    try {
@@ -57,7 +57,7 @@ router.post('/login', async (req, res) => {
 });
 
 // update user password
-router.patch('/update', auth, async (req, res) => {
+router.patch('/password', auth, async (req, res) => {
    try {
       // find user by id and patch the password (after hashing)
       const hashedPassword = await bcrypt.hash(req.body.newPassword, 8);
@@ -88,7 +88,7 @@ router.post('/logout', auth, async (req, res) => {
 });
 
 // delete user
-router.delete('/remove', auth, async (req, res) => {
+router.delete('/', auth, async (req, res) => {
    try {
       // remove user
       const user = await User.findByIdAndDelete(req.user._id);
