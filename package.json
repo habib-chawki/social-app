@@ -4,8 +4,8 @@
    "description": "Social app ",
    "main": "./src/app.js",
    "scripts": {
-      "start": "node --require dotenv/config ./src/index.js",
-      "dev": "nodemon --require dotenv/config ./src/index.js",
+      "start": "node --require dotenv/config ./src/server.js",
+      "dev": "nodemon --require dotenv/config ./src/server.js",
       "test": "jest --watch --runInBand"
    },
    "jest": {
