@@ -23,8 +23,8 @@ app.use(cors());
 
 // use routers
 app.use('/', homeRouter);
+app.use('/users/:id/profile', profileRouter);
 app.use('/users', userRouter);
-app.use('/profiles', profileRouter);
 app.use('/posts', postRouter);
 app.use('/comments', commentRouter);
 
