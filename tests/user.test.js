@@ -8,9 +8,14 @@ const User = require('../models/user');
 
 let { user, teardown, invalidCredentials } = require('./globals');
 
+const baseURL = '/users';
+
 // successful sign up
 test('Should sign up user', async () => {
-   const res = await request(app).post('/user/signup').send(user).expect(201);
+   const res = await request(app)
+      .post(`${baseURL}/registration`)
+      .send(user)
+      .expect(201);
 
    // retrieve token and ensure its validity
    const token = JSON.parse(res.text).token;
@@ -19,12 +24,18 @@ test('Should sign up user', async () => {
 
 // signup fail cases
 test.each(invalidCredentials)('Should fail signup', async (credentials) => {
-   await request(app).post('/user/signup').send(credentials).expect(400);
+   await request(app)
+      .post(`${baseURL}/registration`)
+      .send(credentials)
+      .expect(400);
 });
 
 // successful user login
 test('Should log in user', async () => {
-   const res = await request(app).post('/user/login').send(user).expect(200);
+   const res = await request(app)
+      .post(`${baseURL}/authentication`)
+      .send(user)
+      .expect(200);
 
    // retrieve token and verify its validity
    const { token } = JSON.parse(res.text);
@@ -39,13 +50,16 @@ test('Should log in user', async () => {
 
 // login fail cases
 test.each(invalidCredentials)('Should fail login', async (credentials) => {
-   await request(app).post('/user/login').send(credentials).expect(400);
+   await request(app)
+      .post(`${baseURL}/authentication`)
+      .send(credentials)
+      .expect(400);
 });
 
 // successful user logout
 test('Should logout', async () => {
    await request(app)
-      .post('/user/logout')
+      .post(`${baseURL}/logout`)
       .set('Authorization', `Bearer ${user.token}`)
       .expect(200);
 
@@ -57,7 +71,7 @@ test('Should logout', async () => {
 // password update
 test('Should update password', async () => {
    await request(app)
-      .patch('/user/update')
+      .patch(`${baseURL}/password`)
       .set('Authorization', `Bearer ${user.token}`)
       .send({ newPassword: 'newPassword' })
       .expect(200);
@@ -71,7 +85,7 @@ test('Should update password', async () => {
 // delete user
 test('Should remove user', async () => {
    await request(app)
-      .delete('/user/remove/')
+      .delete(`${baseURL}/`)
       .set('Authorization', `Bearer ${user.token}`)
       .expect(200);
 
