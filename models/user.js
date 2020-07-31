@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
+
+const profileSchema = require('../schema/profile');
 
 // define user Schema
 const userSchema = mongoose.Schema(
@@ -39,6 +41,7 @@ const userSchema = mongoose.Schema(
             default: [],
          },
       ],
+      profile: profileSchema,
    },
    {
       timestamps: true,
