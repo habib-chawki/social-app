@@ -2,7 +2,6 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
-const Profile = require('../models/profile');
 
 const auth = require('../utils/auth');
 
@@ -14,9 +13,6 @@ router.post('/registration', async (req, res) => {
       // create the new user (req.body == email and password)
       const user = await User.create(req.body);
       if (user) {
-         // create user profile
-         await Profile.create({ owner: user._id });
-
          // generate an auth token when the user is created successfuly
          await user.generateAuthToken();
 
@@ -95,8 +91,6 @@ router.delete('/', auth, async (req, res) => {
 
       // send 200 status code if both user and profile were successfuly deleted
       if (user) {
-         // remove user profile
-         await Profile.deleteOne({ owner: user._id });
          return res.status(200).send(user);
       }
 
