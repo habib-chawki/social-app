@@ -1,27 +1,28 @@
 const express = require('express');
 const multer = require('multer');
 
+const User = require('../models/user');
 const auth = require('../utils/auth');
-const Profile = require('../models/profile');
 
 const router = express.Router();
 
 // require authentication for all incoming requests
 router.use(auth);
 
-// get user's profile by id (userId is optional)
+// get user profile by id
 router.get('/', async (req, res) => {
    try {
-      // check if userId is provided (get profile by id or get current logged-in user's profile)
-      const userId = req.body.userId ? req.body.userId : req.user._id;
-      const profile = await Profile.findOne({ owner: userId });
+      // retrieve user id from request url
+      const userId = req.params.id;
+      const { profile } = await User.findById(userId);
 
       if (profile) {
          return res.status(200).send(JSON.stringify(profile));
       }
 
-      throw new Error('Unable to fetch profile.');
+      throw new Error('Unable to fetch user profile.');
    } catch (e) {
+      // 500 - Internal Server Error
       res.status(500).send(e.message);
    }
 });
