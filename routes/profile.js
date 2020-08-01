@@ -27,13 +27,16 @@ router.get('/', async (req, res) => {
    }
 });
 
-// update profile
+// update user profile
 router.put('/', async (req, res) => {
    try {
-      // replace old profile with updated new version
-      const response = await Profile.replaceOne(
-         { owner: req.user._id },
-         { owner: req.user._id, ...req.body }
+      // retrieve user id
+      const userId = req.params.id;
+
+      // replace profile with updated version
+      const response = await User.replaceOne(
+         { _id: userId },
+         { profile: req.body }
       );
 
       // nModified: number of documents modified
