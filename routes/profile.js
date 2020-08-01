@@ -57,11 +57,11 @@ const upload = multer();
 router.post('/avatar', upload.single('avatar'), async (req, res) => {
    try {
       // retrieve user profile
-      const profile = await Profile.findOne({ owner: req.user._id });
+      const user = await User.findOne({ _id: req.params.id });
 
       // save avatar to database
-      profile.avatar = req.file.buffer;
-      await profile.save();
+      user.profile.avatar = req.file.buffer;
+      await user.save();
 
       res.status(200).send('Avatar uploaded.');
    } catch (e) {
