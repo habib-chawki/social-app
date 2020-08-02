@@ -4,7 +4,7 @@ const multer = require('multer');
 const User = require('../models/user');
 const auth = require('../utils/auth');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 // require authentication for all incoming requests
 router.use(auth);
@@ -13,7 +13,7 @@ router.use(auth);
 router.get('/', async (req, res) => {
    try {
       // retrieve user id from request url
-      const userId = req.params.id;
+      const userId = req.params.userId;
       const { profile } = await User.findById(userId);
 
       if (profile) {
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
 router.put('/', async (req, res) => {
    try {
       // retrieve user id
-      const userId = req.params.id;
+      const userId = req.params.userId;
 
       // replace profile with updated version
       const response = await User.replaceOne(
@@ -57,7 +57,7 @@ const upload = multer();
 router.post('/avatar', upload.single('avatar'), async (req, res) => {
    try {
       // retrieve user profile
-      const user = await User.findOne({ _id: req.params.id });
+      const user = await User.findOne({ _id: req.params.userId });
 
       // save avatar to database
       user.profile.avatar = req.file.buffer;
