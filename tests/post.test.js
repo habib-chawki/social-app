@@ -7,6 +7,8 @@ const Post = require('../models/post');
 const { setup, teardown, userOnePosts } = require('./globals');
 let userOne, userTwo;
 
+const baseURL = '/posts';
+
 beforeAll(async () => {
    [userOne, userTwo] = await setup();
 });

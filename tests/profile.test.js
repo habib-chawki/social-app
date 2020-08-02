@@ -13,7 +13,7 @@ beforeAll(async () => {
 // get logged-in user profile
 test('Should get profile', async () => {
    await request(app)
-      .get(`users/${userOne.id}/profile`)
+      .get(`/users/${userOne.id}/profile`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 });
@@ -21,7 +21,7 @@ test('Should get profile', async () => {
 // upload avatar
 test('Should upload avatar', async () => {
    await request(app)
-      .post(`users/${userOne.id}/profile/avatar`)
+      .post(`/users/${userOne.id}/profile/avatar`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .attach('avatar', process.env.AVATAR)
       .expect(200);
@@ -34,7 +34,7 @@ test('Should upload avatar', async () => {
 // update user profile
 test('Should update profile', async () => {
    await request(app)
-      .put(`users/${userOne.id}/profile`)
+      .put(`/users/${userOne.id}/profile`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .send(userOneUpdatedProfile)
       .expect(200);
