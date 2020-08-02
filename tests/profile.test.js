@@ -13,7 +13,7 @@ beforeAll(async () => {
 // get logged-in user profile
 test('Should get profile', async () => {
    await request(app)
-      .get(`users/${userOne._id}/profile`)
+      .get(`users/${userOne.id}/profile`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 });
@@ -21,13 +21,13 @@ test('Should get profile', async () => {
 // upload avatar
 test('Should upload avatar', async () => {
    await request(app)
-      .post('/profile/avatar')
+      .post(`users/${userOne.id}/profile/avatar`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .attach('avatar', process.env.AVATAR)
       .expect(200);
 
    // file should have been saved as buffer
-   const profile = await Profile.findOne({ owner: userOne.id });
+   const { profile } = await User.findById(userOne.id);
    expect(profile.avatar).not.toBe(undefined);
 });
 
