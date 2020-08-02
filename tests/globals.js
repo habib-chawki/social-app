@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 
 const User = require('../models/user');
-const Profile = require('../models/profile');
 const Post = require('../models/post');
 
 // mock-up user
@@ -59,7 +58,7 @@ async function setup() {
 async function setupMockUser(user) {
    // signup user
    const response = await request(app)
-      .post('/user/signup')
+      .post('/users/registration')
       .send(user)
       .expect(201);
 
@@ -73,7 +72,6 @@ async function setupMockUser(user) {
 // global teardown
 async function teardown() {
    await User.deleteMany({});
-   await Profile.deleteMany({});
    await Post.deleteMany({});
 }
 
