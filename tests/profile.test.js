@@ -34,22 +34,10 @@ test('Should upload avatar', async () => {
 // update user profile
 test('Should update profile', async () => {
    await request(app)
-      .put('/profile')
+      .put(`users/${userOne.id}/profile`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .send(userOneUpdatedProfile)
       .expect(200);
-});
-
-// should delete profile when user is deleted
-test('Should delete profile', async () => {
-   await request(app)
-      .delete('/user/remove')
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .expect(200);
-
-   // profile should be deleted when user is removed
-   const profile = await Profile.findById(userOne.id);
-   expect(profile).toBeNull();
 });
 
 afterAll(teardown);
