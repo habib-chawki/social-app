@@ -1,7 +1,7 @@
 const request = require('supertest');
 
 const app = require('../src/app');
-const Profile = require('../models/profile');
+const User = require('../models/user');
 
 const { setup, teardown, userOneUpdatedProfile } = require('./globals');
 let userOne, userTwo;
@@ -13,18 +13,8 @@ beforeAll(async () => {
 // get logged-in user profile
 test('Should get profile', async () => {
    await request(app)
-      .get('/profile')
+      .get(`users/${userOne._id}/profile`)
       .set('Authorization', `Bearer ${userOne.token}`)
-      .expect(200);
-});
-
-// get user profile by id
-test('Should get profile by id', async () => {
-   // get userTwo profile
-   await request(app)
-      .get('/profile')
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ userId: userTwo.id })
       .expect(200);
 });
 
