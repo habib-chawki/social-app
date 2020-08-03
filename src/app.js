@@ -4,7 +4,6 @@ const cors = require('cors');
 
 const homeRouter = require('../routes/home');
 const userRouter = require('../routes/user');
-const profileRouter = require('../routes/profile');
 const postRouter = require('../routes/post');
 const commentRouter = require('../routes/comment');
 
@@ -23,7 +22,6 @@ app.use(cors());
 
 // use routers
 app.use('/', homeRouter);
-app.use('/users/:userId/profile', profileRouter);
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
 app.use('/comments', commentRouter);
