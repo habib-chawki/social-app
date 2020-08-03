@@ -2,10 +2,11 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
-
+const profileRouter = require('../routes/profile');
 const auth = require('../utils/auth');
 
 const router = express.Router();
+router.use('/:userId/profile', profileRouter);
 
 // user signup
 router.post('/registration', async (req, res) => {
