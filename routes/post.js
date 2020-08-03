@@ -39,20 +39,23 @@ router.get('/', (req, res) => {
 
 // get a single post by id
 router.get('/:id', async (req, res) => {
+   // fetch post id
+   const postId = req.params.id;
+
    try {
       // validate id
-      if (!validator.isMongoId(req.params.id)) {
+      if (!validator.isMongoId(postId)) {
          throw new Error('Invalid id.');
       }
 
       // find post by id
-      const post = await Post.findById(req.params.id);
+      const post = await Post.findById(postId);
+
+      // return post if found
       if (post) {
-         // return back the post
          return res.status(200).send(post);
       }
 
-      // throw error if post not found
       throw new Error('Post not found.');
    } catch (e) {
       res.status(404).send(e.message);

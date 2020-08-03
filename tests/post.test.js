@@ -24,15 +24,13 @@ test.each(userOnePosts)('Should create post', async (content) => {
 
 // posts should have been added
 test('Should add posts', async () => {
-   const user = await User.findById(userOne.id);
-   const posts = await Post.find({});
+   const posts = await Post.find({ owner: userOne.id });
 
-   // expect new posts to have been added to posts collection and user's posts list
-   expect(user.posts.length).toBe(userOnePosts.length);
+   // expect posts to have been added successfuly
    expect(posts.length).toBe(userOnePosts.length);
 
    // add posts to mock-up user
-   userOne = { ...userOne, posts: [...user.posts] };
+   userOne = { ...userOne, posts: [...posts] };
 });
 
 // get back all posts
@@ -48,17 +46,13 @@ test('Should get all posts', async () => {
 
 // get post by id
 test('Should get post by id', async () => {
-   const postId = userOne.posts[1];
+   const postId = userOne.posts[1]._id;
 
    // get second mock-up post
-   const res = await request(app)
-      .get(`/post/${postId}`)
+   await request(app)
+      .get(`${baseURL}/${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
-
-   // should get the correct post back
-   const post = await Post.findById(postId);
-   expect(JSON.parse(res.text).content).toEqual(post.content);
 });
 
 // update post by id
