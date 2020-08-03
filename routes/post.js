@@ -21,17 +21,12 @@ router.post('/', async (req, res) => {
          content,
       });
 
-      // post created successfuly
+      // return post if created successfuly
       if (post) {
-         // add new post to user's posts list and return it
-         owner.posts.unshift(post._id);
-         await owner.save();
-
-         // return post
          return res.status(201).send(post);
       }
 
-      throw new Error('Error creating post.');
+      throw new Error('Unable to create post.');
    } catch (e) {
       res.status(500).send(e.message);
    }

@@ -16,7 +16,7 @@ beforeAll(async () => {
 // create new posts for userOne
 test.each(userOnePosts)('Should create post', async (content) => {
    await request(app)
-      .post('/post')
+      .post(baseURL)
       .set('Authorization', userOne.token)
       .send({ content })
       .expect(201);
