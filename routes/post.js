@@ -32,9 +32,36 @@ router.post('/', async (req, res) => {
    }
 });
 
-// get current user's posts
-router.get('/', (req, res) => {
-   res.status(200).send(req.user.posts);
+// get all posts
+router.get('/', async (req, res) => {
+   try {
+      // fetch list of posts
+      const posts = await Post.find({});
+
+      if (posts) {
+         return res.status(200).send(posts);
+      }
+
+      throw new Error('Unable to fetch posts.');
+   } catch (e) {
+      res.status(404).send(e.message);
+   }
+});
+
+// get posts of a particular user
+router.get('/?:user', async (req, res) => {
+   try {
+      // fetch user's posts
+      const posts = await Post.find({ owner: req.query.user });
+
+      if (posts) {
+         return res.status(200).send(posts);
+      }
+
+      throw new Error('Unable to fetch posts.');
+   } catch (e) {
+      res.status(404).send(e.message);
+   }
 });
 
 // get a single post by id
