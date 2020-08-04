@@ -118,16 +118,16 @@ router.delete('/', async (req, res) => {
    const { user } = req;
 
    try {
-      // empty user's posts list
-      user.posts = [];
-      await user.save();
+      // remove posts and return number of deleted documents
+      const { deletedCount } = await Post.deleteMany({ owner: user._id });
 
-      // remove posts from collection
-      await Post.deleteMany({ owner: user._id });
+      if (deletedCount) {
+         res.status(200).send(deletedCount);
+      }
 
-      res.status(200).send(`Posts list is empty: ${user.posts}`);
+      throw new Error('Unable to delete posts.');
    } catch (e) {
-      res.status(500).send(e.message);
+      res.status(404).send(e.message);
    }
 });
 
