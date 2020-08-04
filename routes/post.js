@@ -133,41 +133,21 @@ router.delete('/', async (req, res) => {
 
 // delete post by id
 router.delete('/:id', async (req, res) => {
-   const { user } = req;
+   const postId = req.params.id;
    try {
       // validate id
-      if (!validator.isMongoId(req.params.id)) {
+      if (!validator.isMongoId(postId)) {
          throw new Error('Invalid id');
       }
 
-      // find post by id
-      const postToDelete = await Post.findById(req.params.id);
+      const post = await Post.findByIdAndDelete(postId);
 
-      // validate post existence
-      if (postToDelete) {
-         // validate that post belongs to logged-in user (find the post position in the list of posts)
-         const postToDeleteIndex = user.posts.findIndex((post) =>
-            post._id.equals(postToDelete._id)
-         );
-
-         // -1 => logged-in user is not the post owner
-         if (postToDeleteIndex != -1) {
-            // delete post from posts collection and from the user's posts list
-            await Post.deleteOne({ _id: req.params.id });
-            user.posts.splice(postToDeleteIndex, 1);
-            await user.save();
-         } else {
-            throw new Error('Can not delete posts of others.');
-         }
-
-         // post exists and user has the right to delete it
-         return res
-            .status(200)
-            .send(`Post deleted successfuly ${postToDelete}`);
+      if (post) {
+         res.status(200).send(post);
       }
 
       // post does not exist
-      throw new Error('Error deleting post.');
+      throw new Error('Unable to delete post.');
    } catch (e) {
       res.status(404).send(e.message);
    }
