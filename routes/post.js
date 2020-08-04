@@ -91,13 +91,14 @@ router.get('/:id', async (req, res) => {
 
 // update post by id
 router.patch('/:id', async (req, res) => {
-   // validate id
-   if (!validator.isMongoId(req.params.id)) {
-      throw new Error('Invalid id.');
-   }
+   const postId = req.params.id;
 
    try {
-      const post = await Post.findByIdAndUpdate(req.params.id, {
+      // validate id
+      if (!validator.isMongoId(postId)) {
+         throw new Error('Invalid id.');
+      }
+      const post = await Post.findByIdAndUpdate(postId, {
          content: req.body.content,
       });
 
@@ -105,10 +106,10 @@ router.patch('/:id', async (req, res) => {
          return res.status(200).send(post);
       }
 
-      // throw an error if post can not be found
-      throw new Error(`Can not update post.`);
+      // throw an error if post can not be updated
+      throw new Error(`Unable to update post.`);
    } catch (e) {
-      res.status(500).send(e.message);
+      res.status(404).send(e.message);
    }
 });
 
