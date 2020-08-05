@@ -36,7 +36,7 @@ test('Should add posts', async () => {
 // get back all posts
 test('Should get all posts', async () => {
    const res = await request(app)
-      .get('/post/all')
+      .get(baseURL)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
@@ -59,10 +59,10 @@ test('Should get post by id', async () => {
 test('Should update post by id', async () => {
    // update post number 2
    const newPost = 'the new post number 2';
-   const postId = userOne.posts[1];
+   const postId = userOne.posts[1]._id;
 
    await request(app)
-      .patch(`/post/${postId}`)
+      .patch(`${baseURL}/${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content: newPost })
       .expect(200);
