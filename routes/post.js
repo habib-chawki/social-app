@@ -92,14 +92,16 @@ router.get('/:id', async (req, res) => {
 // update post by id
 router.patch('/:id', async (req, res) => {
    const postId = req.params.id;
+   const { content } = req.body;
 
    try {
       // validate id
       if (!validator.isMongoId(postId)) {
          throw new Error('Invalid id.');
       }
+
       const post = await Post.findByIdAndUpdate(postId, {
-         content: req.body.content,
+         content,
       });
 
       if (post) {
