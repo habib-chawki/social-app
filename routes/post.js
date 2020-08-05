@@ -124,7 +124,7 @@ router.delete('/', async (req, res) => {
       const { deletedCount } = await Post.deleteMany({ owner: user._id });
 
       if (deletedCount) {
-         res.status(200).send(deletedCount);
+         return res.sendStatus(200);
       }
 
       throw new Error('Unable to delete posts.');
@@ -136,16 +136,21 @@ router.delete('/', async (req, res) => {
 // delete post by id
 router.delete('/:id', async (req, res) => {
    const postId = req.params.id;
+   const { user } = req;
+
    try {
       // validate id
       if (!validator.isMongoId(postId)) {
          throw new Error('Invalid id');
       }
 
-      const post = await Post.findByIdAndDelete(postId);
+      const post = await Post.findOneAndDelete({
+         owner: user._id,
+         _id: postId,
+      });
 
       if (post) {
-         res.status(200).send(post);
+         return res.status(200).send(post);
       }
 
       // post does not exist
