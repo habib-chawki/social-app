@@ -75,20 +75,20 @@ test('Should update post by id', async () => {
 // attempt to delete other users' posts
 test('Should not delete other user post', async () => {
    // authenticate userTwo and try to delete userOne post
-   const postId = userOne.posts[0];
+   const postId = userOne.posts[0]._id;
 
    await request(app)
-      .delete(`/post/${postId}`)
+      .delete(`${baseURL}/${postId}`)
       .set('Authorization', `Bearer ${userTwo.token}`)
       .expect(404);
 });
 
 // delete post by id
 test('Should delete post by id', async () => {
-   const postId = userOne.posts[1];
+   const postId = userOne.posts[1]._id;
 
    await request(app)
-      .delete(`/post/${postId}`)
+      .delete(`${baseURL}/${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
@@ -100,13 +100,9 @@ test('Should delete post by id', async () => {
 // delete all posts
 test('Should delete all posts', async () => {
    await request(app)
-      .delete('/post/all')
+      .delete(baseURL)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
-
-   // all posts should have been deleted
-   const user = await User.findById(userOne.id, 'posts');
-   expect(user.posts.length).toEqual(0);
 });
 
 afterAll(teardown);
