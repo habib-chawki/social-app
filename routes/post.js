@@ -117,11 +117,11 @@ router.patch('/:id', async (req, res) => {
 
 // delete all posts
 router.delete('/', async (req, res) => {
-   const { user } = req;
+   const owner = req.user._id;
 
    try {
       // remove posts and return number of deleted documents
-      const { deletedCount } = await Post.deleteMany({ owner: user._id });
+      const { deletedCount } = await Post.deleteMany({ owner });
 
       if (deletedCount) {
          return res.sendStatus(200);
@@ -135,18 +135,18 @@ router.delete('/', async (req, res) => {
 
 // delete post by id
 router.delete('/:id', async (req, res) => {
-   const postId = req.params.id;
-   const { user } = req;
+   const owner = req.user.owner;
+   const id = req.params.id;
 
    try {
       // validate id
-      if (!validator.isMongoId(postId)) {
+      if (!validator.isMongoId(id)) {
          throw new Error('Invalid id');
       }
 
       const post = await Post.findOneAndDelete({
-         owner: user._id,
-         _id: postId,
+         owner,
+         _id: id,
       });
 
       if (post) {
