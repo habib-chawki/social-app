@@ -62,7 +62,7 @@ test('Should update post by id', async () => {
    const postId = userOne.posts[1]._id;
 
    await request(app)
-      .patch(`${baseURL}/${postId}`)
+      .put(`${baseURL}/${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content: newPost })
       .expect(200);
