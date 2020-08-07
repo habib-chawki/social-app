@@ -83,7 +83,23 @@ router.delete('/:id', async () => {
    }
 });
 
-// edit a comment by id
-router.put('/:id', async () => {});
+// update a comment by id
+router.put('/:id', async () => {
+   const owner = req.user._id;
+   const post = req.query.post;
+   const id = req.params.id;
+
+   try {
+      const comment = await Comment.findByIdAndUpdate(id, { owner, post });
+
+      if (comment) {
+         return res.status(200).send(comment);
+      }
+
+      throw new Error('Unable to update comment.');
+   } catch (e) {
+      res.status(400).send(e.message);
+   }
+});
 
 module.exports = router;
