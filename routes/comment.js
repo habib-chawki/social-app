@@ -14,9 +14,8 @@ router.use(auth);
 
 // create a comment
 router.post('/', async (req, res) => {
-   // retrive post id from query string
-   const post = req.query.post;
    const owner = req.user._id;
+   const post = req.query.post;
    const content = req.body.content;
 
    try {
@@ -41,6 +40,7 @@ router.post('/', async (req, res) => {
 // get a list of comments
 router.get('/', async (req, res) => {
    const post = req.query.post;
+
    try {
       // validate post id
       if (!validator.isMongoId(post)) {
@@ -61,8 +61,22 @@ router.get('/', async (req, res) => {
 });
 
 // delete a comment by id
-router.delete('/:commentId', async () => {
+router.delete('/:id', async () => {
+   const owner = req.user._id;
+   const post = req.query.post;
+   const id = req.params.id;
+
    try {
+      const comment = await Comment.findOneAndDelete({
+         _id: id,
+         owner,
+         post,
+      });
+
+      if (comment) {
+         return res.status(200).send(comment);
+      }
+
       throw new Error('Unable to delete comment.');
    } catch (e) {
       res.status(400).send(e.message);
@@ -70,6 +84,6 @@ router.delete('/:commentId', async () => {
 });
 
 // edit a comment by id
-router.put('/:commentId', async () => {});
+router.put('/:id', async () => {});
 
 module.exports = router;
