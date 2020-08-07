@@ -44,6 +44,18 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
    const postId = req.query.postId;
    try {
+      // validate post id
+      if (!validator.isMongoId(postId)) {
+         throw new Error('Invalid post id.');
+      }
+
+      // fetch and return comments list
+      const comments = await Comment.find({ post: postId });
+
+      if (comments) {
+         return res.status(200).send(comments);
+      }
+
       throw new Error('Unable to fetch commnets.');
    } catch (e) {
       res.status(404).send(e.message);
@@ -51,7 +63,13 @@ router.get('/', async (req, res) => {
 });
 
 // delete a comment by id
-router.delete('/:commentId', async () => {});
+router.delete('/:commentId', async () => {
+   try {
+      throw new Error('Unable to delete comment.');
+   } catch (e) {
+      res.status(400).send(e.message);
+   }
+});
 
 // edit a comment by id
 router.put('/:commentId', async () => {});
