@@ -15,20 +15,18 @@ router.use(auth);
 // create a comment
 router.post('/', async (req, res) => {
    // retrive post id from query string
-   const { postId } = req.query.postId;
+   const post = req.query.post;
+   const owner = req.user._id;
+   const content = req.body.content;
 
    try {
       // validate post id
-      if (!validator.isMongoId(postId)) {
+      if (!validator.isMongoId(post)) {
          throw new Error('Invalid post id.');
       }
 
       // create comment
-      const comment = await Comment.create({
-         owner: req.user._id,
-         post: postId,
-         content: req.body.content,
-      });
+      const comment = await Comment.create({ owner, post, content });
 
       if (comment) {
          return res.status(201).send(comment);
@@ -42,15 +40,15 @@ router.post('/', async (req, res) => {
 
 // get a list of comments
 router.get('/', async (req, res) => {
-   const postId = req.query.postId;
+   const post = req.query.post;
    try {
       // validate post id
-      if (!validator.isMongoId(postId)) {
+      if (!validator.isMongoId(post)) {
          throw new Error('Invalid post id.');
       }
 
       // fetch and return comments list
-      const comments = await Comment.find({ post: postId });
+      const comments = await Comment.find({ post });
 
       if (comments) {
          return res.status(200).send(comments);
