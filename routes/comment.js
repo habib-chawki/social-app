@@ -30,21 +30,11 @@ router.post('/', async (req, res) => {
          content: req.body.content,
       });
 
-      return res.status(201).send(comment);
+      if (comment) {
+         return res.status(201).send(comment);
+      }
 
-      // // find which post the comment belongs to
-      // const post = await Post.findById(postId);
-
-      // // check if post exists and add comment to post's comments list
-      // if (post) {
-      //    post.comments.push({ content: req.body.content, owner: req.user._id });
-      //    await post.save();
-
-      //    // return the newly added comment (the last one in the comments list)
-      //    return res.status(201).send(post.comments[post.comments.length - 1]);
-      // }
-
-      throw new Error('Error adding comment.');
+      throw new Error('Unable to add comment.');
    } catch (e) {
       res.status(400).send(e.message);
    }
