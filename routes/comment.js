@@ -40,10 +40,20 @@ router.post('/', async (req, res) => {
    }
 });
 
+// get a list of comments
+router.get('/', async (req, res) => {
+   const postId = req.query.postId;
+   try {
+      throw new Error('Unable to fetch commnets.');
+   } catch (e) {
+      res.status(404).send(e.message);
+   }
+});
+
 // delete a comment by id
-router.delete('/', editComment);
+router.delete('/:commentId', async () => {});
 
 // edit a comment by id
-router.put('/', editComment);
+router.put('/:commentId', async () => {});
 
 module.exports = router;
