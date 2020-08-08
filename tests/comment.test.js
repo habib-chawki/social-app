@@ -6,6 +6,8 @@ const Post = require('../models/post');
 const { setup, teardown, userOnePosts, userTwoPosts } = require('./globals');
 let userOne, userTwo;
 
+const baseURL = '/comments';
+
 beforeAll(async () => {
    [userOne, userTwo] = await setup();
 });
@@ -13,7 +15,7 @@ beforeAll(async () => {
 // create new posts for userOne
 test.each(userOnePosts)('Should create userOne posts', async (content) => {
    await request(app)
-      .post('/post')
+      .post('/posts')
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content })
       .expect(201);
@@ -22,7 +24,7 @@ test.each(userOnePosts)('Should create userOne posts', async (content) => {
 // create new posts for userTwo
 test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
    await request(app)
-      .post('/post')
+      .post('/posts')
       .set('Authorization', `Bearer ${userTwo.token}`)
       .send({ content })
       .expect(201);
@@ -31,13 +33,14 @@ test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
 test('Should add comment to appropriate post', async () => {
    // userOne comment on userTwo post
    const post = userTwoPosts[0];
+   console.log(post);
    const content = `comment number 1 on ${post}`;
    const { _id: postId } = await Post.findOne({ content: post });
 
    await request(app)
-      .post('/comment')
+      .post(`${baseURL}/?post=${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ postId, content })
+      .send({ content })
       .expect(201);
 });
 
