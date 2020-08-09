@@ -135,7 +135,7 @@ router.delete('/', async (req, res) => {
 
 // delete post by id
 router.delete('/:id', async (req, res) => {
-   const owner = req.user.owner;
+   const owner = req.user._id;
    const id = req.params.id;
 
    try {
@@ -144,11 +144,13 @@ router.delete('/:id', async (req, res) => {
          throw new Error('Invalid id');
       }
 
+      console.log(`owner = ${owner}, id = ${id}`);
       const post = await Post.findOneAndDelete({
          owner,
          _id: id,
       });
 
+      console.log(post);
       if (post) {
          return res.status(200).send(post);
       }
