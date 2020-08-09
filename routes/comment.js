@@ -26,7 +26,6 @@ router.post('/', async (req, res) => {
 
       // create comment
       const comment = await Comment.create({ owner, post, content });
-
       if (comment) {
          return res.status(201).send(comment);
       }
@@ -88,9 +87,14 @@ router.put('/:id', async () => {
    const owner = req.user._id;
    const post = req.query.post;
    const id = req.params.id;
+   const content = req.body.content;
 
    try {
-      const comment = await Comment.findByIdAndUpdate(id, { owner, post });
+      const comment = await Comment.findByIdAndUpdate(id, {
+         owner,
+         post,
+         content,
+      });
 
       if (comment) {
          return res.status(200).send(comment);
