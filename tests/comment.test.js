@@ -36,57 +36,11 @@ test('Should add comment to appropriate post', async () => {
    const content = `comment number 1 on ${post}`;
    const { _id: postId } = await Post.findOne({ content: post });
 
-   await request(app)
+   const comment = await request(app)
       .post(`${baseURL}/?post=${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content })
       .expect(201);
-});
-
-// edit comment by id
-test('Should edit comment', async () => {
-   // userOne edit comment on userTwo post
-   // find appropriate post
-   const post = await Post.findOne({ content: userTwoPosts[0] });
-
-   const content = 'new edited comment number 1';
-   const { _id: postId } = post;
-   const commentId = post.comments[0]._id;
-
-   await request(app)
-      .put(`${baseURL}/${commentId}`)
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ postId, commentId, content })
-      .expect(200);
-
-   // userTwo should not be able to edit userOne comment
-   await request(app)
-      .put('/comment')
-      .set('Authorization', `Bearer ${userTwo.token}`)
-      .send({ postId, commentId, content })
-      .expect(400);
-});
-
-// delete comment by id
-test('Should delete comment', async () => {
-   const post = await Post.findOne({ content: userTwoPosts[0] });
-
-   // grab post and comment id
-   const { _id: postId } = post;
-   const commentId = post.comments[0]._id;
-
-   await request(app)
-      .delete('/comment')
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ postId, commentId })
-      .expect(200);
-
-   // userTwo should not be able to delete userOne comment
-   await request(app)
-      .delete('/comment')
-      .set('Authorization', `Bearer ${userTwo.token}`)
-      .send({ postId, commentId })
-      .expect(400);
 });
 
 afterAll(teardown);
