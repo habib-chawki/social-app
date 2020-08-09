@@ -33,7 +33,6 @@ test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
 test('Should add comment to appropriate post', async () => {
    // userOne comment on userTwo post
    const post = userTwoPosts[0];
-   console.log(post);
    const content = `comment number 1 on ${post}`;
    const { _id: postId } = await Post.findOne({ content: post });
 
@@ -50,21 +49,21 @@ test('Should edit comment', async () => {
    // find appropriate post
    const post = await Post.findOne({ content: userTwoPosts[0] });
 
-   const newComment = 'new edited comment number 1';
+   const content = 'new edited comment number 1';
    const { _id: postId } = post;
    const commentId = post.comments[0]._id;
 
    await request(app)
-      .put('/comment')
+      .put(`${baseURL}/${commentId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ postId, commentId, newComment })
+      .send({ postId, commentId, content })
       .expect(200);
 
    // userTwo should not be able to edit userOne comment
    await request(app)
       .put('/comment')
       .set('Authorization', `Bearer ${userTwo.token}`)
-      .send({ postId, commentId, newComment })
+      .send({ postId, commentId, content })
       .expect(400);
 });
 
