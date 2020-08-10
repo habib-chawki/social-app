@@ -5,7 +5,6 @@ const Post = require('../models/post');
 const Comment = require('../models/comment');
 
 const auth = require('../utils/auth');
-const editComment = require('../utils/edit-comment');
 
 const router = express.Router();
 
