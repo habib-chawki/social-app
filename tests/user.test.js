@@ -10,7 +10,7 @@ let { user, teardown, invalidCredentials } = require('./globals');
 
 const baseURL = '/users';
 
-// test registration route
+// test registration route (signup)
 describe('POST /registration', () => {
    test('Should sign up user', async () => {
       const res = await request(app)
@@ -25,15 +25,18 @@ describe('POST /registration', () => {
    test.each(invalidCredentials)(
       'Should not sign up user',
       async (credentials) => {
-         await request(app)
+         const res = await request(app)
             .post(`${baseURL}/registration`)
             .send(credentials)
             .expect(400);
+
+         // auth token should not be present
+         expect(res.body.token).toBeUndefined();
       }
    );
 });
 
-// test authenticaion route
+// test authenticaion route (login)
 describe('POST /authentication', () => {
    test('Should login user', async () => {
       const res = await request(app)
