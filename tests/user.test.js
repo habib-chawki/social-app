@@ -8,63 +8,58 @@ const User = require('../models/user');
 
 let { user, teardown, invalidCredentials } = require('./globals');
 
-const base = '/users';
+const baseURL = '/users';
 
-// successful sign up
+// test registration route
 describe('POST /registration', () => {
    test('Should sign up user', async () => {
       const res = await request(app)
-         .post(`${base}/registration`)
+         .post(`${baseURL}/registration`)
          .send(user)
          .expect(201);
 
       // retrieve token and ensure its validity
-      const token = JSON.parse(res.text).token;
-      expect(validator.isJWT(token)).toBe(true);
+      expect(validator.isJWT(res.body.token)).toBe(true);
    });
 
-   // signup fail cases
    test.each(invalidCredentials)(
       'Should not sign up user',
       async (credentials) => {
          await request(app)
-            .post(`${base}/registration`)
+            .post(`${baseURL}/registration`)
             .send(credentials)
             .expect(400);
       }
    );
 });
 
-// successful user login
-test('Should log in user', async () => {
-   const res = await request(app)
-      .post(`${base}/authentication`)
-      .send(user)
-      .expect(200);
+// test authenticaion route
+describe('POST /authentication', () => {
+   test('Should login user', async () => {
+      const res = await request(app)
+         .post(`${baseURL}/authentication`)
+         .send(user)
+         .expect(200);
 
-   // retrieve token and verify its validity
-   const { token } = JSON.parse(res.text);
-   expect(validator.isJWT(token)).toBe(true);
+      // retrieve token and verify its validity
+      expect(validator.isJWT(res.body.token)).toBe(true);
+   });
 
-   // decode token and retrieve user id
-   const { id } = await jwt.verify(token, process.env.SECRET_KEY);
-
-   // add id and token to mock-up user
-   user = { ...user, token, id };
-});
-
-// login fail cases
-test.each(invalidCredentials)('Should fail login', async (credentials) => {
-   await request(app)
-      .post(`${base}/authentication`)
-      .send(credentials)
-      .expect(400);
+   test.each(invalidCredentials)(
+      'Should not login user',
+      async (credentials) => {
+         await request(app)
+            .post(`${baseURL}/authentication`)
+            .send(credentials)
+            .expect(400);
+      }
+   );
 });
 
 // successful user logout
 test('Should logout', async () => {
    await request(app)
-      .post(`${base}/logout`)
+      .post(`${baseURL}/logout`)
       .set('Authorization', `Bearer ${user.token}`)
       .expect(200);
 
@@ -76,7 +71,7 @@ test('Should logout', async () => {
 // password update
 test('Should update password', async () => {
    await request(app)
-      .patch(`${base}/password`)
+      .patch(`${baseURL}/password`)
       .set('Authorization', `Bearer ${user.token}`)
       .send({ newPassword: 'newPassword' })
       .expect(200);
@@ -90,7 +85,7 @@ test('Should update password', async () => {
 // delete user
 test('Should remove user', async () => {
    await request(app)
-      .delete(`${base}/`)
+      .delete(`${baseURL}/`)
       .set('Authorization', `Bearer ${user.token}`)
       .expect(200);
 
