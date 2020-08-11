@@ -76,8 +76,16 @@ router.patch('/password', auth, async (req, res) => {
 router.post('/logout', auth, async (req, res) => {
    try {
       // log user out by id (delete auth token)
-      await User.updateOne({ _id: req.user._id }, { token: '' });
-      res.status(200).send('Logged out successfuly.');
+      const user = await User.findOneAndUpdate(
+         { _id: req.user._id },
+         { token: null },
+         { new: true }
+      );
+      if (user) {
+         res.status(200).send('Logged out successfuly.');
+      }
+
+      throw new Error('Unable to logout');
    } catch (e) {
       // 500 - internal Server Error
       res.status(500).send(e.message);
