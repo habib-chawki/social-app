@@ -59,16 +59,28 @@ describe('POST /authentication', () => {
    );
 });
 
-// successful user logout
-test('Should logout', async () => {
-   await request(app)
-      .post(`${baseURL}/logout`)
-      .set('Authorization', `Bearer ${user.token}`)
-      .expect(200);
+// test logout route
+describe('POST /logout', () => {
+   const user;
+   beforeEach(async () => {
+      // create new user
+      user = await User.create({});
+   });
 
-   // token should have been removed
-   const newUser = await User.findById(user.id);
-   expect(newUser.token).toBe('');
+   // successful user logout
+   test('Should logout', async () => {
+      const res = await request(app)
+         .post(`${baseURL}/logout`)
+         .set('Authorization', `Bearer ${user.token}`)
+         .expect(200);
+
+      // token should have been removed
+      expect(res.body.token).toBeNull();
+   });
+
+   afterEach(async () => {
+      await User.deleteMany({});
+   });
 });
 
 // password update
