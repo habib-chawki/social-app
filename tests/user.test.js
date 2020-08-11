@@ -61,10 +61,15 @@ describe('POST /authentication', () => {
 
 // test logout route
 describe('POST /logout', () => {
-   const user;
+   let user;
    beforeEach(async () => {
       // create new user
-      user = await User.create({});
+      user = await User.create({
+         email: 'habib@gmail.com',
+         password: 'mypasstest',
+      });
+
+      await user.generateAuthToken();
    });
 
    // successful user logout
