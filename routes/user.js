@@ -75,14 +75,15 @@ router.patch('/password', auth, async (req, res) => {
 // user logout
 router.post('/logout', auth, async (req, res) => {
    try {
-      // log user out by id (delete auth token)
+      // remove auth token
       const user = await User.findOneAndUpdate(
          { _id: req.user._id },
          { token: null },
          { new: true }
       );
+
       if (user) {
-         res.status(200).send('Logged out successfuly.');
+         return res.status(200).send(user);
       }
 
       throw new Error('Unable to logout');
