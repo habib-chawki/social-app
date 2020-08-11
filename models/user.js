@@ -34,13 +34,6 @@ const userSchema = mongoose.Schema(
             }
          },
       },
-      posts: [
-         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Post',
-            default: [],
-         },
-      ],
       profile: { type: profileSchema, default: profileSchema },
    },
    {
