@@ -105,14 +105,13 @@ router.post('/logout', auth, async (req, res) => {
 router.delete('/', auth, async (req, res) => {
    try {
       // remove user
-      const user = await User.findByIdAndDelete(req.user._id);
+      const { deletedCount } = await User.deleteOne({ _id: req.user._id });
 
-      // send 200 status code if both user and profile were successfuly deleted
-      if (user) {
-         return res.status(200).send(user);
+      if (deletedCount) {
+         return res.status(200).send('User removed.');
       }
 
-      throw new Error('Unable to delete user.');
+      throw new Error('Unable to remove user.');
    } catch (e) {
       // 500 - internal Server Error
       res.status(500).send(e.message);
