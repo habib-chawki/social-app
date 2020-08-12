@@ -55,15 +55,23 @@ router.post('/authentication', async (req, res) => {
 
 // update user password
 router.patch('/password', auth, async (req, res) => {
+   const user = req.user;
+   const { oldPassword, newPassword } = req.body;
    try {
-      // find user by id and patch the password (after hashing)
-      const hashedPassword = await bcrypt.hash(req.body.newPassword, 8);
-      const user = await User.findByIdAndUpdate(req.user._id, {
-         password: hashedPassword,
-      });
+      // check if password is valid
+      const match = await bcrypt.compare(oldPassword, user.password);
 
-      if (user) {
-         return res.status(200).send(hashedPassword);
+      if (match) {
+         // find user by id and patch the password (after hashing)
+         const newPasswordHash = await bcrypt.hash(newPassword, 8);
+         const { nModified } = await User.updateOne(
+            { _id: user._id },
+            { password: newPasswordHash }
+         );
+
+         if (nModified) {
+            return res.status(200).send('Password updated.');
+         }
       }
 
       throw new Error('Unable to update password.');
