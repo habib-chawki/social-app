@@ -157,16 +157,33 @@ describe('PATCH /password', () => {
    });
 });
 
-// delete user
-test('Should remove user', async () => {
-   await request(app)
-      .delete(`${baseURL}/`)
-      .set('Authorization', `Bearer ${user.token}`)
-      .expect(200);
+describe('DELETE /', () => {
+   let user;
+   beforeEach(async () => {
+      // create new user
+      user = await User.create({
+         email: 'habib@email.com',
+         password: 'mypassword',
+      });
 
-   // user should be null
-   const newUser = await User.findById(user.id);
-   expect(newUser).toBeNull();
+      await user.generateAuthToken();
+   });
+
+   // delete user
+   test('Should remove user', async () => {
+      await request(app)
+         .delete(`${baseURL}/`)
+         .set('Authorization', `Bearer ${user.token}`)
+         .expect(200);
+
+      // user should be null
+      const oldUser = await User.findById(user._id);
+      expect(oldUser).toBeNull();
+   });
+
+   afterEach(async () => {
+      await User.deleteMany({});
+   });
 });
 
 // cleanup
