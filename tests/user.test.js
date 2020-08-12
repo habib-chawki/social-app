@@ -34,14 +34,32 @@ describe('POST /registration', () => {
          expect(res.body.token).toBeUndefined();
       }
    );
+
+   afterEach(async () => {
+      await User.deleteMany({});
+   });
 });
 
 // test authenticaion route (login)
 describe('POST /authentication', () => {
+   let user;
+   beforeEach(async () => {
+      // create new user
+      user = await User.create({
+         email: 'habib@email.com',
+         password: 'mypassword',
+      });
+
+      await user.generateAuthToken();
+   });
+
    test('Should login user', async () => {
       const res = await request(app)
          .post(`${baseURL}/authentication`)
-         .send(user)
+         .send({
+            email: 'habib@email.com',
+            password: 'mypassword',
+         })
          .expect(200);
 
       // retrieve token and verify its validity
@@ -57,6 +75,10 @@ describe('POST /authentication', () => {
             .expect(400);
       }
    );
+
+   afterEach(async () => {
+      await User.deleteMany({});
+   });
 });
 
 // test logout route
@@ -65,8 +87,8 @@ describe('POST /logout', () => {
    beforeEach(async () => {
       // create new user
       user = await User.create({
-         email: 'habib@gmail.com',
-         password: 'mypasstest',
+         email: 'habib@email.com',
+         password: 'mypassword',
       });
 
       await user.generateAuthToken();
@@ -88,18 +110,35 @@ describe('POST /logout', () => {
    });
 });
 
-// password update
-test('Should update password', async () => {
-   await request(app)
-      .patch(`${baseURL}/password`)
-      .set('Authorization', `Bearer ${user.token}`)
-      .send({ newPassword: 'newPassword' })
-      .expect(200);
+// test update password route
+describe('PATCH /password', () => {
+   let user;
+   beforeEach(async () => {
+      // create new user
+      user = await User.create({
+         email: 'habib@email.com',
+         password: 'mypassword',
+      });
 
-   // password should be updated
-   const { password } = await User.findById(user.id);
-   const match = await bcrypt.compare('newPassword', password);
-   expect(match).toBe(true);
+      await user.generateAuthToken();
+   });
+
+   test('Should update password', async () => {
+      await request(app)
+         .patch(`${baseURL}/password`)
+         .set('Authorization', `Bearer ${user.token}`)
+         .send({ oldPassword: 'mypassword', newPassword: 'mynewpassword' })
+         .expect(200);
+
+      // password should have been updated
+      const { password } = await User.findById(user._id);
+      const match = await bcrypt.compare('mynewpassword', password);
+      expect(match).toBe(true);
+   });
+
+   afterEach(async () => {
+      await User.deleteMany({});
+   });
 });
 
 // delete user

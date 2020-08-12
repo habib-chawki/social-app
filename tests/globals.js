@@ -9,7 +9,7 @@ const Post = require('../models/post');
 // mock-up user
 let user = {
    email: 'habib@email.com',
-   password: 'habibPass',
+   password: 'mypassword',
 };
 
 // mock-up posts
