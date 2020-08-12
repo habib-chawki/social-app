@@ -89,11 +89,7 @@ router.delete('/:id', async () => {
    const id = req.params.id;
 
    try {
-      const comment = await Comment.findOneAndDelete({
-         _id: id,
-         owner,
-         post,
-      });
+      const comment = await Comment.findByIdAndDelete(id, { owner, post });
 
       if (comment) {
          return res.status(200).send(comment);
