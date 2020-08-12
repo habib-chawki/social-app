@@ -136,6 +136,22 @@ describe('PATCH /password', () => {
       expect(match).toBe(true);
    });
 
+   test('Should not update password', async () => {
+      await request(app)
+         .patch(`${baseURL}/password`)
+         .set('Authorization', `Bearer ${user.token}`)
+         .send({
+            oldPassword: 'mypasswordincorrect',
+            newPassword: 'mynewpassword',
+         })
+         .expect(500);
+
+      // password should have stayed the same
+      const { password } = await User.findById(user._id);
+      const match = await bcrypt.compare('mypassword', password);
+      expect(match).toBe(true);
+   });
+
    afterEach(async () => {
       await User.deleteMany({});
    });
