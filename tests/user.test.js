@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 const User = require('../models/user');
 
-let { teardown, invalidCredentials } = require('./globals');
+let { invalidCredentials } = require('./globals');
 
 const baseURL = '/users';
 
@@ -45,8 +45,7 @@ describe('POST /registration', () => {
    });
 });
 
-// test authenticaion route (login)
-describe('POST /authentication', () => {
+describe('Test with setup and teardown', () => {
    let user;
    beforeEach(async () => {
       // create new user
@@ -58,138 +57,94 @@ describe('POST /authentication', () => {
       await user.generateAuthToken();
    });
 
-   test('Should login user', async () => {
-      const res = await request(app)
-         .post(`${baseURL}/authentication`)
-         .send({
-            email: 'habib@email.com',
-            password: 'mypassword',
-         })
-         .expect(200);
-
-      // retrieve token and verify its validity
-      expect(validator.isJWT(res.body.token)).toBe(true);
+   afterEach(async () => {
+      await User.deleteMany({});
    });
 
-   test.each(invalidCredentials)(
-      'Should not login user',
-      async (credentials) => {
-         await request(app)
+   // test authenticaion route (login)
+   describe('POST /authentication', () => {
+      test('Should login user', async () => {
+         const res = await request(app)
             .post(`${baseURL}/authentication`)
             .send(credentials)
-            .expect(400);
-      }
-   );
+            .expect(200);
 
-   afterEach(async () => {
-      await User.deleteMany({});
-   });
-});
-
-// test logout route
-describe('POST /logout', () => {
-   let user;
-   beforeEach(async () => {
-      // create new user
-      user = await User.create({
-         email: 'habib@email.com',
-         password: 'mypassword',
+         // retrieve token and verify its validity
+         expect(validator.isJWT(res.body.token)).toBe(true);
       });
 
-      await user.generateAuthToken();
+      test.each(invalidCredentials)(
+         'Should not login user',
+         async (credentials) => {
+            await request(app)
+               .post(`${baseURL}/authentication`)
+               .send(credentials)
+               .expect(400);
+         }
+      );
+
+      afterEach(async () => {
+         await User.deleteMany({});
+      });
    });
 
-   // successful user logout
-   test('Should logout', async () => {
-      const res = await request(app)
-         .post(`${baseURL}/logout`)
-         .set('Authorization', `Bearer ${user.token}`)
-         .expect(200);
+   // test logout route
+   describe('POST /logout', () => {
+      // successful user logout
+      test('Should logout', async () => {
+         const res = await request(app)
+            .post(`${baseURL}/logout`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
 
-      // token should have been removed
-      expect(res.body.token).toBeNull();
+         // token should have been removed
+         expect(res.body.token).toBeNull();
+      });
    });
 
-   afterEach(async () => {
-      await User.deleteMany({});
-   });
-});
+   // test update password route
+   describe('PATCH /password', () => {
+      test('Should update password', async () => {
+         await request(app)
+            .patch(`${baseURL}/password`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .send({ oldPassword: 'mypassword', newPassword: 'mynewpassword' })
+            .expect(200);
 
-// test update password route
-describe('PATCH /password', () => {
-   let user;
-   beforeEach(async () => {
-      // create new user
-      user = await User.create({
-         email: 'habib@email.com',
-         password: 'mypassword',
+         // password should have been updated
+         const { password } = await User.findById(user._id);
+         const match = await bcrypt.compare('mynewpassword', password);
+         expect(match).toBe(true);
       });
 
-      await user.generateAuthToken();
-   });
+      test('Should not update password', async () => {
+         await request(app)
+            .patch(`${baseURL}/password`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .send({
+               oldPassword: 'mypasswordincorrect',
+               newPassword: 'mynewpassword',
+            })
+            .expect(500);
 
-   test('Should update password', async () => {
-      await request(app)
-         .patch(`${baseURL}/password`)
-         .set('Authorization', `Bearer ${user.token}`)
-         .send({ oldPassword: 'mypassword', newPassword: 'mynewpassword' })
-         .expect(200);
-
-      // password should have been updated
-      const { password } = await User.findById(user._id);
-      const match = await bcrypt.compare('mynewpassword', password);
-      expect(match).toBe(true);
-   });
-
-   test('Should not update password', async () => {
-      await request(app)
-         .patch(`${baseURL}/password`)
-         .set('Authorization', `Bearer ${user.token}`)
-         .send({
-            oldPassword: 'mypasswordincorrect',
-            newPassword: 'mynewpassword',
-         })
-         .expect(500);
-
-      // password should have stayed the same
-      const { password } = await User.findById(user._id);
-      const match = await bcrypt.compare('mypassword', password);
-      expect(match).toBe(true);
-   });
-
-   afterEach(async () => {
-      await User.deleteMany({});
-   });
-});
-
-describe('DELETE /', () => {
-   let user;
-   beforeEach(async () => {
-      // create new user
-      user = await User.create({
-         email: 'habib@email.com',
-         password: 'mypassword',
+         // password should have stayed the same
+         const { password } = await User.findById(user._id);
+         const match = await bcrypt.compare('mypassword', password);
+         expect(match).toBe(true);
       });
-
-      await user.generateAuthToken();
    });
 
-   // delete user
-   test('Should remove user', async () => {
-      await request(app)
-         .delete(`${baseURL}/`)
-         .set('Authorization', `Bearer ${user.token}`)
-         .expect(200);
+   describe('DELETE /', () => {
+      // delete user
+      test('Should remove user', async () => {
+         await request(app)
+            .delete(`${baseURL}/`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
 
-      // user should be null
-      const oldUser = await User.findById(user._id);
-      expect(oldUser).toBeNull();
-   });
-
-   afterEach(async () => {
-      await User.deleteMany({});
+         // user should be null
+         const oldUser = await User.findById(user._id);
+         expect(oldUser).toBeNull();
+      });
    });
 });
-
-// cleanup
-afterAll(teardown);
