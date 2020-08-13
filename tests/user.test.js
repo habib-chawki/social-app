@@ -1,12 +1,9 @@
 const request = require('supertest');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 const app = require('../src/app');
 const User = require('../models/user');
-
-let { invalidCredentials } = require('./globals');
 
 const baseURL = '/users';
 
@@ -14,6 +11,14 @@ const credentials = {
    email: 'habib@email.com',
    password: 'mypassword',
 };
+
+// signup / login fail cases
+const invalidCredentials = [
+   { email: 'habib@email.com', password: '' },
+   { email: '', password: 'thisisavalidpass' },
+   { email: 'habibemail.com', password: 'thisisavalidpass' },
+   { email: 'habib@email.com', password: 'th' },
+];
 
 // test registration route (signup)
 describe('POST /registration', () => {
