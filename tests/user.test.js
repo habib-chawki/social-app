@@ -6,16 +6,21 @@ const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 const User = require('../models/user');
 
-let { user, teardown, invalidCredentials } = require('./globals');
+let { teardown, invalidCredentials } = require('./globals');
 
 const baseURL = '/users';
+
+const credentials = {
+   email: 'habib@email.com',
+   password: 'mypassword',
+};
 
 // test registration route (signup)
 describe('POST /registration', () => {
    test('Should sign up user', async () => {
       const res = await request(app)
          .post(`${baseURL}/registration`)
-         .send(user)
+         .send(credentials)
          .expect(201);
 
       // retrieve token and ensure its validity
