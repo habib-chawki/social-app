@@ -51,9 +51,9 @@ describe('POST /registration', () => {
 });
 
 describe('Test with setup and teardown', () => {
+   // create user
    let user;
    beforeEach(async () => {
-      // create new user
       user = await User.create({
          email: 'habib@email.com',
          password: 'mypassword',
