@@ -51,11 +51,7 @@ describe('Test with setup and teardown', () => {
    // create user before each test
    let user;
    beforeEach(async () => {
-      user = await User.create({
-         email: 'habib@email.com',
-         password: 'mypassword',
-      });
-
+      user = await User.create(credentials);
       await user.generateAuthToken();
    });
 
