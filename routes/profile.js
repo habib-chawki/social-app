@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
       const { profile } = await User.findById(userId);
 
       if (profile) {
-         return res.status(200).send(JSON.stringify(profile));
+         return res.status(200).send(profile);
       }
 
       throw new Error('Unable to fetch user profile.');
