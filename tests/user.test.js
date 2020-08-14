@@ -32,18 +32,15 @@ describe('POST /registration', () => {
       expect(validator.isJWT(res.body.token)).toBe(true);
    });
 
-   test.each(invalidCredentials)(
-      'Should not sign up user',
-      async (credentials) => {
-         const res = await request(app)
-            .post(`${baseURL}/registration`)
-            .send(credentials)
-            .expect(400);
+   test.each(invalidCredentials)('Should signup fail', async (credentials) => {
+      const res = await request(app)
+         .post(`${baseURL}/registration`)
+         .send(credentials)
+         .expect(400);
 
-         // auth token should not be present
-         expect(res.body.token).toBeUndefined();
-      }
-   );
+      // auth token should not be present
+      expect(res.body.token).toBeUndefined();
+   });
 
    afterEach(async () => {
       await User.deleteMany({});
@@ -51,7 +48,7 @@ describe('POST /registration', () => {
 });
 
 describe('Test with setup and teardown', () => {
-   // create user
+   // create user before each test
    let user;
    beforeEach(async () => {
       user = await User.create({
@@ -62,13 +59,15 @@ describe('Test with setup and teardown', () => {
       await user.generateAuthToken();
    });
 
+   // remove user document after each test
    afterEach(async () => {
       await User.deleteMany({});
    });
 
    // test authenticaion route (login)
    describe('POST /authentication', () => {
-      test('Should login user', async () => {
+      // successful login
+      test('Should log in user', async () => {
          const res = await request(app)
             .post(`${baseURL}/authentication`)
             .send(credentials)
@@ -78,8 +77,9 @@ describe('Test with setup and teardown', () => {
          expect(validator.isJWT(res.body.token)).toBe(true);
       });
 
+      // failed login cases
       test.each(invalidCredentials)(
-         'Should not login user',
+         'Should login fail',
          async (credentials) => {
             await request(app)
                .post(`${baseURL}/authentication`)
@@ -93,10 +93,10 @@ describe('Test with setup and teardown', () => {
       });
    });
 
-   // test logout route
+   // test user logout route
    describe('POST /logout', () => {
       // successful user logout
-      test('Should logout', async () => {
+      test('Should log out user', async () => {
          const res = await request(app)
             .post(`${baseURL}/logout`)
             .set('Authorization', `Bearer ${user.token}`)
@@ -109,6 +109,7 @@ describe('Test with setup and teardown', () => {
 
    // test update password route
    describe('PATCH /password', () => {
+      // successful password update
       test('Should update password', async () => {
          await request(app)
             .patch(`${baseURL}/password`)
@@ -122,6 +123,7 @@ describe('Test with setup and teardown', () => {
          expect(match).toBe(true);
       });
 
+      // failed password update in case of incorrect password
       test('Should not update password', async () => {
          await request(app)
             .patch(`${baseURL}/password`)
@@ -139,8 +141,8 @@ describe('Test with setup and teardown', () => {
       });
    });
 
+   // test delete user route
    describe('DELETE /', () => {
-      // delete user
       test('Should remove user', async () => {
          await request(app)
             .delete(`${baseURL}/`)

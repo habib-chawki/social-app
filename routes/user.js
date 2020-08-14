@@ -19,7 +19,9 @@ router.post('/registration', async (req, res) => {
 
          // 201 - created
          // send back generated auth token
-         return res.status(201).send({ token: user.token });
+         return res.status(201).send({
+            token: user.token,
+         });
       }
 
       throw new Error('Unable to create user.');
@@ -35,14 +37,18 @@ router.post('/authentication', async (req, res) => {
 
    try {
       // find user by email
-      const user = await User.findOne({ email });
+      const user = await User.findOne({
+         email,
+      });
       if (user) {
          // check password validity
          const match = await bcrypt.compare(password, user.password);
          if (match) {
             // send back generated token
             await user.generateAuthToken();
-            return res.status(200).send({ token: user.token });
+            return res.status(200).send({
+               token: user.token,
+            });
          }
       }
 
@@ -65,8 +71,12 @@ router.patch('/password', auth, async (req, res) => {
          // find user by id and patch the password (after hashing)
          const newPasswordHash = await bcrypt.hash(newPassword, 8);
          const { nModified } = await User.updateOne(
-            { _id: user._id },
-            { password: newPasswordHash }
+            {
+               _id: user._id,
+            },
+            {
+               password: newPasswordHash,
+            }
          );
 
          if (nModified) {
@@ -85,9 +95,15 @@ router.post('/logout', auth, async (req, res) => {
    try {
       // remove auth token
       const user = await User.findOneAndUpdate(
-         { _id: req.user._id },
-         { token: null },
-         { new: true }
+         {
+            _id: req.user._id,
+         },
+         {
+            token: null,
+         },
+         {
+            new: true,
+         }
       );
 
       if (user) {
@@ -105,7 +121,9 @@ router.post('/logout', auth, async (req, res) => {
 router.delete('/', auth, async (req, res) => {
    try {
       // remove user
-      const { deletedCount } = await User.deleteOne({ _id: req.user._id });
+      const { deletedCount } = await User.deleteOne({
+         _id: req.user._id,
+      });
 
       if (deletedCount) {
          return res.status(200).send('User removed.');

@@ -17,11 +17,22 @@ const userOnePosts = ['post number 1 by userOne', 'post number 2 by userOne'];
 const userTwoPosts = ['post number 3 by userTwo'];
 
 // signup / login fail cases
-const invalidCredentials = [
-   { email: 'habib@email.com', password: '' },
-   { email: '', password: 'thisisavalidpass' },
-   { email: 'habibemail.com', password: 'thisisavalidpass' },
-   { email: 'habib@email.com', password: 'th' },
+const invalidCredentials = [{
+      email: 'habib@email.com',
+      password: ''
+   },
+   {
+      email: '',
+      password: 'thisisavalidpass'
+   },
+   {
+      email: 'habibemail.com',
+      password: 'thisisavalidpass'
+   },
+   {
+      email: 'habib@email.com',
+      password: 'th'
+   },
 ];
 
 const userOneUpdatedProfile = {
@@ -66,7 +77,11 @@ async function setupMockUser(user) {
    const token = JSON.parse(response.text).token;
    const id = await jwt.verify(token, process.env.SECRET_KEY).id;
 
-   return { ...user, token, id };
+   return {
+      ...user,
+      token,
+      id
+   };
 }
 
 // global teardown
