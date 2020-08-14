@@ -3,41 +3,62 @@ const request = require('supertest');
 const app = require('../src/app');
 const User = require('../models/user');
 
-const { setup, teardown, userOneUpdatedProfile } = require('./globals');
-let userOne, userTwo;
+const { userOneUpdatedProfile } = require('./globals');
 
+const credentials = {
+   email: 'habib@email.com',
+   password: 'mypassword',
+};
+
+let user;
+
+// create user
 beforeAll(async () => {
-   [userOne, userTwo] = await setup();
+   user = await User.create(credentials);
+   await user.generateAuthToken();
 });
 
-// get logged-in user profile
-test('Should get profile', async () => {
-   await request(app)
-      .get(`/users/${userOne.id}/profile`)
-      .set('Authorization', `Bearer ${userOne.token}`)
+test('Should get user profile', async () => {
+   const res = await request(app)
+      .get(`/users/${user._id}/profile`)
+      .set('Authorization', `Bearer ${user.token}`)
       .expect(200);
+
+   const profile = res.body;
+   expect(Object.keys(profile)).toEqual(
+      expect.arrayContaining([
+         '_id',
+         'firstName',
+         'bio',
+         'experience',
+         'createdAt',
+      ])
+   );
 });
 
 // upload avatar
 test('Should upload avatar', async () => {
    await request(app)
-      .post(`/users/${userOne.id}/profile/avatar`)
-      .set('Authorization', `Bearer ${userOne.token}`)
+      .post(`/users/${user._id}/profile/avatar`)
+      .set('Authorization', `Bearer ${user.token}`)
       .attach('avatar', process.env.AVATAR)
       .expect(200);
 
    // file should have been saved as buffer
-   const { profile } = await User.findById(userOne.id);
+   const { profile } = await User.findById(user._id);
    expect(profile.avatar).not.toBe(undefined);
 });
 
 // update user profile
 test('Should update profile', async () => {
    await request(app)
-      .put(`/users/${userOne.id}/profile`)
-      .set('Authorization', `Bearer ${userOne.token}`)
+      .put(`/users/${user._id}/profile`)
+      .set('Authorization', `Bearer ${user.token}`)
       .send(userOneUpdatedProfile)
       .expect(200);
 });
 
-afterAll(teardown);
+// remove user document
+afterAll(async () => {
+   await User.deleteMany({});
+});
