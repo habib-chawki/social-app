@@ -3,11 +3,24 @@ const request = require('supertest');
 const app = require('../src/app');
 const User = require('../models/user');
 
-const { userOneUpdatedProfile } = require('./globals');
-
 const credentials = {
    email: 'habib@email.com',
    password: 'mypassword',
+};
+
+const updatedProfile = {
+   firstName: 'Habib',
+   lastName: 'Chawki',
+   gender: 'male',
+   bio: 'This is an updated bio',
+   skills: {
+      technical: [
+         'Software development',
+         'Network administration',
+         'Machine learning',
+      ],
+   },
+   languages: ['English', 'French', 'German'],
 };
 
 let user;
@@ -36,6 +49,15 @@ test('Should get user profile', async () => {
    );
 });
 
+// update user profile
+test('Should update profile', async () => {
+   await request(app)
+      .put(`/users/${user._id}/profile`)
+      .set('Authorization', `Bearer ${user.token}`)
+      .send(updatedProfile)
+      .expect(200);
+});
+
 // upload avatar
 test('Should upload avatar', async () => {
    await request(app)
@@ -47,15 +69,6 @@ test('Should upload avatar', async () => {
    // file should have been saved as buffer
    const { profile } = await User.findById(user._id);
    expect(profile.avatar).not.toBe(undefined);
-});
-
-// update user profile
-test('Should update profile', async () => {
-   await request(app)
-      .put(`/users/${user._id}/profile`)
-      .set('Authorization', `Bearer ${user.token}`)
-      .send(userOneUpdatedProfile)
-      .expect(200);
 });
 
 // remove user document
