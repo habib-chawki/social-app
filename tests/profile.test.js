@@ -13,13 +13,13 @@ const updatedProfile = {
    lastName: 'Chawki',
    gender: 'male',
    bio: 'This is an updated bio',
-   skills: {
-      technical: [
-         'Software development',
-         'Network administration',
-         'Machine learning',
-      ],
-   },
+   // skills: {
+   //    technical: [
+   //       'Software development',
+   //       'Network administration',
+   //       'Machine learning',
+   //    ],
+   // },
    languages: ['English', 'French', 'German'],
 };
 
@@ -56,6 +56,9 @@ test('Should update profile', async () => {
       .set('Authorization', `Bearer ${user.token}`)
       .send(updatedProfile)
       .expect(200);
+
+   const { profile } = await User.findById(user._id).lean();
+   expect(profile).toMatchObject(updatedProfile);
 });
 
 // upload avatar
