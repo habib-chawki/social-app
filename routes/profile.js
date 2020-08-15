@@ -56,14 +56,22 @@ const upload = multer();
 // upload an avatar
 router.post('/avatar', upload.single('avatar'), async (req, res) => {
    try {
+      // retrieve user id
+      const userId = req.params.userId;
+
       // retrieve user profile
-      const user = await User.findOne({ _id: req.params.userId });
+      const { profile } = await User.findByIdAndUpdate(
+         userId,
+         {
+            'profile.avatar': req.file.buffer,
+         },
+         { new: true }
+      );
 
-      // save avatar to database
-      user.profile.avatar = req.file.buffer;
-      await user.save();
+      console.log(profile);
+      if (profile) return res.status(200).send('Avatar uploaded.');
 
-      res.status(200).send('Avatar uploaded.');
+      throw new Error('Unable to upload avatar.');
    } catch (e) {
       // 500 - internal Server Error
       res.status(500).send(e.message);
