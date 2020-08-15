@@ -71,7 +71,7 @@ test('Should upload avatar', async () => {
 
    // file should have been saved as buffer
    const { profile } = await User.findById(user._id);
-   expect(profile.avatar).not.toBe(undefined);
+   expect(profile.avatar.buffer).not.toBeUndefined();
 });
 
 // remove user document
