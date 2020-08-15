@@ -4,7 +4,7 @@ const profileSchema = mongoose.Schema(
    {
       avatar: {
          type: Buffer,
-         default: undefined,
+         default: null,
       },
       firstName: {
          type: String,
