@@ -68,8 +68,9 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
          { new: true }
       );
 
-      console.log(profile);
-      if (profile) return res.status(200).send('Avatar uploaded.');
+      if (profile) {
+         return res.status(200).send('Avatar uploaded successfuly');
+      }
 
       throw new Error('Unable to upload avatar.');
    } catch (e) {
