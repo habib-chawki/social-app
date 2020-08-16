@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const app = require('../src/app');
 const User = require('../models/user');
 
-const baseURL = '/users';
+const baseUrl = '/users';
 
 const credentials = {
    email: 'habib@email.com',
@@ -21,10 +21,10 @@ const invalidCredentials = [
 ];
 
 // test registration route (signup)
-describe('POST /registration', () => {
+describe('POST /users/registration', () => {
    test('Should sign up user', async () => {
       const res = await request(app)
-         .post(`${baseURL}/registration`)
+         .post(`${baseUrl}/registration`)
          .send(credentials)
          .expect(201);
 
@@ -34,7 +34,7 @@ describe('POST /registration', () => {
 
    test.each(invalidCredentials)('Should signup fail', async (credentials) => {
       const res = await request(app)
-         .post(`${baseURL}/registration`)
+         .post(`${baseUrl}/registration`)
          .send(credentials)
          .expect(400);
 
@@ -61,11 +61,11 @@ describe('Test with setup and teardown', () => {
    });
 
    // test authenticaion route (login)
-   describe('POST /authentication', () => {
+   describe('POST /users/authentication', () => {
       // successful login
       test('Should log in user', async () => {
          const res = await request(app)
-            .post(`${baseURL}/authentication`)
+            .post(`${baseUrl}/authentication`)
             .send(credentials)
             .expect(200);
 
@@ -78,7 +78,7 @@ describe('Test with setup and teardown', () => {
          'Should login fail',
          async (credentials) => {
             await request(app)
-               .post(`${baseURL}/authentication`)
+               .post(`${baseUrl}/authentication`)
                .send(credentials)
                .expect(400);
          }
@@ -90,11 +90,11 @@ describe('Test with setup and teardown', () => {
    });
 
    // test user logout route
-   describe('POST /logout', () => {
+   describe('POST /users/logout', () => {
       // successful user logout
       test('Should log out user', async () => {
          const res = await request(app)
-            .post(`${baseURL}/logout`)
+            .post(`${baseUrl}/logout`)
             .set('Authorization', `Bearer ${user.token}`)
             .expect(200);
 
@@ -104,11 +104,11 @@ describe('Test with setup and teardown', () => {
    });
 
    // test update password route
-   describe('PATCH /password', () => {
+   describe('PATCH /users/password', () => {
       // successful password update
       test('Should update password', async () => {
          await request(app)
-            .patch(`${baseURL}/password`)
+            .patch(`${baseUrl}/password`)
             .set('Authorization', `Bearer ${user.token}`)
             .send({ oldPassword: 'mypassword', newPassword: 'mynewpassword' })
             .expect(200);
@@ -122,7 +122,7 @@ describe('Test with setup and teardown', () => {
       // failed password update in case of incorrect password
       test('Should not update password', async () => {
          await request(app)
-            .patch(`${baseURL}/password`)
+            .patch(`${baseUrl}/password`)
             .set('Authorization', `Bearer ${user.token}`)
             .send({
                oldPassword: 'mypasswordincorrect',
@@ -138,10 +138,10 @@ describe('Test with setup and teardown', () => {
    });
 
    // test delete user route
-   describe('DELETE /', () => {
+   describe('DELETE /users/', () => {
       test('Should remove user', async () => {
          await request(app)
-            .delete(`${baseURL}/`)
+            .delete(`${baseUrl}/`)
             .set('Authorization', `Bearer ${user.token}`)
             .expect(200);
 
