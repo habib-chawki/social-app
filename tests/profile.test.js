@@ -13,13 +13,13 @@ const updatedProfile = {
    lastName: 'Chawki',
    gender: 'male',
    bio: 'This is an updated bio',
-   // skills: {
-   //    technical: [
-   //       'Software development',
-   //       'Network administration',
-   //       'Machine learning',
-   //    ],
-   // },
+   skills: {
+      technical: [
+         'Software development',
+         'Network administration',
+         'Machine learning',
+      ],
+   },
    languages: ['English', 'French', 'German'],
 };
 
@@ -31,50 +31,55 @@ beforeAll(async () => {
    await user.generateAuthToken();
 });
 
-test('Should get user profile', async () => {
-   const res = await request(app)
-      .get(`/users/${user._id}/profile`)
-      .set('Authorization', `Bearer ${user.token}`)
-      .expect(200);
+describe('GET /users/:userId/profile', () => {
+   it('Should get user profile', async () => {
+      const res = await request(app)
+         .get(`/users/${user._id}/profile`)
+         .set('Authorization', `Bearer ${user.token}`)
+         .expect(200);
 
-   const profile = res.body;
-   expect(Object.keys(profile)).toEqual(
-      expect.arrayContaining([
-         '_id',
-         'firstName',
-         'bio',
-         'experience',
-         'createdAt',
-      ])
-   );
+      const profile = res.body;
+      expect(Object.keys(profile)).toEqual(
+         expect.arrayContaining([
+            '_id',
+            'firstName',
+            'bio',
+            'experience',
+            'createdAt',
+         ])
+      );
+   });
 });
 
-// update user profile
-test('Should update profile', async () => {
-   await request(app)
-      .put(`/users/${user._id}/profile`)
-      .set('Authorization', `Bearer ${user.token}`)
-      .send(updatedProfile)
-      .expect(200);
+describe('PUT /users/:userId/profile', () => {
+   it('Should update profile', async () => {
+      await request(app)
+         .put(`/users/${user._id}/profile`)
+         .set('Authorization', `Bearer ${user.token}`)
+         .send(updatedProfile)
+         .expect(200);
 
-   const { profile } = await User.findById(user._id).lean();
-   expect(profile).toMatchObject(updatedProfile);
+      // profile should have been updated
+      const { profile } = await User.findById(user._id).lean();
+      expect(profile).toMatchObject(updatedProfile);
+   });
 });
 
-// upload avatar
-test('Should upload avatar', async () => {
-   await request(app)
-      .post(`/users/${user._id}/profile/avatar`)
-      .set('Authorization', `Bearer ${user.token}`)
-      .attach('avatar', process.env.AVATAR)
-      .expect(200);
+describe('POST /users/:userId/profile/avatar', () => {
+   it('Should upload avatar', async () => {
+      await request(app)
+         .post(`/users/${user._id}/profile/avatar`)
+         .set('Authorization', `Bearer ${user.token}`)
+         .attach('avatar', process.env.AVATAR)
+         .expect(200);
 
-   // file should have been saved as buffer
-   const { profile } = await User.findById(user._id);
-   expect(profile.avatar.buffer).not.toBeUndefined();
+      // avatar should have been saved as buffer
+      const { profile } = await User.findById(user._id);
+      expect(profile.avatar.buffer).not.toBeUndefined();
+   });
 });
 
-// remove user document
+// clear user collection
 afterAll(async () => {
    await User.deleteMany({});
 });
