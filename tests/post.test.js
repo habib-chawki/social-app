@@ -4,39 +4,56 @@ const app = require('../src/app');
 const User = require('../models/user');
 const Post = require('../models/post');
 
-const { setup, teardown, userOnePosts } = require('./globals');
-let userOne, userTwo;
+const baseUrl = '/posts';
 
-const baseURL = '/posts';
+// user credentials
+const credentials = {
+   email: 'habib@email.com',
+   password: 'mypassword',
+};
 
-beforeAll(async () => {
-   [userOne, userTwo] = await setup();
-});
+// user list of posts
+const posts = [
+   { content: 'post 1' },
+   { content: 'post 2' },
+   { content: 'post 3' },
+];
 
-// create new posts for userOne
-test.each(userOnePosts)('Should create post', async (content) => {
-   await request(app)
-      .post(baseURL)
-      .set('Authorization', userOne.token)
-      .send({ content })
-      .expect(201);
-});
+describe('POST /posts', () => {
+   // create user
+   let user;
+   beforeAll(async () => {
+      user = await User.create(credentials);
+      await user.generateAuthToken();
+   });
 
-// posts should have been added
-test('Should add posts', async () => {
-   const posts = await Post.find({ owner: userOne.id });
+   it.each(posts)('Should create post', async (post) => {
+      const res = await request(app)
+         .post(baseUrl)
+         .set('Authorization', user.token)
+         .send({ content: post.content })
+         .expect(201);
+   });
 
-   // expect posts to have been added successfuly
-   expect(posts.length).toBe(userOnePosts.length);
+   it('Should add posts', async () => {
+      const userPosts = await Post.find(
+         { owner: user._id },
+         '-_id content'
+      ).lean();
 
-   // add posts to mock-up user
-   userOne = { ...userOne, posts: [...posts] };
+      // posts should have been added
+      expect(userPosts).toEqual(expect.arrayContaining(posts));
+   });
+
+   afterAll(async () => {
+      await User.deleteMany({});
+   });
 });
 
 // get back all posts
 test('Should get all posts', async () => {
    const res = await request(app)
-      .get(baseURL)
+      .get(baseUrl)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
@@ -50,7 +67,7 @@ test('Should get post by id', async () => {
 
    // get second mock-up post
    await request(app)
-      .get(`${baseURL}/${postId}`)
+      .get(`${baseUrl}/${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 });
@@ -62,7 +79,7 @@ test('Should update post by id', async () => {
    const postId = userOne.posts[1]._id;
 
    await request(app)
-      .put(`${baseURL}/${postId}`)
+      .put(`${baseUrl}/${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content: newPost })
       .expect(200);
@@ -78,7 +95,7 @@ test('Should not delete other user post', async () => {
    const postId = userOne.posts[0]._id;
 
    await request(app)
-      .delete(`${baseURL}/${postId}`)
+      .delete(`${baseUrl}/${postId}`)
       .set('Authorization', `Bearer ${userTwo.token}`)
       .expect(404);
 });
@@ -88,7 +105,7 @@ test('Should delete post by id', async () => {
    const postId = userOne.posts[1]._id;
 
    await request(app)
-      .delete(`${baseURL}/${postId}`)
+      .delete(`${baseUrl}/${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 
@@ -100,9 +117,7 @@ test('Should delete post by id', async () => {
 // delete all posts
 test('Should delete all posts', async () => {
    await request(app)
-      .delete(baseURL)
+      .delete(baseUrl)
       .set('Authorization', `Bearer ${userOne.token}`)
       .expect(200);
 });
-
-afterAll(teardown);
