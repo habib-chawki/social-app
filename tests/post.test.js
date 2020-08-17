@@ -12,11 +12,16 @@ const credentials = {
    password: 'mypassword',
 };
 
+const credentialsSecondary = {
+   email: 'chawki@email.com',
+   password: 'alsomypassword',
+};
+
 // user list of posts
 const posts = [
-   { content: 'post 1' },
-   { content: 'post 2' },
-   { content: 'post 3' },
+   { content: 'Post 1' },
+   { content: 'Post 2' },
+   { content: 'Post 3' },
 ];
 
 describe('POST /posts', () => {
@@ -50,15 +55,50 @@ describe('POST /posts', () => {
    });
 });
 
-// get back all posts
-test('Should get all posts', async () => {
-   const res = await request(app)
-      .get(baseUrl)
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .expect(200);
+describe('GET /posts', () => {
+   let userPrimary, userSecondary, userPrimaryPosts, userSecondaryPosts;
 
-   // expect to get all userOne posts
-   expect(JSON.parse(res.text).length).toBe(userOne.posts.length);
+   beforeAll(async () => {
+      // create user
+      userPrimary = await User.create(credentials);
+      await userPrimary.generateAuthToken();
+
+      userSecondary = await User.create(credentialsSecondary);
+      await userSecondary.generateAuthToken();
+
+      userPrimaryPosts = posts.map((post) => ({
+         owner: userPrimary._id,
+         ...post,
+      }));
+
+      // create primary user list of posts
+      await Post.insertMany(userPrimaryPosts);
+
+      userSecondaryPosts = posts.map((post) => ({
+         owner: userSecondary._id,
+         ...post,
+      }));
+
+      // create secondary user list of posts
+      await Post.insertMany(userSecondaryPosts);
+   });
+
+   it('Should get all posts', async () => {
+      const res = await request(app)
+         .get(baseUrl)
+         .set('Authorization', `Bearer ${userPrimary.token}`)
+         .expect(200);
+
+      // expect to get posts
+      expect(res.body).toEqual(
+         expect.arrayContaining(userPrimaryPosts.concat(userSecondaryPosts))
+      );
+   });
+
+   afterAll(async () => {
+      await User.deleteMany({});
+      await Post.deleteMany({});
+   });
 });
 
 // get post by id
