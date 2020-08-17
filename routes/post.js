@@ -32,17 +32,26 @@ router.post('/', async (req, res) => {
    }
 });
 
-// get all posts
-router.get('/', async (req, res) => {
-   try {
-      // fetch list of posts
-      const posts = await Post.find({});
+// get a single post by id
+router.get('/:id', async (req, res) => {
+   // fetch post id
+   const postId = req.params.id;
 
-      if (posts) {
-         return res.status(200).send(posts);
+   try {
+      // validate id
+      if (!validator.isMongoId(postId)) {
+         throw new Error('Invalid id.');
       }
 
-      throw new Error('Unable to fetch posts.');
+      // find post by id
+      const post = await Post.findById(postId);
+
+      // return post if found
+      if (post) {
+         return res.status(200).send(post);
+      }
+
+      throw new Error('Post not found.');
    } catch (e) {
       res.status(404).send(e.message);
    }
@@ -64,26 +73,17 @@ router.get('/?:user', async (req, res) => {
    }
 });
 
-// get a single post by id
-router.get('/:id', async (req, res) => {
-   // fetch post id
-   const postId = req.params.id;
-
+// get all posts
+router.get('/', async (req, res) => {
    try {
-      // validate id
-      if (!validator.isMongoId(postId)) {
-         throw new Error('Invalid id.');
+      // fetch list of posts
+      const posts = await Post.find({});
+
+      if (posts) {
+         return res.status(200).send(posts);
       }
 
-      // find post by id
-      const post = await Post.findById(postId);
-
-      // return post if found
-      if (post) {
-         return res.status(200).send(post);
-      }
-
-      throw new Error('Post not found.');
+      throw new Error('Unable to fetch posts.');
    } catch (e) {
       res.status(404).send(e.message);
    }
