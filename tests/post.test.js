@@ -52,6 +52,7 @@ describe('POST /posts', () => {
 
    afterAll(async () => {
       await User.deleteMany({});
+      await Post.deleteMany({});
    });
 });
 
@@ -90,6 +91,11 @@ describe('GET /posts', () => {
          .expect(200);
 
       // expect to get posts
+      // expect(res.body).toEqual(
+      //    expect.arrayContaining([
+      //       expect.objectContaining({ content: 'Post 1' }),
+      //    ])
+      // );
       expect(res.body).toEqual(
          expect.arrayContaining(userPrimaryPosts.concat(userSecondaryPosts))
       );
