@@ -90,15 +90,10 @@ describe('GET /posts', () => {
          .set('Authorization', `Bearer ${userPrimary.token}`)
          .expect(200);
 
-      // expect to get posts
-      // expect(res.body).toEqual(
-      //    expect.arrayContaining([
-      //       expect.objectContaining({ content: 'Post 1' }),
-      //    ])
-      // );
-      expect(res.body).toEqual(
-         expect.arrayContaining(userPrimaryPosts.concat(userSecondaryPosts))
-      );
+      // posts should have been added
+
+      const userPosts = await Post.find({});
+      expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
    });
 
    afterAll(async () => {
