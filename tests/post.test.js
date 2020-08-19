@@ -12,19 +12,14 @@ const credentials = {
    password: 'mypassword',
 };
 
-const credentialsSecondary = {
-   email: 'chawki@email.com',
-   password: 'alsomypassword',
-};
-
-// user list of posts
-const posts = [
-   { content: 'Post 1' },
-   { content: 'Post 2' },
-   { content: 'Post 3' },
-];
-
 describe('POST /posts', () => {
+   // list of posts
+   const posts = [
+      { content: 'Post 1' },
+      { content: 'Post 2' },
+      { content: 'Post 3' },
+   ];
+
    // create user
    let user;
    beforeAll(async () => {
@@ -57,43 +52,50 @@ describe('POST /posts', () => {
 });
 
 describe('GET /posts', () => {
-   let userPrimary, userSecondary, userPrimaryPosts, userSecondaryPosts;
+   let user;
+
+   const createUser = async (credentials) => {
+      const user = await User.create(credentials);
+      await user.generateAuthToken();
+
+      await Post.insertMany([
+         { owner: user._id, content: 'Post 1' },
+         { owner: user._id, content: 'Post 2' },
+      ]);
+
+      return user;
+   };
 
    beforeAll(async () => {
-      // create user
-      userPrimary = await User.create(credentials);
-      await userPrimary.generateAuthToken();
+      // create primary user
+      user = await createUser({
+         email: 'habib@email.com',
+         password: 'habibpass',
+      });
 
-      userSecondary = await User.create(credentialsSecondary);
-      await userSecondary.generateAuthToken();
-
-      userPrimaryPosts = posts.map((post) => ({
-         owner: userPrimary._id,
-         ...post,
-      }));
-
-      // create primary user list of posts
-      await Post.insertMany(userPrimaryPosts);
-
-      userSecondaryPosts = posts.map((post) => ({
-         owner: userSecondary._id,
-         ...post,
-      }));
-
-      // create secondary user list of posts
-      await Post.insertMany(userSecondaryPosts);
+      // create another user
+      await createUser({
+         email: 'chawki@email.com',
+         password: 'chawkipass',
+      });
    });
 
    it('Should get all posts', async () => {
       const res = await request(app)
          .get(baseUrl)
-         .set('Authorization', `Bearer ${userPrimary.token}`)
+         .set('Authorization', `Bearer ${user.token}`)
          .expect(200);
 
-      // posts should have been added
-
+      // expect all posts to be present
       const userPosts = await Post.find({});
       expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
+
+      // expect list of posts to contain at list post 1
+      expect(res.body).toEqual(
+         expect.arrayContaining([
+            expect.objectContaining({ content: 'Post 1' }),
+         ])
+      );
    });
 
    afterAll(async () => {
