@@ -88,7 +88,7 @@ describe('GET /posts', () => {
             .set('Authorization', `Bearer ${user.token}`)
             .expect(200);
 
-         // expect all posts to be present
+         // expect to get list of all posts
          const userPosts = await Post.find({});
          expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
 
@@ -106,24 +106,21 @@ describe('GET /posts', () => {
    });
 
    describe('GET /:id', () => {
-      it('Should get a single post by id', async () => {});
+      it('Should get a single post by id', async () => {
+         const postId = userOne.posts[1]._id;
+
+         // get second mock-up post
+         await request(app)
+            .get(`${baseUrl}/${postId}`)
+            .set('Authorization', `Bearer ${userOne.token}`)
+            .expect(200);
+      });
    });
 
    afterAll(async () => {
       await User.deleteMany({});
       await Post.deleteMany({});
    });
-});
-
-// get post by id
-test('Should get post by id', async () => {
-   const postId = userOne.posts[1]._id;
-
-   // get second mock-up post
-   await request(app)
-      .get(`${baseUrl}/${postId}`)
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .expect(200);
 });
 
 // update post by id
