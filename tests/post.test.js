@@ -54,6 +54,7 @@ describe('POST /posts', () => {
 describe('GET /posts', () => {
    let user;
 
+   // create a new user with a list of posts
    const createUser = async (credentials) => {
       const user = await User.create(credentials);
       await user.generateAuthToken();
@@ -80,22 +81,32 @@ describe('GET /posts', () => {
       });
    });
 
-   it('Should get all posts', async () => {
-      const res = await request(app)
-         .get(baseUrl)
-         .set('Authorization', `Bearer ${user.token}`)
-         .expect(200);
+   describe('GET /', () => {
+      it('Should get list of all posts', async () => {
+         const res = await request(app)
+            .get(baseUrl)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
 
-      // expect all posts to be present
-      const userPosts = await Post.find({});
-      expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
+         // expect all posts to be present
+         const userPosts = await Post.find({});
+         expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
 
-      // expect list of posts to contain at list post 1
-      expect(res.body).toEqual(
-         expect.arrayContaining([
-            expect.objectContaining({ content: 'Post 1' }),
-         ])
-      );
+         // expect list of posts to contain at list post 1
+         expect(res.body).toEqual(
+            expect.arrayContaining([
+               expect.objectContaining({ content: 'Post 1' }),
+            ])
+         );
+      });
+   });
+
+   describe('GET /?:user', () => {
+      it('Should get list of posts of a specific user', async () => {});
+   });
+
+   describe('GET /:id', () => {
+      it('Should get a single post by id', async () => {});
    });
 
    afterAll(async () => {
