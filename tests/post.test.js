@@ -92,7 +92,7 @@ describe('GET /posts', () => {
          const userPosts = await Post.find({});
          expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
 
-         // expect list of posts to contain at list post 1
+         // expect list of posts to contain at least post 1
          expect(res.body).toEqual(
             expect.arrayContaining([
                expect.objectContaining({ content: 'Post 1' }),
@@ -101,8 +101,17 @@ describe('GET /posts', () => {
       });
    });
 
-   describe('GET /?:user', () => {
-      it('Should get list of posts of a specific user', async () => {});
+   describe('GET /?user=userId', () => {
+      it('Should get list of posts of a specific user', async () => {
+         const posts = await Post.find({ owner: user._id });
+
+         const res = await request(app)
+            .get(`${baseUrl}/?user=${user._id}`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
+
+         expect(JSON.stringify(res.body)).toEqual(JSON.stringify(posts));
+      });
    });
 
    describe('GET /:id', () => {
