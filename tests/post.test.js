@@ -107,13 +107,15 @@ describe('GET /posts', () => {
 
    describe('GET /:id', () => {
       it('Should get a single post by id', async () => {
-         const postId = userOne.posts[1]._id;
+         // find post
+         const post = await Post.findOne({ owner: user._id });
 
-         // get second mock-up post
-         await request(app)
-            .get(`${baseUrl}/${postId}`)
-            .set('Authorization', `Bearer ${userOne.token}`)
+         const res = await request(app)
+            .get(`${baseUrl}/${post._id}`)
+            .set('Authorization', `Bearer ${user.token}`)
             .expect(200);
+
+         expect(JSON.stringify(res.body)).toEqual(JSON.stringify(post));
       });
    });
 
