@@ -57,27 +57,14 @@ router.get('/:id', async (req, res) => {
    }
 });
 
-// get posts of a particular user
-router.get('/?:user', async (req, res) => {
-   try {
-      // fetch user's posts
-      const posts = await Post.find({ owner: req.query.user });
-
-      if (posts) {
-         return res.status(200).send(posts);
-      }
-
-      throw new Error('Unable to fetch posts.');
-   } catch (e) {
-      res.status(404).send(e.message);
-   }
-});
-
-// get all posts
+// get list of posts
 router.get('/', async (req, res) => {
    try {
+      // fetch posts of a specific user if query string is set up
+      const query = req.query.user ? { owner: req.query.user } : {};
+
       // fetch list of posts
-      const posts = await Post.find({});
+      const posts = await Post.find(query);
 
       if (posts) {
          return res.status(200).send(posts);
