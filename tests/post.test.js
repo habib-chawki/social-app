@@ -87,7 +87,7 @@ describe('Test with setup and teardown', () => {
    });
 
    describe('GET /posts', () => {
-      describe('GET /', () => {
+      describe('GET /posts', () => {
          it('Should get list of all posts', async () => {
             const res = await request(app)
                .get(baseUrl)
@@ -107,7 +107,7 @@ describe('Test with setup and teardown', () => {
          });
       });
 
-      describe('GET /?user=userId', () => {
+      describe('GET /posts/?user=userId', () => {
          it('Should get list of posts of a specific user', async () => {
             const posts = await Post.find({ owner: user._id });
 
@@ -120,7 +120,7 @@ describe('Test with setup and teardown', () => {
          });
       });
 
-      describe('GET /:id', () => {
+      describe('GET /posts/:id', () => {
          it('Should get a single post by id', async () => {
             // find post
             const post = await Post.findOne({ owner: user._id });
@@ -134,24 +134,23 @@ describe('Test with setup and teardown', () => {
          });
       });
    });
-});
 
-describe('PUT /posts', () => {
-   // update post by id
-   test('Should update post by id', async () => {
-      // update post number 2
-      const newPost = 'the new post number 2';
-      const postId = userOne.posts[1]._id;
+   describe('PUT /posts', () => {
+      describe('PUT /posts', () => {
+         it('Should update post by id', async () => {
+            const post = await Post.findOne({ content: 'Post 1' });
+            const updatedPostContent = 'Post 1 updated';
 
-      await request(app)
-         .put(`${baseUrl}/${postId}`)
-         .set('Authorization', `Bearer ${userOne.token}`)
-         .send({ content: newPost })
-         .expect(200);
+            const res = await request(app)
+               .put(`${baseUrl}/${post._id}`)
+               .set('Authorization', `Bearer ${user.token}`)
+               .send({ content: updatedPostContent })
+               .expect(200);
 
-      // post should have been updated
-      const post = await Post.findById(postId);
-      expect(post.content).toEqual(newPost);
+            // post should have been updated
+            expect(res.body.content).toEqual(updatedPostContent);
+         });
+      });
    });
 });
 
