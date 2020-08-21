@@ -87,11 +87,9 @@ router.put('/:id', async (req, res) => {
          throw new Error('Invalid id.');
       }
 
-      const post = await Post.findByIdAndUpdate(
-         id,
-         {
-            content,
-         },
+      const post = await Post.findOneAndUpdate(
+         { _id: id, owner: req.user._id },
+         { content },
          { new: true }
       );
 
