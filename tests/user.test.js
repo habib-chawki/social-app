@@ -50,6 +50,7 @@ describe('POST /users/registration', () => {
 describe('Test with setup and teardown', () => {
    // create user before each test
    let user;
+
    beforeEach(async () => {
       user = await User.create(credentials);
       await user.generateAuthToken();
@@ -60,54 +61,60 @@ describe('Test with setup and teardown', () => {
       await User.deleteMany({});
    });
 
-   // test authenticaion route (login)
-   describe('POST /users/authentication', () => {
-      // successful login
-      it('Should log in user', async () => {
-         const res = await request(app)
-            .post(`${baseUrl}/authentication`)
-            .send(credentials)
-            .expect(200);
+   describe('POST /users', () => {
+      // test authenticaion route (login)
+      describe('POST /users/authentication', () => {
+         // successful login
+         it('Should log in user', async () => {
+            const res = await request(app)
+               .post(`${baseUrl}/authentication`)
+               .send(credentials)
+               .expect(200);
 
-         // retrieve token and verify its validity
-         expect(validator.isJWT(res.body.token)).toBe(true);
+            // retrieve token and verify its validity
+            expect(validator.isJWT(res.body.token)).toBe(true);
+         });
+
+         // failed login cases
+         it.each(invalidCredentials)(
+            'Should login fail',
+            async (credentials) => {
+               await request(app)
+                  .post(`${baseUrl}/authentication`)
+                  .send(credentials)
+                  .expect(400);
+            }
+         );
+
+         afterEach(async () => {
+            await User.deleteMany({});
+         });
       });
 
-      // failed login cases
-      it.each(invalidCredentials)('Should login fail', async (credentials) => {
-         await request(app)
-            .post(`${baseUrl}/authentication`)
-            .send(credentials)
-            .expect(400);
-      });
+      // test user logout route
+      describe('POST /users/logout', () => {
+         // successful user logout
+         it('Should log out user', async () => {
+            const res = await request(app)
+               .post(`${baseUrl}/logout`)
+               .set('Authorization', `Bearer ${user.token}`)
+               .expect(200);
 
-      afterEach(async () => {
-         await User.deleteMany({});
+            // token should have been removed
+            expect(res.body.token).toBeNull();
+         });
       });
    });
 
-   // test user logout route
-   describe('POST /users/logout', () => {
-      // successful user logout
-      it('Should log out user', async () => {
-         const res = await request(app)
-            .post(`${baseUrl}/logout`)
-            .set('Authorization', `Bearer ${user.token}`)
-            .expect(200);
-
-         // token should have been removed
-         expect(res.body.token).toBeNull();
-      });
-   });
-
-   // test update password route
    describe('PATCH /users/password', () => {
-      // successful password update
       it('Should update password', async () => {
          await request(app)
             .patch(`${baseUrl}/password`)
             .set('Authorization', `Bearer ${user.token}`)
-            .send({ oldPassword: 'mypassword', newPassword: 'mynewpassword' })
+            .send({
+               oldPassword: 'mypassword',
+               newPassword: 'mynewpassword',
+            })
             .expect(200);
 
          // password should have been updated
