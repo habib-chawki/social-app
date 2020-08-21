@@ -135,7 +135,7 @@ describe('Test with setup and teardown', () => {
       });
    });
 
-   describe('PUT /posts', () => {
+   describe('PUT /posts/:id', () => {
       it('Should update post by id', async () => {
          const post = await Post.findOne({
             owner: user._id,
@@ -153,7 +153,7 @@ describe('Test with setup and teardown', () => {
          expect(res.body.content).toEqual(updatedPostContent);
       });
 
-      it('Should not update others posts', async () => {
+      it('Should not update other user post', async () => {
          let post = await Post.findOne({ owner: user._id, content: 'Post 1' });
          const updatedPostContent = 'Post 1 updated';
 
@@ -168,31 +168,35 @@ describe('Test with setup and teardown', () => {
          expect(post.content).not.toEqual(updatedPostContent);
       });
    });
-});
 
-// attempt to delete other users' posts
-test('Should not delete other user post', async () => {
-   // authenticate userTwo and try to delete userOne post
-   const postId = userOne.posts[0]._id;
+   describe('DELETE /posts/:id', () => {
+      test('Should delete post by id', async () => {
+         let post = await Post.findOne({
+            owner: user._id,
+            content: 'Post 2',
+         });
 
-   await request(app)
-      .delete(`${baseUrl}/${postId}`)
-      .set('Authorization', `Bearer ${userTwo.token}`)
-      .expect(404);
-});
+         await request(app)
+            .delete(`${baseUrl}/${post._id}`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
 
-// delete post by id
-test('Should delete post by id', async () => {
-   const postId = userOne.posts[1]._id;
+         // post should have been deleted
+         post = await Post.findById(post._id);
+         expect(post).toBeNull();
+      });
 
-   await request(app)
-      .delete(`${baseUrl}/${postId}`)
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .expect(200);
+      // attempt to delete other users' posts
+      test('Should not delete other user post', async () => {
+         // authenticate userTwo and try to delete userOne post
+         const postId = userOne.posts[0]._id;
 
-   // post should have been deleted
-   const post = await Post.findById(postId);
-   expect(post).toBeNull();
+         await request(app)
+            .delete(`${baseUrl}/${postId}`)
+            .set('Authorization', `Bearer ${userTwo.token}`)
+            .expect(404);
+      });
+   });
 });
 
 // delete all posts
