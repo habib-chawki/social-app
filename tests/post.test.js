@@ -137,7 +137,7 @@ describe('Test with setup and teardown', () => {
 
    describe('PUT /posts/:id', () => {
       it('Should update post by id', async () => {
-         const post = await Post.findOne({
+         let post = await Post.findOne({
             owner: user._id,
             content: 'Post 1',
          });
@@ -150,6 +150,10 @@ describe('Test with setup and teardown', () => {
             .expect(200);
 
          // post should have been updated
+         post = await Post.findById(post._id);
+         expect(post.content).toEqual(updatedPostContent);
+
+         // should get the updated post back
          expect(res.body.content).toEqual(updatedPostContent);
       });
 
@@ -186,23 +190,38 @@ describe('Test with setup and teardown', () => {
          expect(post).toBeNull();
       });
 
-      // attempt to delete other users' posts
       test('Should not delete other user post', async () => {
-         // authenticate userTwo and try to delete userOne post
-         const postId = userOne.posts[0]._id;
+         let post = await Post.findOne({
+            owner: user._id,
+            content: 'Post 2',
+         });
 
          await request(app)
-            .delete(`${baseUrl}/${postId}`)
-            .set('Authorization', `Bearer ${userTwo.token}`)
+            .delete(`${baseUrl}/${post._id}`)
+            .set('Authorization', `Bearer ${user2.token}`)
             .expect(404);
+
+         // post should still exist
+         post = await Post.findById(post._id);
+         expect(post).not.toBeNull();
       });
    });
-});
 
-// delete all posts
-test('Should delete all posts', async () => {
-   await request(app)
-      .delete(baseUrl)
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .expect(200);
+   describe('DELETE /', () => {
+      test('Should delete all posts of current user', async () => {
+         let posts = await Post.find({ owner: user._id });
+
+         const res = await request(app)
+            .delete(baseUrl)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
+
+         // number of deleted posts should equal the number of user posts
+         expect(posts.length).toBe(res.body.deletedCount);
+
+         // posts should have been deleted
+         posts = await Post.find({ owner: user._id });
+         expect(posts).toEqual([]);
+      });
+   });
 });
