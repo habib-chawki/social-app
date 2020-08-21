@@ -75,7 +75,7 @@ describe('Test with setup and teardown', () => {
       });
 
       // create another user
-      await createUser({
+      user2 = await createUser({
          email: 'chawki@email.com',
          password: 'chawkipass',
       });
@@ -136,20 +136,36 @@ describe('Test with setup and teardown', () => {
    });
 
    describe('PUT /posts', () => {
-      describe('PUT /posts', () => {
-         it('Should update post by id', async () => {
-            const post = await Post.findOne({ content: 'Post 1' });
-            const updatedPostContent = 'Post 1 updated';
-
-            const res = await request(app)
-               .put(`${baseUrl}/${post._id}`)
-               .set('Authorization', `Bearer ${user.token}`)
-               .send({ content: updatedPostContent })
-               .expect(200);
-
-            // post should have been updated
-            expect(res.body.content).toEqual(updatedPostContent);
+      it('Should update post by id', async () => {
+         const post = await Post.findOne({
+            owner: user._id,
+            content: 'Post 1',
          });
+         const updatedPostContent = 'Post 1 updated';
+
+         const res = await request(app)
+            .put(`${baseUrl}/${post._id}`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .send({ content: updatedPostContent })
+            .expect(200);
+
+         // post should have been updated
+         expect(res.body.content).toEqual(updatedPostContent);
+      });
+
+      it('Should not update others posts', async () => {
+         let post = await Post.findOne({ owner: user._id, content: 'Post 1' });
+         const updatedPostContent = 'Post 1 updated';
+
+         const res = await request(app)
+            .put(`${baseUrl}/${post._id}`)
+            .set('Authorization', `Bearer ${user2.token}`)
+            .send({ content: updatedPostContent })
+            .expect(404);
+
+         // post should not have been updated
+         post = await Post.findById(post._id);
+         expect(post.content).not.toEqual(updatedPostContent);
       });
    });
 });
