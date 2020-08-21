@@ -104,24 +104,6 @@ router.put('/:id', async (req, res) => {
    }
 });
 
-// delete all posts
-router.delete('/', async (req, res) => {
-   const owner = req.user._id;
-
-   try {
-      // remove posts and return number of deleted documents
-      const { deletedCount } = await Post.deleteMany({ owner });
-
-      if (deletedCount) {
-         return res.sendStatus(200);
-      }
-
-      throw new Error('Unable to delete posts.');
-   } catch (e) {
-      res.status(404).send(e.message);
-   }
-});
-
 // delete post by id
 router.delete('/:id', async (req, res) => {
    const owner = req.user._id;
@@ -144,6 +126,24 @@ router.delete('/:id', async (req, res) => {
 
       // post does not exist
       throw new Error('Unable to delete post.');
+   } catch (e) {
+      res.status(404).send(e.message);
+   }
+});
+
+// delete all posts
+router.delete('/', async (req, res) => {
+   const owner = req.user._id;
+
+   try {
+      // remove posts and return number of deleted documents
+      const { deletedCount } = await Post.deleteMany({ owner });
+
+      if (deletedCount) {
+         return res.send({ deletedCount });
+      }
+
+      throw new Error('Unable to delete posts.');
    } catch (e) {
       res.status(404).send(e.message);
    }
