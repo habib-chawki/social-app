@@ -1,11 +1,9 @@
 const request = require('supertest');
 
 const app = require('../src/app');
-const Post = require('../models/post');
 const User = require('../models/user');
-
-const { setup, teardown, userOnePosts, userTwoPosts } = require('./globals');
-let userOne, userTwo;
+const Post = require('../models/post');
+const Comment = require('../models/comment');
 
 const baseUrl = '/comments';
 
@@ -19,12 +17,14 @@ describe('POST /comments', () => {
    ];
 
    beforeEach(async () => {
+      // create a user
       user = await User.create({
          email: 'habib@email.com',
          password: 'mypassword',
       });
       await user.generateAuthToken();
 
+      // create a post
       post = await Post.create({
          owner: user._id,
          content: 'My post',
@@ -46,6 +46,17 @@ describe('POST /comments', () => {
             content: comment.content,
          })
          .expect(201);
+   });
+
+   it('Should add comments', async () => {
+      // retrieve list of comments with content only
+      const postComments = await Comment.find(
+         { post: post._id },
+         '-_id content'
+      ).lean();
+
+      // comments should have been added
+      expect(postComments).toEqual(expect.arrayContaning(comments));
    });
 });
 
