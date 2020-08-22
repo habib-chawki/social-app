@@ -2,11 +2,52 @@ const request = require('supertest');
 
 const app = require('../src/app');
 const Post = require('../models/post');
+const User = require('../models/user');
 
 const { setup, teardown, userOnePosts, userTwoPosts } = require('./globals');
 let userOne, userTwo;
 
-const baseURL = '/comments';
+const baseUrl = '/comments';
+
+describe('POST /comments', () => {
+   let user, post;
+
+   const comments = [
+      { content: 'Comment 1' },
+      { content: 'Comment 2' },
+      { content: 'Comment 3' },
+   ];
+
+   beforeEach(async () => {
+      user = await User.create({
+         email: 'habib@email.com',
+         password: 'mypassword',
+      });
+      await user.generateAuthToken();
+
+      post = await Post.create({
+         owner: user._id,
+         content: 'My post',
+      });
+   });
+
+   afterEach(async () => {
+      await User.deleteMany({});
+      await Post.deleteMany({});
+   });
+
+   it.each(comments)('Should create comment', async (comment) => {
+      await request(app)
+         .post(baseUrl)
+         .set('Authorization', `Bearer ${user.token}`)
+         .send({
+            owner: user._id,
+            post: post._id,
+            content: comment.content,
+         })
+         .expect(201);
+   });
+});
 
 beforeAll(async () => {
    [userOne, userTwo] = await setup();
@@ -37,7 +78,7 @@ test('Should add comment to appropriate post', async () => {
    const { _id: postId } = await Post.findOne({ content: post });
 
    const comment = await request(app)
-      .post(`${baseURL}/?post=${postId}`)
+      .post(`${baseUrl}/?post=${postId}`)
       .set('Authorization', `Bearer ${userOne.token}`)
       .send({ content })
       .expect(201);
