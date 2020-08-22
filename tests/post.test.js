@@ -36,6 +36,7 @@ describe('POST /posts', () => {
    });
 
    it('Should add posts', async () => {
+      // retrieve list of posts with content only
       const userPosts = await Post.find(
          { owner: user._id },
          '-_id content'
