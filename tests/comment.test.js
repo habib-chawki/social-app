@@ -70,38 +70,46 @@ describe('Test with single user', () => {
          expect(res.body).toEqual(comments);
       });
    });
-
-   
 });
 
-
 desctibe('Test with multiple users', () => {
-   let user;
+   let user, user2, post, post2;
 
-   // create a new user with a list of posts
    const createUser = async (credentials) => {
       const user = await User.create(credentials);
       await user.generateAuthToken();
 
-      await Post.insertMany([
-         { owner: user._id, content: 'Post 1' },
-         { owner: user._id, content: 'Post 2' },
-      ]);
+      // create a post
+      const post = await Post.create({ owner: user._id, content: 'My post' });
 
-      return user;
+      // return the user and their post
+      return [user, post];
    };
 
    beforeEach(async () => {
       // create primary user
-      user = await createUser({
+      [user, post] = await createUser({
          email: 'habib@email.com',
          password: 'habibpass',
       });
 
       // create another user
-      user2 = await createUser({
+      [user2, post2] = await createUser({
          email: 'chawki@email.com',
          password: 'chawkipass',
+      });
+
+      // create comments
+      await Comment.create({
+         owner: user._id,
+         post: post2._id,
+         content: 'User 1 comment on User 2 post',
+      });
+
+      await Comment.create({
+         owner: user2._id,
+         post: post._id,
+         content: 'User 2 comment on User 1 post',
       });
    });
 
@@ -113,12 +121,10 @@ desctibe('Test with multiple users', () => {
 
 describe('PUT /:id', () => {
    it('Should update comment by id', async () => {
-      const res = await request(app).put(`${baseUrl}/${}`)
+      const res = await request(app).put(`${baseUrl}/${comment._id}`);
    });
 });
 
 describe('DELETE /:id', () => {
-   it('Should delete comment by id', async () => {
-
-   });
+   it('Should delete comment by id', async () => {});
 });
