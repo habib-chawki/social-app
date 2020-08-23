@@ -28,7 +28,7 @@ describe('POST /posts', () => {
    });
 
    it.each(posts)('Should create post', async (post) => {
-      const res = await request(app)
+      await request(app)
          .post(baseUrl)
          .set('Authorization', user.token)
          .send({ content: post.content })
