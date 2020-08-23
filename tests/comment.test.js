@@ -7,7 +7,7 @@ const Comment = require('../models/comment');
 
 const baseUrl = '/comments';
 
-describe('Test with setup and teardown', () => {
+describe('Test with single user', () => {
    let user, post;
 
    const comments = [
@@ -34,6 +34,7 @@ describe('Test with setup and teardown', () => {
    afterEach(async () => {
       await User.deleteMany({});
       await Post.deleteMany({});
+      await Comment.deleteMany({});
    });
 
    describe('POST /comments', () => {
@@ -68,5 +69,56 @@ describe('Test with setup and teardown', () => {
 
          expect(res.body).toEqual(comments);
       });
+   });
+
+   
+});
+
+
+desctibe('Test with multiple users', () => {
+   let user;
+
+   // create a new user with a list of posts
+   const createUser = async (credentials) => {
+      const user = await User.create(credentials);
+      await user.generateAuthToken();
+
+      await Post.insertMany([
+         { owner: user._id, content: 'Post 1' },
+         { owner: user._id, content: 'Post 2' },
+      ]);
+
+      return user;
+   };
+
+   beforeEach(async () => {
+      // create primary user
+      user = await createUser({
+         email: 'habib@email.com',
+         password: 'habibpass',
+      });
+
+      // create another user
+      user2 = await createUser({
+         email: 'chawki@email.com',
+         password: 'chawkipass',
+      });
+   });
+
+   afterEach(async () => {
+      await User.deleteMany({});
+      await Post.deleteMany({});
+   });
+});
+
+describe('PUT /:id', () => {
+   it('Should update comment by id', async () => {
+      const res = await request(app).put(`${baseUrl}/${}`)
+   });
+});
+
+describe('DELETE /:id', () => {
+   it('Should delete comment by id', async () => {
+
    });
 });
