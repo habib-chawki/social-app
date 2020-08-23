@@ -7,7 +7,7 @@ const Comment = require('../models/comment');
 
 const baseUrl = '/comments';
 
-describe('Test with single user', () => {
+describe('Test with a single user', () => {
    let user, post;
 
    const comments = [
@@ -73,7 +73,7 @@ describe('Test with single user', () => {
 });
 
 desctibe('Test with multiple users', () => {
-   let user, user2, post, post2;
+   let user, user2, post, post2, comment, comment2;
 
    const createUser = async (credentials) => {
       const user = await User.create(credentials);
@@ -100,13 +100,13 @@ desctibe('Test with multiple users', () => {
       });
 
       // create comments
-      await Comment.create({
+      comment = await Comment.create({
          owner: user._id,
          post: post2._id,
          content: 'User 1 comment on User 2 post',
       });
 
-      await Comment.create({
+      comment2 = await Comment.create({
          owner: user2._id,
          post: post._id,
          content: 'User 2 comment on User 1 post',
@@ -116,15 +116,19 @@ desctibe('Test with multiple users', () => {
    afterEach(async () => {
       await User.deleteMany({});
       await Post.deleteMany({});
+      await Comment.deleteMany({});
    });
-});
 
-describe('PUT /:id', () => {
-   it('Should update comment by id', async () => {
-      const res = await request(app).put(`${baseUrl}/${comment._id}`);
+   describe('PUT /:id', () => {
+      it('Should update comment by id', async () => {
+         const res = await request(app)
+            .put(`${baseUrl}/${comment._id}`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
+      });
    });
-});
 
-describe('DELETE /:id', () => {
-   it('Should delete comment by id', async () => {});
+   describe('DELETE /:id', () => {
+      it('Should delete comment by id', async () => {});
+   });
 });
