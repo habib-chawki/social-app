@@ -124,6 +124,8 @@ desctibe('Test with multiple users', () => {
          const res = await request(app)
             .put(`${baseUrl}/${comment._id}`)
             .set('Authorization', `Bearer ${user.token}`)
+            .query({ post: post2._id })
+            .send({ content: 'Updated comment' })
             .expect(200);
       });
    });
