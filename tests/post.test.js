@@ -53,7 +53,7 @@ describe('POST /posts', () => {
 });
 
 describe('Test with setup and teardown', () => {
-   let user;
+   let user, user2;
 
    // create a new user with a list of posts
    const createUser = async (credentials) => {
