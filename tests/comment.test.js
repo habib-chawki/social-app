@@ -7,7 +7,7 @@ const Comment = require('../models/comment');
 
 const baseUrl = '/comments';
 
-describe('POST /comments', () => {
+describe('Test with setup and teardown', () => {
    let user, post;
 
    const comments = [
@@ -36,63 +36,37 @@ describe('POST /comments', () => {
       await Post.deleteMany({});
    });
 
-   it.each(comments)('Should create comment', async (comment) => {
-      await request(app)
-         .post(baseUrl)
-         .set('Authorization', `Bearer ${user.token}`)
-         .send({
-            owner: user._id,
-            post: post._id,
-            content: comment.content,
-         })
-         .expect(201);
+   describe('POST /comments', () => {
+      it.each(comments)('Should create comment', async (comment) => {
+         await request(app)
+            .post(baseUrl)
+            .set('Authorization', `Bearer ${user.token}`)
+            .query({ post: post._id })
+            .send({ owner: user._id, content: comment.content })
+            .expect(201);
+      });
+
+      it('Should add comments', async () => {
+         // retrieve list of comments with content only
+         const postComments = await Comment.find(
+            { post: post._id },
+            '-_id content'
+         ).lean();
+
+         // comments should have been added
+         expect(postComments).toEqual(expect.arrayContaning(comments));
+      });
    });
 
-   it('Should add comments', async () => {
-      // retrieve list of comments with content only
-      const postComments = await Comment.find(
-         { post: post._id },
-         '-_id content'
-      ).lean();
+   desctibe('GET /comments', () => {
+      it('Should fetch list of comments', async () => {
+         const res = await request(app)
+            .get(baseUrl)
+            .set('Authorization', `Bearer ${user.token}`)
+            .query({ post: post._id })
+            .expect(200);
 
-      // comments should have been added
-      expect(postComments).toEqual(expect.arrayContaning(comments));
+         expect(res.body).toEqual(comments);
+      });
    });
 });
-
-beforeAll(async () => {
-   [userOne, userTwo] = await setup();
-});
-
-// create new posts for userOne
-test.each(userOnePosts)('Should create userOne posts', async (content) => {
-   await request(app)
-      .post('/posts')
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ content })
-      .expect(201);
-});
-
-// create new posts for userTwo
-test.each(userTwoPosts)('Should create userTwo posts', async (content) => {
-   await request(app)
-      .post('/posts')
-      .set('Authorization', `Bearer ${userTwo.token}`)
-      .send({ content })
-      .expect(201);
-});
-
-test('Should add comment to appropriate post', async () => {
-   // userOne comment on userTwo post
-   const post = userTwoPosts[0];
-   const content = `comment number 1 on ${post}`;
-   const { _id: postId } = await Post.findOne({ content: post });
-
-   const comment = await request(app)
-      .post(`${baseUrl}/?post=${postId}`)
-      .set('Authorization', `Bearer ${userOne.token}`)
-      .send({ content })
-      .expect(201);
-});
-
-afterAll(teardown);
