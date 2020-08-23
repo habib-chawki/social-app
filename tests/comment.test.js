@@ -73,7 +73,8 @@ describe('Test with a single user', () => {
 });
 
 desctibe('Test with multiple users', () => {
-   let user, user2, post, post2, comment, comment2;
+   let user, post, comment;
+   let user2, post2, comment2;
 
    const createUser = async (credentials) => {
       const user = await User.create(credentials);
@@ -121,12 +122,25 @@ desctibe('Test with multiple users', () => {
 
    describe('PUT /:id', () => {
       it('Should update comment by id', async () => {
+         // updated comment content
+         const content = 'updated: User 1 comment on User 2 post';
+
          const res = await request(app)
             .put(`${baseUrl}/${comment._id}`)
             .set('Authorization', `Bearer ${user.token}`)
             .query({ post: post2._id })
-            .send({ content: 'Updated comment' })
+            .send({ content })
             .expect(200);
+      });
+
+      it('Should not update other user comment', async () => {
+         // user 2 should not be able to update user 1 comment on their post
+         const res = await request(app)
+            .put(`${baseUrl}/${comment._id}`)
+            .set('Authorization', `Bearer ${user2.token}`)
+            .query({ post: post2._id })
+            .send({ content: 'updated !' })
+            .expect(400);
       });
    });
 
