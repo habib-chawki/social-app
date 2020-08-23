@@ -65,11 +65,11 @@ router.put('/:id', async () => {
       const id = req.params.id;
       const content = req.body.content;
 
-      const comment = await Comment.findByIdAndUpdate(id, {
-         owner,
-         post,
-         content,
-      });
+      const comment = await Comment.findByIdAndUpdate(
+         id,
+         { owner, post, content },
+         { new: true }
+      );
 
       if (comment) {
          return res.status(200).send(comment);
