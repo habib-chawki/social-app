@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
 });
 
 // update a comment by id
-router.put('/:id', async () => {
+router.put('/:id', async (req, res) => {
    try {
       const owner = req.user._id;
       const post = req.query.post;
@@ -82,7 +82,7 @@ router.put('/:id', async () => {
 });
 
 // delete a comment by id
-router.delete('/:id', async () => {
+router.delete('/:id', async (req, res) => {
    try {
       const owner = req.user._id;
       const post = req.query.post;
