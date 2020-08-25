@@ -126,9 +126,8 @@ describe('Test with multiple users', () => {
       it('Should not update other user comment', async () => {
          // user 2 should not be able to update user 1 comment
          const res = await request(app)
-            .put(`${baseUrl}/${comment._id}`)
+            .put(`${baseUrl}/${comment._id}?post=${post2._id}`)
             .set('Authorization', `Bearer ${user2.token}`)
-            .query({ post: post2._id })
             .send({ content: 'updated !' })
             .expect(400);
 
@@ -136,16 +135,15 @@ describe('Test with multiple users', () => {
       });
    });
 
-   describe('DELETE /:id', () => {
+   describe('DELETE comments/:id?post=postId', () => {
       it('Should delete comment by id', async () => {
          const res = await request(app)
-            .delete(`${baseUrl}/${comment._id}`)
+            .delete(`${baseUrl}/${comment._id}?post=${post2._id}`)
             .set('Authorization', `Bearer ${user.token}`)
-            .query({ post: post._id })
             .expect(200);
 
          // the appropriate comment should have been deleted
-         expect(res.body._id).toEqual(comment._id);
+         expect(res.body._id).toEqual(comment._id.toString());
 
          // comment should have been deleted
          const userComment = await Comment.findById(comment._id);
@@ -154,9 +152,8 @@ describe('Test with multiple users', () => {
 
       it('Should not delete other user comment', async () => {
          await request(app)
-            .delete(`${baseUrl}/${comment2._id}`)
+            .delete(`${baseUrl}/${comment2._id}?post=${post._id}`)
             .set('Authorization', `Bearer ${user.token}`)
-            .query({ post: post._id })
             .expect(400);
 
          // comment should not have been deleted
