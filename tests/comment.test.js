@@ -39,7 +39,7 @@ describe('Test with a single user', () => {
 
    describe('POST /comments', () => {
       it.each(comments)('Should create comment', async (comment) => {
-         await request(app)
+         const res = await request(app)
             .post(`${baseUrl}?post=${post._id}`)
             .set('Authorization', `Bearer ${user.token}`)
             .send({ content: comment.content })
@@ -54,13 +54,9 @@ describe('Test with a single user', () => {
             .set('Authorization', `Bearer ${user.token}`)
             .expect(200);
 
-         const comments = await Comment.find(
-            { post: post._id },
-            { lean: true }
-         );
-
-         console.log('list of comments:' + comments);
-         expect(res.body).toEqual(comments);
+         // should get back the list of comments
+         const comments = await Comment.find({ post: post._id });
+         expect(JSON.stringify(res.body)).toEqual(JSON.stringify(comments));
       });
    });
 });
