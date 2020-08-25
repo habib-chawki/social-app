@@ -65,9 +65,9 @@ router.put('/:id', async (req, res) => {
       const id = req.params.id;
       const content = req.body.content;
 
-      const comment = await Comment.findByIdAndUpdate(
-         id,
-         { owner, post, content },
+      const comment = await Comment.findOneAndUpdate(
+         { _id: id, owner, post },
+         { content },
          { new: true }
       );
 
@@ -88,7 +88,7 @@ router.delete('/:id', async (req, res) => {
       const post = req.query.post;
       const id = req.params.id;
 
-      const comment = await Comment.findByIdAndDelete(id, { owner, post });
+      const comment = await Comment.findOneAndDelete({ _id: id, owner, post });
 
       if (comment) {
          return res.status(200).send(comment);
