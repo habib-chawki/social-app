@@ -20,11 +20,11 @@ const invalidCredentials = [
    { email: 'habib@email.com', password: 'th' },
 ];
 
-// test registration route (signup)
-describe('POST /users/registration', () => {
+// test signup route
+describe('POST /users/signup', () => {
    it('Should sign up user', async () => {
       const res = await request(app)
-         .post(`${baseUrl}/registration`)
+         .post(`${baseUrl}/signup`)
          .send(credentials)
          .expect(201);
 
@@ -34,7 +34,7 @@ describe('POST /users/registration', () => {
 
    it.each(invalidCredentials)('Should signup fail', async (credentials) => {
       const res = await request(app)
-         .post(`${baseUrl}/registration`)
+         .post(`${baseUrl}/signup`)
          .send(credentials)
          .expect(400);
 
@@ -63,11 +63,11 @@ describe('Test with setup and teardown', () => {
 
    describe('POST /users', () => {
       // test authenticaion route (login)
-      describe('POST /users/authentication', () => {
+      describe('POST /users/login', () => {
          // successful login
          it('Should log in user', async () => {
             const res = await request(app)
-               .post(`${baseUrl}/authentication`)
+               .post(`${baseUrl}/login`)
                .send(credentials)
                .expect(200);
 
@@ -80,7 +80,7 @@ describe('Test with setup and teardown', () => {
             'Should login fail',
             async (credentials) => {
                await request(app)
-                  .post(`${baseUrl}/authentication`)
+                  .post(`${baseUrl}/login`)
                   .send(credentials)
                   .expect(400);
             }
