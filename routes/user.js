@@ -9,7 +9,7 @@ const router = express.Router();
 router.use('/:userId/profile', profileRouter);
 
 // user signup
-router.post('/registration', async (req, res) => {
+router.post('/signup', async (req, res) => {
    try {
       // create the new user, req.body: {email, password}
       const user = await User.create(req.body);
@@ -32,7 +32,7 @@ router.post('/registration', async (req, res) => {
 });
 
 // user login
-router.post('/authentication', async (req, res) => {
+router.post('/login', async (req, res) => {
    const { email, password } = req.body;
 
    try {
