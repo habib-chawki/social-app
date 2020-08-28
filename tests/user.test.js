@@ -95,13 +95,14 @@ describe('Test with setup and teardown', () => {
       describe('POST /users/logout', () => {
          // successful user logout
          it('Should log out user', async () => {
-            const res = await request(app)
+            await request(app)
                .post(`${baseUrl}/logout`)
                .set('Authorization', `Bearer ${user.token}`)
                .expect(200);
 
             // token should have been removed
-            expect(res.body.token).toBeNull();
+            const { token } = await User.findById(user._id);
+            expect(token).toBeNull();
          });
       });
    });
