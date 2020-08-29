@@ -63,8 +63,11 @@ router.get('/', async (req, res) => {
       // fetch posts of a specific user if query string is set up
       const query = req.query.user ? { owner: req.query.user } : {};
 
+      const numPosts = req.query.numPosts ? req.query.numPosts : 10; // the number of posts
+      const offset = req.query.offset ? req.query.offset : 0; // the number of docs to skip
+
       // fetch list of posts
-      const posts = await Post.find(query);
+      const posts = await Post.find(query).skip(offset).limit(numPosts);
 
       if (posts) {
          return res.status(200).send(posts);
