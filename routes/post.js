@@ -63,11 +63,20 @@ router.get('/', async (req, res) => {
       // fetch posts of a specific user if query string is set up
       const query = req.query.user ? { owner: req.query.user } : {};
 
-      const numPosts = req.query.numPosts ? req.query.numPosts : 10; // the number of posts
-      const offset = req.query.offset ? req.query.offset : 0; // the number of docs to skip
+      // limit the number of posts and comments
+      const numberOfComments = 5;
+      const numberOfPosts = req.query.numberOfPosts
+         ? req.query.numberOfPosts
+         : 10;
+
+      // the number of docs to skip
+      const offset = req.query.offset ? req.query.offset : 0;
 
       // fetch list of posts
-      const posts = await Post.find(query).skip(offset).limit(numPosts);
+      const posts = await Post.find(query)
+         .skip(offset)
+         .limit(numberOfPosts)
+         .populate({ path: 'comments', perDocumentLimit: numberOfComments });
 
       if (posts) {
          return res.status(200).send(posts);
