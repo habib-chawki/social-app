@@ -146,6 +146,10 @@ describe('Test with multiple users', () => {
             .set('Authorization', `Bearer ${user.token}`)
             .expect(200);
 
+         // comment should have been deleted from post comments
+         const thePost = await Post.findById(post2._id);
+         expect(JSON.stringify(thePost.comments)).not.toContain(res.body._id);
+
          // the appropriate comment should have been deleted
          expect(res.body._id).toEqual(comment._id.toString());
 
