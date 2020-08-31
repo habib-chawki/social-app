@@ -44,6 +44,10 @@ describe('Test with a single user', () => {
             .set('Authorization', `Bearer ${user.token}`)
             .send({ content: comment.content })
             .expect(201);
+
+         // comment should have been added to post
+         const thePost = await Post.findById(post._id);
+         expect(JSON.stringify(thePost.comments)).toContain(res.body._id);
       });
    });
 
