@@ -99,6 +99,9 @@ describe('Test with setup and teardown', () => {
             const userPosts = await Post.find({});
             expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
 
+            // expect post to have a list of comments
+            expect(res.body[0]).toMatchObject({ comments: [] });
+
             // expect list of posts to contain at least post 1
             expect(res.body).toEqual(
                expect.arrayContaining([
