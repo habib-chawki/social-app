@@ -63,6 +63,7 @@ describe('Test with setup and teardown', () => {
       await Post.insertMany([
          { owner: user._id, content: 'Post 1' },
          { owner: user._id, content: 'Post 2' },
+         { owner: user._id, content: 'Post 3' },
       ]);
 
       return user;
@@ -99,15 +100,25 @@ describe('Test with setup and teardown', () => {
             const userPosts = await Post.find({});
             expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
 
-            // expect post to have a list of comments
-            expect(res.body[0]).toMatchObject({ comments: [] });
-
             // expect list of posts to contain at least post 1
             expect(res.body).toEqual(
                expect.arrayContaining([
                   expect.objectContaining({ content: 'Post 1' }),
                ])
             );
+         });
+
+         it('Should get limited number of posts', async () => {
+            // set limit for number of posts returned
+            const limit = 2;
+
+            const res = await request(app)
+               .get(`${baseUrl}?limit=${limit}`)
+               .set('Authorization', `Bearer ${user.token}`)
+               .expect(200);
+
+            // expect a list of "limit" posts
+            expect(res.body.length).toBe(limit);
          });
       });
 
