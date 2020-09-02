@@ -65,17 +65,15 @@ router.get('/', async (req, res) => {
 
       // limit the number of posts and comments
       const numberOfComments = 5;
-      const numberOfPosts = req.query.numberOfPosts
-         ? req.query.numberOfPosts
-         : 10;
+      const limit = req.query.limit ? req.query.limit : 10;
 
       // the number of docs to skip
-      const offset = req.query.offset ? req.query.offset : 0;
+      const skip = req.query.skip ? req.query.skip : 0;
 
       // fetch list of posts
       const posts = await Post.find(query)
-         .skip(offset)
-         .limit(numberOfPosts)
+         .skip(skip)
+         .limit(limit)
          .populate({ path: 'comments', perDocumentLimit: numberOfComments });
 
       if (posts) {
