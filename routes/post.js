@@ -64,16 +64,16 @@ router.get('/', async (req, res) => {
       const query = req.query.user ? { owner: req.query.user } : {};
 
       // limit the number of posts and comments
-      const numberOfComments = 5;
       const limit = req.query.limit ? req.query.limit : 10;
+      const numberOfComments = 5;
 
       // the number of docs to skip
       const skip = req.query.skip ? req.query.skip : 0;
 
       // fetch list of posts
       const posts = await Post.find(query)
-         .skip(skip)
-         .limit(limit)
+         .skip(parseInt(skip))
+         .limit(parseInt(limit))
          .populate({ path: 'comments', perDocumentLimit: numberOfComments });
 
       if (posts) {
