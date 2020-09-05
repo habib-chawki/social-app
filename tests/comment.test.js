@@ -14,6 +14,7 @@ describe('Test with a single user', () => {
       { content: 'Comment 1' },
       { content: 'Comment 2' },
       { content: 'Comment 3' },
+      { content: 'Comment 4' },
    ];
 
    beforeAll(async () => {
@@ -61,6 +62,19 @@ describe('Test with a single user', () => {
          // should get back the list of comments
          const comments = await Comment.find({ post: post._id });
          expect(JSON.stringify(res.body)).toEqual(JSON.stringify(comments));
+      });
+
+      // test pagination
+      it('Should fetch limited list of comments', async () => {
+         const limit = 2;
+
+         const res = await request(app)
+            .get(`${baseUrl}?post=${post._id}&limit=${limit}`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
+
+         // paginated list of comments
+         expect(res.body.length).toBe(limit);
       });
    });
 });
