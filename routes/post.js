@@ -63,12 +63,12 @@ router.get('/', async (req, res) => {
       // fetch posts of a specific user if query string is set up
       const query = req.query.user ? { owner: req.query.user } : {};
 
-      // limit the number of posts and comments
+      // limit the number of posts
       const limit = req.query.limit ? req.query.limit : 10;
-      const numberOfComments = 5;
-
-      // the number of docs to skip
       const skip = req.query.skip ? req.query.skip : 0;
+
+      // limit number of comments
+      const numberOfComments = 5;
 
       // fetch list of posts
       const posts = await Post.find(query)
