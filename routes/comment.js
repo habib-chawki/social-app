@@ -44,8 +44,14 @@ router.get('/', async (req, res) => {
          throw new Error('Invalid post id.');
       }
 
+      // limit number of comments
+      const limit = req.query.limit ? req.query.limit : 5;
+      const skip = req.query.skip ? req.query.skip : 0;
+
       // fetch and return comments list
-      const comments = await Comment.find({ post });
+      const comments = await Comment.find({ post })
+         .skip(parseInt(skip))
+         .limit(parseInt(limit));
 
       if (comments) {
          return res.status(200).send(comments);
