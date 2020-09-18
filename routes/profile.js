@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 
 const User = require('../models/user');
-const auth = require('../utils/auth');
+const auth = require('../middleware/auth');
 
 const router = express.Router({ mergeParams: true });
 
