@@ -9,6 +9,8 @@ const commentRouter = require('../routes/comment');
 
 const setDatabaseConnection = require('../db/connection');
 
+const errorHandler = require('../middleware/error-handler');
+
 const app = express();
 
 // set database connection
@@ -25,5 +27,8 @@ app.use('/', homeRouter);
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
 app.use('/comments', commentRouter);
+
+// setup error handler middleware
+app.use(errorHandler);
 
 module.exports = app;
