@@ -14,6 +14,7 @@ router.post('/signup', async (req, res, next) => {
    try {
       // create the new user, req.body: {email, password}
       const user = await User.create(req.body);
+
       if (user) {
          // generate an auth token when the user is created successfuly
          await user.generateAuthToken();
@@ -25,13 +26,10 @@ router.post('/signup', async (req, res, next) => {
          });
       }
 
-      // throw new Error('Unable to create user.');
-      // throw createError(400, 'Unable to create user');
+      throw new Error('Signup failed.');
    } catch (err) {
       // 400 - bad request
-      // res.status(400).send(e);
       next(createError(400, err.message));
-      // next(err);
    }
 });
 
