@@ -11,31 +11,32 @@ router.use('/:userId/profile', profileRouter);
 
 // user signup
 router.post('/signup', async (req, res, next) => {
-   // try {
-   // create the new user, req.body: {email, password}
-   const user = await User.create(req.body);
-   if (user) {
-      // generate an auth token when the user is created successfuly
-      await user.generateAuthToken();
+   try {
+      // create the new user, req.body: {email, password}
+      const user = await User.create(req.body);
+      if (user) {
+         // generate an auth token when the user is created successfuly
+         await user.generateAuthToken();
 
-      // 201 - created
-      // send back generated auth token
-      return res.status(201).send({
-         token: user.token,
-      });
+         // 201 - created
+         // send back generated auth token
+         return res.status(201).send({
+            token: user.token,
+         });
+      }
+
+      // throw new Error('Unable to create user.');
+      // throw createError(400, 'Unable to create user');
+   } catch (err) {
+      // 400 - bad request
+      // res.status(400).send(e);
+      next(createError(400, err.message));
+      // next(err);
    }
-
-   // throw new Error('Unable to create user.');
-   next(createError(400, 'Unable to create user'));
-   // } catch (err) {
-   //    // 400 - bad request
-   //    // res.status(400).send(e.message);
-   //    next(err);
-   // }
 });
 
 // user login
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
    const { email, password } = req.body;
 
    try {
@@ -63,7 +64,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 // update user password
-router.patch('/password', auth, async (req, res, next) => {
+router.patch('/password', auth, async (req, res) => {
    const user = req.user;
    const { oldPassword, newPassword } = req.body;
    try {
@@ -94,7 +95,7 @@ router.patch('/password', auth, async (req, res, next) => {
 });
 
 // user logout
-router.post('/logout', auth, async (req, res, next) => {
+router.post('/logout', auth, async (req, res) => {
    try {
       // remove auth token
       const { nModified } = await User.updateOne(
@@ -114,7 +115,7 @@ router.post('/logout', auth, async (req, res, next) => {
 });
 
 // delete user
-router.delete('/', auth, async (req, res, next) => {
+router.delete('/', auth, async (req, res) => {
    try {
       // remove user
       const { deletedCount } = await User.deleteOne({
