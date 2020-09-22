@@ -10,27 +10,27 @@ const userSchema = mongoose.Schema(
    {
       email: {
          type: String,
-         required: [true, 'Email is required.'],
+         required: [true, 'Email is required'],
          trim: true,
          unique: true,
          lowercase: true,
          validate(value) {
             if (!validator.isEmail(value)) {
-               throw new Error('Invalid Email.');
+               throw new Error('Invalid Email');
             }
          },
       },
       password: {
          type: String,
          trim: true,
-         required: [true, 'Password is required.'],
-         minlength: 5,
+         required: [true, 'Password is required'],
+         minlength: [5, 'Password should be at least 5 characters long'],
       },
       token: {
          type: String,
          validate(value) {
             if (!validator.isJWT(value)) {
-               throw new Error('Invalid token.');
+               throw new Error('Invalid token');
             }
          },
       },
@@ -48,7 +48,7 @@ userSchema.pre('save', async function () {
       if (this.isModified('password'))
          this.password = await bcrypt.hash(this.password, 8);
    } catch (e) {
-      throw new Error('Encryption failed.');
+      throw new Error('Encryption failed');
    }
 });
 
@@ -59,14 +59,14 @@ userSchema.methods.generateAuthToken = async function () {
       this.token = await jwt.sign({ id: this._id }, process.env.SECRET_KEY);
       await this.save();
    } catch (e) {
-      throw new Error('Unable to generate token: ' + e.message);
+      throw new Error('Token generation failed');
    }
 };
 
-// handle duplicate key error
+// handle duplicate email error
 userSchema.post('save', function (error, doc, next) {
    if (error.name === 'MongoError' && error.code === 11000) {
-      return next(new Error('Email already exists.'));
+      return next(new Error('Email already exists'));
    }
 
    next();
