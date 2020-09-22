@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema(
    {
       email: {
          type: String,
-         required: true,
+         required: [true, 'Email is required.'],
          trim: true,
          unique: true,
          lowercase: true,
@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema(
       password: {
          type: String,
          trim: true,
-         required: true,
+         required: [true, 'Password is required.'],
          minlength: 5,
       },
       token: {
@@ -62,5 +62,14 @@ userSchema.methods.generateAuthToken = async function () {
       throw new Error('Unable to generate token: ' + e.message);
    }
 };
+
+// handle duplicate key error
+userSchema.post('save', function (error, doc, next) {
+   if (error.name === 'MongoError' && error.code === 11000) {
+      return next(new Error('Email already exists.'));
+   }
+
+   next();
+});
 
 module.exports = mongoose.model('User', userSchema);
