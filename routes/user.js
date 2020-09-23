@@ -27,7 +27,7 @@ router.post('/signup', async (req, res, next) => {
       }
 
       // last resort
-      throw new Error('Signup failed.');
+      throw new Error('Signup failed');
    } catch (err) {
       // 400 - bad request
       next(createError(400, err));
@@ -35,30 +35,32 @@ router.post('/signup', async (req, res, next) => {
 });
 
 // user login
-router.post('/login', async (req, res) => {
-   const { email, password } = req.body;
-
+router.post('/login', async (req, res, next) => {
    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+         throw new Error('Both email and password fields are required');
+      }
+
       // find user by email
-      const user = await User.findOne({
-         email,
-      });
+      const user = await User.findOne({ email });
+
       if (user) {
          // check password validity
          const match = await bcrypt.compare(password, user.password);
+
          if (match) {
-            // send back generated token
+            // generate token and send it back
             await user.generateAuthToken();
-            return res.status(200).send({
-               token: user.token,
-            });
+            return res.status(200).send({ token: user.token });
          }
+
+         throw new Error('Invalid password');
       }
 
-      // reject login in case of incorrect email or password
-      throw new Error('Unable to login. Incorrect email or password.');
-   } catch (e) {
-      res.status(400).send(e.message);
+      throw new Error('Invalid email');
+   } catch (err) {
+      next(createError(400, err));
    }
 });
 
