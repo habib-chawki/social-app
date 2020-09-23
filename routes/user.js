@@ -26,10 +26,11 @@ router.post('/signup', async (req, res, next) => {
          });
       }
 
+      // last resort
       throw new Error('Signup failed.');
    } catch (err) {
       // 400 - bad request
-      next(createError(400, err.message));
+      next(createError(400, err));
    }
 });
 
