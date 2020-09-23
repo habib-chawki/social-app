@@ -66,7 +66,7 @@ userSchema.methods.generateAuthToken = async function () {
 // handle duplicate email error
 userSchema.post('save', function (error, doc, next) {
    if (error.name === 'MongoError' && error.code === 11000) {
-      return next(new Error('Email already exists'));
+      return next(new Error('Email exists already'));
    }
 
    next();
