@@ -47,8 +47,22 @@ userSchema.pre('save', async function () {
       // hash password only if it has been modified
       if (this.isModified('password'))
          this.password = await bcrypt.hash(this.password, 8);
-   } catch (e) {
-      throw new Error('Encryption failed');
+   } catch (err) {
+      throw new Error('Hashing failed');
+   }
+});
+
+// hash password after update and validation
+userSchema.post('updateOne', async function () {
+   try {
+      console.log(this._update);
+      // 'this' refers to the query
+      this._update.$set.password = await bcrypt.hash(
+         this._update.$set.password,
+         8
+      );
+   } catch (err) {
+      throw new Error('Hashing failed');
    }
 });
 
