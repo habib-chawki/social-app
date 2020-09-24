@@ -38,6 +38,7 @@ router.post('/signup', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
    try {
       const { email, password } = req.body;
+
       if (!email || !password) {
          throw new Error('Both email and password fields are required');
       }
@@ -55,9 +56,11 @@ router.post('/login', async (req, res, next) => {
             return res.status(200).send({ token: user.token });
          }
 
+         // in case of invalid password
          throw new Error('Invalid password');
       }
 
+      // last resort
       throw new Error('Invalid email');
    } catch (err) {
       next(createError(400, err));
@@ -65,33 +68,33 @@ router.post('/login', async (req, res, next) => {
 });
 
 // update user password
-router.patch('/password', auth, async (req, res) => {
-   const user = req.user;
-   const { oldPassword, newPassword } = req.body;
+router.patch('/password', auth, async (req, res, next) => {
    try {
+      const user = req.user;
+      const { oldPassword, newPassword } = req.body;
+
       // check if password is valid
       const match = await bcrypt.compare(oldPassword, user.password);
 
       if (match) {
          // find user by id and patch the password (after hashing)
-         const newPasswordHash = await bcrypt.hash(newPassword, 8);
+         // const newPasswordHash = await bcrypt.hash(newPassword, 8);
          const { nModified } = await User.updateOne(
-            {
-               _id: user._id,
-            },
-            {
-               password: newPasswordHash,
-            }
+            { _id: user._id },
+            { password: newPassword },
+            { runValidators: true }
          );
 
          if (nModified) {
-            return res.status(200).send('Password updated.');
+            return res
+               .status(200)
+               .send({ message: 'Password updated successfully' });
          }
       }
 
-      throw new Error('Unable to update password.');
-   } catch (e) {
-      res.status(500).send(e.message);
+      throw new Error('Incorrect password');
+   } catch (err) {
+      next(createError(400, err));
    }
 });
 
