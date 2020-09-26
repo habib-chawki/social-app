@@ -41,25 +41,25 @@ router.post('/login', async (req, res, next) => {
       // retrieve email and password from request body
       const { email, password } = req.body;
 
-      if (!email || !password) {
-         throw new Error('Both email and password fields are required');
-      }
-
       // find user by email
       const user = await User.findOne({ email });
 
       if (user) {
-         // check password validity
-         const match = await bcrypt.compare(password, user.password);
+         if (password) {
+            // check password validity
+            const match = await bcrypt.compare(password, user.password);
 
-         if (match) {
-            // generate token and send it back
-            await user.generateAuthToken();
-            return res.status(200).send({ token: user.token });
+            if (match) {
+               // generate token and send it back
+               await user.generateAuthToken();
+               return res.status(200).send({ token: user.token });
+            }
+
+            // in case of invalid password
+            throw new Error('Invalid password');
          }
 
-         // in case of invalid password
-         throw new Error('Invalid password');
+         throw new Error('Required password');
       }
 
       // last resort
@@ -72,25 +72,31 @@ router.post('/login', async (req, res, next) => {
 // update user password
 router.patch('/password', auth, async (req, res, next) => {
    try {
-      // retrieve user id and password
-      const { userId = _id, password } = req.user;
-
       // retrieve old and new passwords from request body
       const { oldPassword, newPassword } = req.body;
 
+      if (!oldPassword || !newPassword) {
+         throw new Error('Both old and new password fields are required');
+      }
+
+      const user = req.user;
+
       // check if password is correct
-      const match = await bcrypt.compare(oldPassword, password);
+      const match = await bcrypt.compare(oldPassword, user.password);
 
       if (match) {
-         const user = await User.findById(userId);
+         // new password should not be the same as the old password
+         if (oldPassword === newPassword) {
+            throw new Error('Can not use the same password');
+         }
+
+         // update password
          user.password = newPassword;
          user.save();
 
-         if (userDoc.password) {
-            return res
-               .status(200)
-               .send({ message: 'Password updated successfully' });
-         }
+         return res
+            .status(200)
+            .send({ message: 'Password updated successfully' });
       }
 
       throw new Error('Incorrect password');
