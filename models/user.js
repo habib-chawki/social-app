@@ -52,20 +52,6 @@ userSchema.pre('save', async function () {
    }
 });
 
-// hash password after update and validation
-userSchema.post('updateOne', async function () {
-   try {
-      console.log(this._update);
-      // 'this' refers to the query
-      this._update.$set.password = await bcrypt.hash(
-         this._update.$set.password,
-         8
-      );
-   } catch (err) {
-      throw new Error('Hashing failed');
-   }
-});
-
 // instance method to generate authentication token
 userSchema.methods.generateAuthToken = async function () {
    try {
