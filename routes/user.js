@@ -77,15 +77,11 @@ router.patch('/password', auth, async (req, res, next) => {
       const match = await bcrypt.compare(oldPassword, user.password);
 
       if (match) {
-         // find user by id and patch the password (after hashing)
-         // const newPasswordHash = await bcrypt.hash(newPassword, 8);
-         const { nModified } = await User.updateOne(
-            { _id: user._id },
-            { password: newPassword },
-            { runValidators: true }
-         );
+         const userDoc = await User.findById(user._id);
+         userDoc.password = newPassword;
+         userDoc.save();
 
-         if (nModified) {
+         if (userDoc.password) {
             return res
                .status(200)
                .send({ message: 'Password updated successfully' });
