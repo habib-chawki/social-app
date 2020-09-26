@@ -59,7 +59,7 @@ router.post('/login', async (req, res, next) => {
             throw new Error('Invalid password');
          }
 
-         throw new Error('Required password');
+         throw new Error('Password is required');
       }
 
       // last resort
@@ -92,7 +92,7 @@ router.patch('/password', auth, async (req, res, next) => {
 
          // update password
          user.password = newPassword;
-         user.save();
+         await user.save();
 
          return res
             .status(200)
