@@ -12,8 +12,11 @@ router.use('/:userId/profile', profileRouter);
 // user signup
 router.post('/signup', async (req, res, next) => {
    try {
-      // create the new user, req.body: {email, password}
-      const user = await User.create(req.body);
+      // retrieve email and password from request body
+      const { email, password } = req.body;
+
+      // create the new user
+      const user = await User.create({ email, password });
 
       if (user) {
          // generate an auth token when the user is created successfuly
@@ -21,9 +24,7 @@ router.post('/signup', async (req, res, next) => {
 
          // 201 - created
          // send back generated auth token
-         return res.status(201).send({
-            token: user.token,
-         });
+         return res.status(201).send({ token: user.token });
       }
 
       // last resort
@@ -37,6 +38,7 @@ router.post('/signup', async (req, res, next) => {
 // user login
 router.post('/login', async (req, res, next) => {
    try {
+      // retrieve email and password from request body
       const { email, password } = req.body;
 
       if (!email || !password) {
@@ -70,16 +72,19 @@ router.post('/login', async (req, res, next) => {
 // update user password
 router.patch('/password', auth, async (req, res, next) => {
    try {
-      const user = req.user;
+      // retrieve user id and password
+      const { userId = _id, password } = req.user;
+
+      // retrieve old and new passwords from request body
       const { oldPassword, newPassword } = req.body;
 
-      // check if password is valid
-      const match = await bcrypt.compare(oldPassword, user.password);
+      // check if password is correct
+      const match = await bcrypt.compare(oldPassword, password);
 
       if (match) {
-         const userDoc = await User.findById(user._id);
-         userDoc.password = newPassword;
-         userDoc.save();
+         const user = await User.findById(userId);
+         user.password = newPassword;
+         user.save();
 
          if (userDoc.password) {
             return res
