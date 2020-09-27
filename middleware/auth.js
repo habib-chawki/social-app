@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const createError = require('http-errors');
+
 const User = require('../models/user');
 
 // authentication middleware
@@ -9,8 +11,10 @@ async function auth(req, res, next) {
 
       // ensure authorization header is populated
       if (!authorization) {
-         throw new Error('Unauthorized.');
+         throw new Error('Unauthorized');
       }
+
+      // extract token from request header
       const token = authorization.replace('Bearer ', '');
 
       // verify token validity (originally signed with user id)
@@ -28,9 +32,9 @@ async function auth(req, res, next) {
       }
 
       // throw an error if token is invalid or user not found
-      throw new Error('Unauthorized.');
-   } catch (e) {
-      res.status(401).send(e.message);
+      throw new Error('Unauthorized');
+   } catch (err) {
+      next(createError(401, err));
    }
 }
 
