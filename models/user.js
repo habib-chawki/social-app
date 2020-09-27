@@ -45,23 +45,25 @@ const userSchema = mongoose.Schema(
 userSchema.pre('save', async function () {
    try {
       // hash password only if it has been modified
-      if (this.isModified('password'))
+      if (this.isModified('password')) {
          this.password = await bcrypt.hash(this.password, 8);
+      }
    } catch (err) {
-      throw new Error('Hashing failed');
+      throw new Error('Unexpected error');
    }
 });
 
-// instance method to generate authentication token
-userSchema.methods.generateAuthToken = async function () {
+// generate authentication token
+userSchema.pre('save', async function () {
    try {
-      // sign the token with the user id
-      this.token = await jwt.sign({ id: this._id }, process.env.SECRET_KEY);
-      await this.save();
+      if (!this.token) {
+         // sign the token with the user id
+         this.token = await jwt.sign({ id: this._id }, process.env.SECRET_KEY);
+      }
    } catch (e) {
-      throw new Error('Token generation failed');
+      throw new Error('Unexpected error');
    }
-};
+});
 
 // handle duplicate email error
 userSchema.post('save', function (error, doc, next) {
