@@ -19,9 +19,6 @@ router.post('/signup', async (req, res, next) => {
       const user = await User.create({ email, password });
 
       if (user) {
-         // generate an auth token when the user is created successfuly
-         await user.generateAuthToken();
-
          // 201 - created
          // send back generated auth token
          return res.status(201).send({ token: user.token });
@@ -50,8 +47,7 @@ router.post('/login', async (req, res, next) => {
             const match = await bcrypt.compare(password, user.password);
 
             if (match) {
-               // generate token and send it back
-               await user.generateAuthToken();
+               // send back auth token
                return res.status(200).send({ token: user.token });
             }
 
