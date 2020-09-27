@@ -102,7 +102,7 @@ router.patch('/password', auth, async (req, res, next) => {
 });
 
 // user logout
-router.post('/logout', auth, async (req, res) => {
+router.post('/logout', auth, async (req, res, next) => {
    try {
       // remove auth token
       const { nModified } = await User.updateOne(
@@ -114,15 +114,15 @@ router.post('/logout', auth, async (req, res) => {
          return res.sendStatus(200);
       }
 
-      throw new Error('Unable to logout');
-   } catch (e) {
+      throw new Error('Logout failed');
+   } catch (err) {
       // 500 - internal Server Error
-      res.status(500).send(e.message);
+      next(createError(500, err));
    }
 });
 
 // delete user
-router.delete('/', auth, async (req, res) => {
+router.delete('/', auth, async (req, res, next) => {
    try {
       // remove user
       const { deletedCount } = await User.deleteOne({
@@ -134,9 +134,9 @@ router.delete('/', auth, async (req, res) => {
       }
 
       throw new Error('Unable to remove user.');
-   } catch (e) {
+   } catch (err) {
       // 500 - internal Server Error
-      res.status(500).send(e.message);
+      next(createError(500, err));
    }
 });
 
