@@ -130,10 +130,10 @@ router.delete('/', auth, async (req, res, next) => {
       });
 
       if (deletedCount) {
-         return res.status(200).send('User removed.');
+         return res.status(200).send({ message: 'User removed successfully' });
       }
 
-      throw new Error('Unable to remove user.');
+      throw new Error('Operation failed');
    } catch (err) {
       // 500 - internal Server Error
       next(createError(500, err));
