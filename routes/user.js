@@ -7,6 +7,8 @@ const profileRouter = require('../routes/profile');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
+
+// delegate profile related requests to the profile route
 router.use('/:userId/profile', profileRouter);
 
 // user signup

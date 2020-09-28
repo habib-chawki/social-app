@@ -22,13 +22,13 @@ app.use(bodyParser.json());
 // enable cors
 app.use(cors());
 
-// use routers
+// use routers and delegate requests
 app.use('/', homeRouter);
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
 app.use('/comments', commentRouter);
 
-// setup error handler middleware
+// use error handling middleware
 app.use(errorHandler);
 
 module.exports = app;
