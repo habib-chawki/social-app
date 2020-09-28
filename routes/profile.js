@@ -1,29 +1,37 @@
 const express = require('express');
 const multer = require('multer');
+const validator = require('validator');
+const createError = require('http-errors');
 
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 
+// preserve the req.params values from the parent router (userRouter)
 const router = express.Router({ mergeParams: true });
 
 // require authentication for all incoming requests
 router.use(auth);
 
 // get user profile by id
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
    try {
       // retrieve user id from request url
       const userId = req.params.userId;
-      const { profile } = await User.findById(userId);
 
-      if (profile) {
-         return res.status(200).send(profile);
+      if (!validator.isMongoId(userId)) {
+         throw new Error('Invalid id');
       }
 
-      throw new Error('Unable to fetch user profile.');
-   } catch (e) {
+      const user = await User.findById(userId);
+
+      if (user) {
+         return res.status(200).send(user.profile);
+      }
+
+      throw new Error('Profile not found');
+   } catch (err) {
       // 500 - Internal Server Error
-      res.status(500).send(e.message);
+      next(createError(500, err));
    }
 });
 
@@ -62,9 +70,7 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
       // retrieve user profile
       const { profile } = await User.findByIdAndUpdate(
          userId,
-         {
-            'profile.avatar': req.file.buffer,
-         },
+         { 'profile.avatar': req.file.buffer },
          { new: true }
       );
 
