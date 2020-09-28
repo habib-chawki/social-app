@@ -69,26 +69,32 @@ router.put('/', async (req, res, next) => {
 const upload = multer();
 
 // upload an avatar
-router.post('/avatar', upload.single('avatar'), async (req, res) => {
+router.post('/avatar', upload.single('avatar'), async (req, res, next) => {
    try {
       // retrieve user id
       const userId = req.params.userId;
 
+      // check user id validity
+      if (!validator.isMongoId(userId)) {
+         throw createError(400, 'Invalid id');
+      }
+
       // retrieve user profile
-      const { profile } = await User.findByIdAndUpdate(
+      const user = await User.findByIdAndUpdate(
          userId,
          { 'profile.avatar': req.file.buffer },
          { new: true }
       );
 
-      if (profile) {
-         return res.status(200).send('Avatar uploaded successfuly');
+      if (user.profile.avatar) {
+         return res
+            .status(200)
+            .send({ message: 'Avatar uploaded successfuly' });
       }
 
-      throw new Error('Unable to upload avatar.');
-   } catch (e) {
-      // 500 - internal Server Error
-      res.status(500).send(e.message);
+      throw createError(500, 'Avatar upload failed');
+   } catch (err) {
+      next(err);
    }
 });
 

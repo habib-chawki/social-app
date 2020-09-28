@@ -2,7 +2,7 @@
 function errorHandler(err, req, res, next) {
    // create error object
    const error = {
-      status: err.status,
+      status: err.status || 500,
       message: err.message,
       path: req.originalUrl,
       timestamp: Date.now(),
