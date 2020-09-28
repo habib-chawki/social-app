@@ -12,7 +12,7 @@ const router = express.Router({ mergeParams: true });
 // require authentication for all incoming requests
 router.use(auth);
 
-// get user profile by id
+// get user profile by user id
 router.get('/', async (req, res, next) => {
    try {
       // retrieve user id from request url
@@ -31,16 +31,20 @@ router.get('/', async (req, res, next) => {
 
       throw createError(404, 'Profile not found');
    } catch (err) {
-      // 404 - Not found
       next(err);
    }
 });
 
 // update user profile
-router.put('/', async (req, res) => {
+router.put('/', async (req, res, next) => {
    try {
       // retrieve user id
       const userId = req.params.userId;
+
+      // check user id validity
+      if (!validator.isMongoId(userId)) {
+         throw createError(400, 'Invalid id');
+      }
 
       // replace profile with updated version
       const response = await User.replaceOne(
@@ -50,16 +54,18 @@ router.put('/', async (req, res) => {
 
       // nModified: number of documents modified
       if (response.nModified === 1) {
-         return res.status(200).send(response);
+         return res
+            .status(200)
+            .send({ message: 'Profile updated successfully' });
       }
 
-      throw new Error('Unable to update profile.');
-   } catch (e) {
-      res.status(500).send(e.message);
+      throw createError(500, 'Profile update failed');
+   } catch (err) {
+      next(err);
    }
 });
 
-// setup multer middleware for file upload
+// set up multer middleware for file upload
 const upload = multer();
 
 // upload an avatar
