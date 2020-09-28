@@ -18,8 +18,9 @@ router.get('/', async (req, res, next) => {
       // retrieve user id from request url
       const userId = req.params.userId;
 
+      // check user id validity
       if (!validator.isMongoId(userId)) {
-         throw new Error('Invalid id');
+         throw createError(400, 'Invalid id');
       }
 
       const user = await User.findById(userId);
@@ -28,10 +29,10 @@ router.get('/', async (req, res, next) => {
          return res.status(200).send(user.profile);
       }
 
-      throw new Error('Profile not found');
+      throw createError(404, 'Profile not found');
    } catch (err) {
-      // 500 - Internal Server Error
-      next(createError(500, err));
+      // 404 - Not found
+      next(err);
    }
 });
 
