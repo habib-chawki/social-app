@@ -8,7 +8,7 @@ const postSchema = mongoose.Schema(
       },
       content: {
          type: String,
-         required: true,
+         required: [true, 'Content is required'],
          trim: true,
       },
       comments: {
