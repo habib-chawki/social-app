@@ -1,5 +1,6 @@
 const express = require('express');
 const validator = require('validator');
+const createError = require('http-errors');
 
 const Post = require('../models/post');
 const auth = require('../middleware/auth');
@@ -10,25 +11,25 @@ const router = express.Router();
 router.use(auth);
 
 // create post
-router.post('/', async (req, res) => {
-   const { content } = req.body;
-   const owner = req.user;
-
+router.post('/', async (req, res, next) => {
    try {
-      // create and associate post with owner
+      const { content } = req.body;
+      const { _id: userId } = req.user;
+
+      // create new post
       const post = await Post.create({
-         owner: owner._id,
+         owner: userId,
          content,
       });
 
-      // return post if created successfuly
+      // return post when created successfully
       if (post) {
          return res.status(201).send(post);
       }
 
-      throw new Error('Unable to create post.');
-   } catch (e) {
-      res.status(500).send(e.message);
+      throw new Error('Create post failed');
+   } catch (err) {
+      next(createError(err));
    }
 });
 
