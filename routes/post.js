@@ -14,6 +14,11 @@ router.use(auth);
 router.post('/', async (req, res, next) => {
    try {
       const { content } = req.body;
+
+      if (!content) {
+         throw createError(400, 'Post content is required');
+      }
+
       const { _id: userId } = req.user;
 
       // create new post
@@ -27,9 +32,9 @@ router.post('/', async (req, res, next) => {
          return res.status(201).send(post);
       }
 
-      throw new Error('Create post failed');
+      throw createError(500, 'Create post failed');
    } catch (err) {
-      next(createError(err));
+      next(err);
    }
 });
 
