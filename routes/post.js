@@ -39,14 +39,18 @@ router.post('/', async (req, res, next) => {
 });
 
 // get a single post by id
-router.get('/:id', async (req, res) => {
-   // fetch post id
-   const postId = req.params.id;
-
+router.get('/:id', async (req, res, next) => {
    try {
+      // fetch post id from request params
+      const postId = req.params.id;
+
+      if (!postId) {
+         throw createError(400, 'Post id is required');
+      }
+
       // validate id
       if (!validator.isMongoId(postId)) {
-         throw new Error('Invalid id.');
+         throw createError(400, 'Invalid id');
       }
 
       // find post by id
@@ -57,9 +61,9 @@ router.get('/:id', async (req, res) => {
          return res.status(200).send(post);
       }
 
-      throw new Error('Post not found.');
-   } catch (e) {
-      res.status(404).send(e.message);
+      throw createError(404, 'Post not found');
+   } catch (err) {
+      next(err);
    }
 });
 
