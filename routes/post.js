@@ -68,9 +68,10 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // get list of posts
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
    try {
       // fetch posts of a specific user if query string is set up
+      // otherwise fetch current user's posts
       const query = req.query.user ? { owner: req.query.user } : {};
 
       // limit the number of posts
@@ -90,9 +91,9 @@ router.get('/', async (req, res) => {
          return res.status(200).send(posts);
       }
 
-      throw new Error('Unable to fetch posts.');
-   } catch (e) {
-      res.status(404).send(e.message);
+      throw new Error('Unable to fetch posts');
+   } catch (err) {
+      next(createError(404, err));
    }
 });
 
