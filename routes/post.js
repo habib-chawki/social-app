@@ -153,10 +153,10 @@ router.delete('/:id', async (req, res, next) => {
 });
 
 // delete all posts
-router.delete('/', async (req, res) => {
-   const owner = req.user._id;
-
+router.delete('/', async (req, res, next) => {
    try {
+      const owner = req.user._id;
+
       // remove posts and return number of deleted documents
       const { deletedCount } = await Post.deleteMany({ owner });
 
@@ -164,9 +164,9 @@ router.delete('/', async (req, res) => {
          return res.send({ deletedCount });
       }
 
-      throw new Error('Unable to delete posts.');
-   } catch (e) {
-      res.status(404).send(e.message);
+      throw createError(500, 'Delete posts failed');
+   } catch (err) {
+      next(err);
    }
 });
 
