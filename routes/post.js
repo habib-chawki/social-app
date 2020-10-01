@@ -91,9 +91,9 @@ router.get('/', async (req, res, next) => {
          return res.status(200).send(posts);
       }
 
-      throw new Error('Unable to fetch posts');
+      throw createError(404, 'Posts not found');
    } catch (err) {
-      next(createError(404, err));
+      next(err);
    }
 });
 
