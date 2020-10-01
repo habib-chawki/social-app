@@ -98,14 +98,14 @@ router.get('/', async (req, res, next) => {
 });
 
 // update post by id
-router.put('/:id', async (req, res) => {
-   const id = req.params.id;
-   const content = req.body.content;
-
+router.put('/:id', async (req, res, next) => {
    try {
+      const id = req.params.id;
+      const { content } = req.body;
+
       // validate id
       if (!validator.isMongoId(id)) {
-         throw new Error('Invalid id.');
+         throw createError(400, 'Invalid id');
       }
 
       const post = await Post.findOneAndUpdate(
@@ -119,9 +119,9 @@ router.put('/:id', async (req, res) => {
       }
 
       // throw an error if post can not be updated
-      throw new Error(`Unable to update post.`);
-   } catch (e) {
-      res.status(404).send(e.message);
+      throw createError(500, 'Update post failed');
+   } catch (err) {
+      next(err);
    }
 });
 
