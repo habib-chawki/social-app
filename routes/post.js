@@ -100,11 +100,11 @@ router.get('/', async (req, res, next) => {
 // update post by id
 router.put('/:id', async (req, res, next) => {
    try {
-      const id = req.params.id;
+      const postId = req.params.id;
       const { content } = req.body;
 
       // validate id
-      if (!validator.isMongoId(id)) {
+      if (!validator.isMongoId(postId)) {
          throw createError(400, 'Invalid id');
       }
 
@@ -126,19 +126,19 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // delete post by id
-router.delete('/:id', async (req, res) => {
-   const owner = req.user._id;
-   const id = req.params.id;
-
+router.delete('/:id', async (req, res, next) => {
    try {
+      const owner = req.user._id;
+      const postId = req.params.id;
+
       // validate id
-      if (!validator.isMongoId(id)) {
-         throw new Error('Invalid id');
+      if (!validator.isMongoId(postId)) {
+         throw createError(400, 'Invalid id');
       }
 
       const post = await Post.findOneAndDelete({
          owner,
-         _id: id,
+         _id: postId,
       });
 
       if (post) {
@@ -146,9 +146,9 @@ router.delete('/:id', async (req, res) => {
       }
 
       // post does not exist
-      throw new Error('Unable to delete post.');
-   } catch (e) {
-      res.status(404).send(e.message);
+      throw createError(500, 'Delete post failed');
+   } catch (err) {
+      next(err);
    }
 });
 
