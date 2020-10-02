@@ -65,12 +65,17 @@ router.get('/', async (req, res, next) => {
 });
 
 // update a comment by id
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
    try {
       const owner = req.user._id;
       const post = req.query.post;
       const id = req.params.id;
       const content = req.body.content;
+
+      // validate post id
+      if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
+         throw crateError(400, 'Invalid id');
+      }
 
       const comment = await Comment.findOneAndUpdate(
          { _id: id, owner, post },
@@ -82,9 +87,9 @@ router.put('/:id', async (req, res) => {
          return res.status(200).send(comment);
       }
 
-      throw new Error('Unable to update comment.');
-   } catch (e) {
-      res.status(400).send(e.message);
+      throw createError(500, 'Update comment failed');
+   } catch (err) {
+      next(err);
    }
 });
 
