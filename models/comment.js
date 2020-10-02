@@ -3,9 +3,21 @@ const Post = require('./post');
 
 const commentSchema = mongoose.Schema(
    {
-      owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
-      content: { type: String, required: true, trim: true },
+      owner: {
+         type: mongoose.Schema.Types.ObjectId,
+         required: [true, 'User id is required'],
+         ref: 'User',
+      },
+      post: {
+         type: mongoose.Schema.Types.ObjectId,
+         required: [true, 'Post id is required'],
+         ref: 'Post',
+      },
+      content: {
+         type: String,
+         required: [true, 'Comment content is required'],
+         trim: true,
+      },
    },
    {
       timestamps: true,
