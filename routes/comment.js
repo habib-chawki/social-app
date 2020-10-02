@@ -72,7 +72,7 @@ router.put('/:id', async (req, res, next) => {
       const id = req.params.id;
       const content = req.body.content;
 
-      // validate post id
+      // validate id
       if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
          throw crateError(400, 'Invalid id');
       }
@@ -94,11 +94,16 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // delete a comment by id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
    try {
       const owner = req.user._id;
       const post = req.query.post;
       const id = req.params.id;
+
+      // validate id
+      if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
+         throw crateError(400, 'Invalid id');
+      }
 
       const comment = await Comment.findOneAndDelete({ _id: id, owner, post });
 
@@ -106,9 +111,9 @@ router.delete('/:id', async (req, res) => {
          return res.status(200).send(comment);
       }
 
-      throw new Error('Unable to delete comment.');
-   } catch (e) {
-      res.status(400).send(e.message);
+      throw createError(500, 'Delete comment failed');
+   } catch (err) {
+      next(err);
    }
 });
 
