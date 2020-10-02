@@ -36,13 +36,13 @@ router.post('/', async (req, res, next) => {
 });
 
 // get a list of comments
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
    try {
       const post = req.query.post;
 
       // validate post id
       if (!validator.isMongoId(post)) {
-         throw new Error('Invalid post id.');
+         throw crateError(400, 'Invalid post id');
       }
 
       // limit number of comments
@@ -58,9 +58,9 @@ router.get('/', async (req, res) => {
          return res.status(200).send(comments);
       }
 
-      throw new Error('Unable to fetch commnets.');
-   } catch (e) {
-      res.status(404).send(e.message);
+      throw createError(404, 'Fetching comments failed');
+   } catch (err) {
+      next(err);
    }
 });
 
