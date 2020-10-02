@@ -1,5 +1,6 @@
 const express = require('express');
 const validator = require('validator');
+const createError = require('http-errors');
 
 const Comment = require('../models/comment');
 const auth = require('../middleware/auth');
@@ -10,7 +11,7 @@ const router = express.Router();
 router.use(auth);
 
 // create a comment
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
    try {
       const owner = req.user._id;
       const post = req.query.post;
@@ -18,7 +19,7 @@ router.post('/', async (req, res) => {
 
       // validate post id
       if (!validator.isMongoId(post)) {
-         throw new Error('Invalid post id.');
+         throw createError(400, 'Invalid post id');
       }
 
       // create comment
@@ -28,9 +29,9 @@ router.post('/', async (req, res) => {
          return res.status(201).send(comment);
       }
 
-      throw new Error('Unable to add comment.');
-   } catch (e) {
-      res.status(400).send(e.message);
+      throw createError(500, 'Create comment failed');
+   } catch (err) {
+      next(err);
    }
 });
 
