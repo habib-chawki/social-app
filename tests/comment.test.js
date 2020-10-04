@@ -23,7 +23,6 @@ describe('Test with a single user', () => {
          email: 'habib@email.com',
          password: 'mypassword',
       });
-      await user.generateAuthToken();
 
       // create a post
       post = await Post.create({
@@ -85,7 +84,6 @@ describe('Test with multiple users', () => {
 
    const createUser = async (credentials) => {
       const user = await User.create(credentials);
-      await user.generateAuthToken();
 
       // create a post
       const post = await Post.create({ owner: user._id, content: 'My post' });
@@ -147,7 +145,7 @@ describe('Test with multiple users', () => {
             .put(`${baseUrl}/${comment._id}?post=${post2._id}`)
             .set('Authorization', `Bearer ${user2.token}`)
             .send({ content: 'updated !' })
-            .expect(400);
+            .expect(500);
 
          expect(res.body.content).not.toEqual('updated !');
       });
@@ -176,7 +174,7 @@ describe('Test with multiple users', () => {
          await request(app)
             .delete(`${baseUrl}/${comment2._id}?post=${post._id}`)
             .set('Authorization', `Bearer ${user.token}`)
-            .expect(400);
+            .expect(500);
 
          // comment should not have been deleted
          const user2Comment = await Comment.findById(comment2._id);
