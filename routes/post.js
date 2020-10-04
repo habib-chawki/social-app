@@ -109,7 +109,7 @@ router.put('/:id', async (req, res, next) => {
       }
 
       const post = await Post.findOneAndUpdate(
-         { _id: id, owner: req.user._id },
+         { _id: postId, owner: req.user._id },
          { content },
          { new: true }
       );
