@@ -53,7 +53,6 @@ describe('Test with setup and teardown', () => {
 
    beforeEach(async () => {
       user = await User.create(credentials);
-      await user.generateAuthToken();
    });
 
    // remove user document after each test
