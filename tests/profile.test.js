@@ -28,7 +28,6 @@ let user;
 // create user
 beforeAll(async () => {
    user = await User.create(credentials);
-   await user.generateAuthToken();
 });
 
 describe('GET /users/:userId/profile', () => {
