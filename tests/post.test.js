@@ -24,7 +24,6 @@ describe('POST /posts', () => {
    let user;
    beforeAll(async () => {
       user = await User.create(credentials);
-      await user.generateAuthToken();
    });
 
    it.each(posts)('Should create post', async (post) => {
@@ -58,7 +57,6 @@ describe('Test with setup and teardown', () => {
    // create a new user with a list of posts
    const createUser = async (credentials) => {
       const user = await User.create(credentials);
-      await user.generateAuthToken();
 
       await Post.insertMany([
          { owner: user._id, content: 'Post 1' },
@@ -180,7 +178,7 @@ describe('Test with setup and teardown', () => {
             .put(`${baseUrl}/${post._id}`)
             .set('Authorization', `Bearer ${user2.token}`)
             .send({ content: updatedPostContent })
-            .expect(404);
+            .expect(500);
 
          // post should not have been updated
          post = await Post.findById(post._id);
@@ -214,7 +212,7 @@ describe('Test with setup and teardown', () => {
          await request(app)
             .delete(`${baseUrl}/${post._id}`)
             .set('Authorization', `Bearer ${user2.token}`)
-            .expect(404);
+            .expect(500);
 
          // post should still exist
          post = await Post.findById(post._id);
