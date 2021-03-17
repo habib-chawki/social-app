@@ -22,8 +22,8 @@ router.post('/signup', async (req, res, next) => {
 
       if (user) {
          // 201 - created
-         // send back generated auth token
-         return res.status(201).send({ userId: user._id, token: user.token });
+         // send back generated auth token and user id
+         return res.status(201).send({ id: user._id, token: user.token });
       }
 
       // last resort
@@ -49,8 +49,8 @@ router.post('/login', async (req, res, next) => {
             const match = await bcrypt.compare(password, user.password);
 
             if (match) {
-               // send back auth token
-               return res.status(200).send({ token: user.token });
+               // send back auth token and user id
+               return res.status(200).send({ id: user._id, token: user.token });
             }
 
             // in case of invalid password
