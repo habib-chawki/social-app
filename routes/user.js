@@ -23,7 +23,7 @@ router.post('/signup', async (req, res, next) => {
       if (user) {
          // 201 - created
          // send back generated auth token
-         return res.status(201).send({ token: user.token });
+         return res.status(201).send({ userId: user._id, token: user.token });
       }
 
       // last resort
