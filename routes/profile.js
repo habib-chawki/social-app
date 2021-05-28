@@ -47,10 +47,9 @@ router.put('/', async (req, res, next) => {
       }
 
       // replace profile with updated version
-      const response = await User.replaceOne(
-         { _id: userId },
-         { profile: req.body }
-      );
+      const response = await User.findByIdAndUpdate(userId, {
+         $set: { profile: req.body },
+      });
 
       // nModified: number of documents modified
       if (response.nModified === 1) {
