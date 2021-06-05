@@ -15,7 +15,7 @@ router.use('/:userId/profile', profileRouter);
 // user signup
 router.post('/signup', async (req, res, next) => {
    try {
-      // retrieve email and password from request body
+      // extract email and password from request body
       const { email, password } = req.body;
 
       // invoke user service, create the new user
@@ -26,9 +26,6 @@ router.post('/signup', async (req, res, next) => {
          // send back generated auth token and user id
          return res.status(201).send({ id: user._id, token: user.token });
       }
-
-      // last resort
-      throw new Error('Signup failed');
    } catch (err) {
       // 400 - bad request
       next(createError(400, err));
