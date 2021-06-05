@@ -13,23 +13,19 @@ const router = express.Router();
 router.use('/:userId/profile', profileRouter);
 
 // user signup
-router.post('/signup', async (req, res, next) => {
-   try {
-      // extract email and password from request body
-      const { email, password } = req.body;
+router.post('/signup', (req, res, next) => {
+   // extract email and password from request body
+   const { email, password } = req.body;
 
-      // invoke user service, create the new user
-      const user = await userService.signUserUp({ email, password });
-
-      if (user) {
-         // 201 - created
-         // send back generated auth token and user id
-         return res.status(201).send({ id: user._id, token: user.token });
-      }
-   } catch (err) {
-      // 400 - bad request
-      next(createError(400, err));
-   }
+   // invoke user service, create the new user
+   userService
+      .signUserUp({ email, password })
+      .then((user) => {
+         res.status(201).send({ id: user._id, token: user.token });
+      })
+      .catch((err) => {
+         next(createError(400, err));
+      });
 });
 
 // user login
