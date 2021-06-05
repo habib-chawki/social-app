@@ -12,9 +12,14 @@ async function signUserUp(userCredentials) {
 
 async function logUserIn(userCredentials) {
    const { email, password } = userCredentials;
+   let user;
 
-   // find user by email
-   const user = await User.findOne({ email });
+   try {
+      // find user by email
+      user = await User.findOne({ email });
+   } catch (err) {
+      throw new Error('Could not find user by given email');
+   }
 
    if (user) {
       if (password) {
