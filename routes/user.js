@@ -33,53 +33,35 @@ router.post('/signup', async (req, res, next) => {
 });
 
 // user login
-router.post('/login', async (req, res, next) => {
-   try {
-      // extract email and password from request body
-      const { email, password } = req.body;
+router.post('/login', (req, res, next) => {
+   // extract email and password from request body
+   const { email, password } = req.body;
 
-      // invoke user service, log user in
-      const user = await userService.logUserIn({ email, password });
-
-      if (user) {
+   // invoke user service, log user in
+   userService
+      .logUserIn({ email, password })
+      .then((user) => {
          res.status(200).send({ id: user._id, token: user.token });
-      }
-   } catch (err) {
-      next(createError(400, err));
-   }
+      })
+      .catch((err) => {
+         next(createError(400, err));
+      });
 });
 
 // update user password
 router.patch('/password', auth, async (req, res, next) => {
    try {
-      // retrieve old and new passwords from request body
+      // extract old and new passwords from request body
       const { oldPassword, newPassword } = req.body;
 
       if (!oldPassword || !newPassword) {
          throw new Error('Both old and new password fields are required');
       }
 
-      const user = req.user;
+      // invoke user service, update password
+      await userService.updatePassword(req.user, oldPassword, newPassword);
 
-      // check if password is correct
-      const match = await bcrypt.compare(oldPassword, user.password);
-
-      if (match) {
-         // new password should not be the same as the old password
-         if (oldPassword === newPassword) {
-            throw new Error('Can not use the same password');
-         }
-
-         // update password
-         user.password = newPassword;
-         await user.save();
-
-         return res
-            .status(200)
-            .send({ message: 'Password updated successfully' });
-      }
-
-      throw new Error('Incorrect password');
+      res.status(200).send({ message: 'Password updated successfully' });
    } catch (err) {
       next(createError(400, err));
    }
