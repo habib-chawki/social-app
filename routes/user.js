@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const createError = require('http-errors');
 
+const userService = require('../services/userService');
 const User = require('../models/user');
 const profileRouter = require('../routes/profile');
 const auth = require('../middleware/auth');
@@ -17,8 +18,8 @@ router.post('/signup', async (req, res, next) => {
       // retrieve email and password from request body
       const { email, password } = req.body;
 
-      // create the new user
-      const user = await User.create({ email, password });
+      // invoke user service, create the new user
+      const user = await userService.createUser({ email, password });
 
       if (user) {
          // 201 - created
