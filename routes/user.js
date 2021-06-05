@@ -19,7 +19,7 @@ router.post('/signup', async (req, res, next) => {
       const { email, password } = req.body;
 
       // invoke user service, create the new user
-      const user = await userService.createUser({ email, password });
+      const user = await userService.signUserUp({ email, password });
 
       if (user) {
          // 201 - created
@@ -35,7 +35,7 @@ router.post('/signup', async (req, res, next) => {
 // user login
 router.post('/login', async (req, res, next) => {
    try {
-      // retrieve email and password from request body
+      // extract email and password from request body
       const { email, password } = req.body;
 
       // find user by email
