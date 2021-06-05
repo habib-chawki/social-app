@@ -42,4 +42,24 @@ async function logUserIn(userCredentials) {
    throw new Error('User does not exist');
 }
 
+async function updatePassword(user, oldPassword, newPassword) {
+   // check if password is correct
+   const match = await bcrypt.compare(oldPassword, user.password);
+
+   if (match) {
+      // new password should not be the same as the old password
+      if (oldPassword === newPassword) {
+         throw new Error('Can not use the same password');
+      }
+
+      // update password
+      console.log('updating ' + user._id + ' password to ' + newPassword);
+      await User.updateOne({ _id: user._id }, { password: newPassword });
+      //    user.password = newPassword;
+      //    await user.save();
+   }
+
+   throw new Error('Incorrect password');
+}
+
 module.exports = { signUserUp, logUserIn };
