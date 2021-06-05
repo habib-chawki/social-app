@@ -38,28 +38,12 @@ router.post('/login', async (req, res, next) => {
       // extract email and password from request body
       const { email, password } = req.body;
 
-      // find user by email
-      const user = await User.findOne({ email });
+      // invoke user service, log user in
+      const user = await userService.logUserIn({ email, password });
 
       if (user) {
-         if (password) {
-            // check password validity
-            const match = await bcrypt.compare(password, user.password);
-
-            if (match) {
-               // send back auth token and user id
-               return res.status(200).send({ id: user._id, token: user.token });
-            }
-
-            // in case of invalid password
-            throw new Error('Invalid password');
-         }
-
-         throw new Error('Password is required');
+         res.status(200).send({ id: user._id, token: user.token });
       }
-
-      // last resort
-      throw new Error('Invalid email');
    } catch (err) {
       next(createError(400, err));
    }
