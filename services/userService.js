@@ -59,4 +59,14 @@ async function updatePassword(user, oldPassword, newPassword) {
    throw new Error('Incorrect password');
 }
 
-module.exports = { signUserUp, logUserIn, updatePassword };
+async function deleteUser(userId) {
+   // remove user
+   const { deletedCount } = await User.deleteOne({
+      _id: userId,
+   });
+
+   if (deletedCount) return deletedCount;
+   else throw new Error('Could not delete user with id: ' + userId);
+}
+
+module.exports = { signUserUp, logUserIn, updatePassword, deleteUser };
