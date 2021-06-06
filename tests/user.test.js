@@ -22,7 +22,7 @@ const invalidCredentials = [
 
 // test signup route
 describe('POST /users/signup', () => {
-   it('Should sign up user', async () => {
+   it('Should sign user up', async () => {
       const res = await request(app)
          .post(`${baseUrl}/signup`)
          .send(credentials)
