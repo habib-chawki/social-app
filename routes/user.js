@@ -1,5 +1,5 @@
 const express = require('express');
-const createError = require('http-errors');
+const httpError = require('http-errors');
 
 const userService = require('../services/userService');
 const User = require('../models/user');
@@ -17,7 +17,7 @@ router.post('/signup', (req, res, next) => {
    const { email, password } = req.body;
 
    if (!email || !password) {
-      next(createError(400, 'Email and password are required'));
+      next(httpError(400, 'Email and password are required'));
    }
 
    // invoke user service, create the new user
@@ -43,7 +43,7 @@ router.post('/login', (req, res, next) => {
          res.status(200).send({ id: user._id, token: user.token });
       })
       .catch((err) => {
-         next(createError(400, err));
+         next(httpError(400, err));
       });
 });
 
@@ -62,7 +62,7 @@ router.patch('/password', auth, async (req, res, next) => {
 
       res.status(200).send({ message: 'Password updated successfully' });
    } catch (err) {
-      next(createError(400, err));
+      next(httpError(400, err));
    }
 });
 
@@ -82,7 +82,7 @@ router.post('/logout', auth, async (req, res, next) => {
       throw new Error('Logout failed');
    } catch (err) {
       // 500 - internal Server Error
-      next(createError(500, err));
+      next(httpError(500, err));
    }
 });
 
@@ -96,7 +96,7 @@ router.delete('/', auth, (req, res, next) => {
          res.status(200).send({ message: 'User removed successfully' });
       })
       .catch((err) => {
-         next(createError(500, err));
+         next(httpError(500, err));
       });
 });
 

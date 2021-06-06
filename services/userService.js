@@ -19,28 +19,19 @@ async function logUserIn(userCredentials) {
       // find user by email
       user = await User.findOne({ email });
    } catch (err) {
-      throw httpError(400, 'Could not find user by given email');
+      throw httpError(404, 'Could not find user by given email');
    }
 
-   if (user) {
-      if (password) {
-         // check password validity
-         const match = await bcrypt.compare(password, user.password);
+   // check password validity
+   const match = await bcrypt.compare(password, user.password);
 
-         if (match) {
-            // send back user
-            return user;
-         }
-
-         // in case of invalid password
-         throw httpError(400, 'Invalid password');
-      }
-
-      throw httpError(400, 'Password is required');
+   if (match) {
+      // send back user
+      return user;
+   } else {
+      // in case of invalid password
+      throw httpError(400, 'Invalid password');
    }
-
-   // last resort - user not found
-   throw httpError(400, 'User not found');
 }
 
 async function updatePassword(user, oldPassword, newPassword) {
