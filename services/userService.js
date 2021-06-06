@@ -1,12 +1,13 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const httpError = require('http-errors');
 
 async function signUserUp(userCredentials) {
    try {
       const { email, password } = userCredentials;
       return await User.create({ email, password });
    } catch (err) {
-      throw new Error('Signup failed');
+      throw httpError(400, 'Signup failed');
    }
 }
 
@@ -18,7 +19,7 @@ async function logUserIn(userCredentials) {
       // find user by email
       user = await User.findOne({ email });
    } catch (err) {
-      throw new Error('Could not find user by given email');
+      throw httpError(400, 'Could not find user by given email');
    }
 
    if (user) {
@@ -32,14 +33,14 @@ async function logUserIn(userCredentials) {
          }
 
          // in case of invalid password
-         throw new Error('Invalid password');
+         throw httpError(400, 'Invalid password');
       }
 
-      throw new Error('Password is required');
+      throw httpError(400, 'Password is required');
    }
 
-   // last resort
-   throw new Error('User does not exist');
+   // last resort - user not found
+   throw httpError(400, 'User not found');
 }
 
 async function updatePassword(user, oldPassword, newPassword) {
