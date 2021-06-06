@@ -53,13 +53,10 @@ async function updatePassword(user, oldPassword, newPassword) {
       }
 
       // update password
-      console.log('updating ' + user._id + ' password to ' + newPassword);
       await User.updateOne({ _id: user._id }, { password: newPassword });
-      //    user.password = newPassword;
-      //    await user.save();
    }
 
    throw new Error('Incorrect password');
 }
 
-module.exports = { signUserUp, logUserIn };
+module.exports = { signUserUp, logUserIn, updatePassword };
