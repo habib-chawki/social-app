@@ -41,14 +41,14 @@ async function updatePassword(user, oldPassword, newPassword) {
    if (match) {
       // new password should not be the same as the old password
       if (oldPassword === newPassword) {
-         throw new Error('Can not use the same password');
+         throw httpError(400, 'Can not use the same password');
       }
 
       // update password
       await User.updateOne({ _id: user._id }, { password: newPassword });
+   } else {
+      throw httpError(403, 'Incorrect password');
    }
-
-   throw new Error('Incorrect password');
 }
 
 async function deleteUser(userId) {
