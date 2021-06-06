@@ -84,22 +84,17 @@ router.post('/logout', auth, async (req, res, next) => {
 });
 
 // delete user
-router.delete('/', auth, async (req, res, next) => {
-   try {
-      // remove user
-      const { deletedCount } = await User.deleteOne({
-         _id: req.user._id,
+router.delete('/', auth, (req, res, next) => {
+   const userId = req.user._id;
+
+   userService
+      .deleteUser(userId)
+      .then(() => {
+         res.status(200).send({ message: 'User removed successfully' });
+      })
+      .catch((err) => {
+         next(createError(500, err));
       });
-
-      if (deletedCount) {
-         return res.status(200).send({ message: 'User removed successfully' });
-      }
-
-      throw new Error('Operation failed');
-   } catch (err) {
-      // 500 - internal Server Error
-      next(createError(500, err));
-   }
 });
 
 module.exports = router;
