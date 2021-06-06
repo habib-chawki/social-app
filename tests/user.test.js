@@ -132,7 +132,7 @@ describe('Test with setup and teardown', () => {
                oldPassword: 'mypasswordincorrect',
                newPassword: 'mynewpassword',
             })
-            .expect(400);
+            .expect(403);
 
          // password should have stayed the same
          const { password } = await User.findById(user._id);
