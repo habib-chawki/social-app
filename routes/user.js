@@ -1,5 +1,4 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
 const createError = require('http-errors');
 
 const userService = require('../services/userService');
@@ -17,6 +16,10 @@ router.post('/signup', (req, res, next) => {
    // extract email and password from request body
    const { email, password } = req.body;
 
+   if (!email || !password) {
+      next(createError(400, 'Email and password are required'));
+   }
+
    // invoke user service, create the new user
    userService
       .signUserUp({ email, password })
@@ -24,7 +27,7 @@ router.post('/signup', (req, res, next) => {
          res.status(201).send({ id: user._id, token: user.token });
       })
       .catch((err) => {
-         next(createError(400, err));
+         next(err);
       });
 });
 
