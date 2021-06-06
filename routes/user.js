@@ -36,6 +36,10 @@ router.post('/login', (req, res, next) => {
    // extract email and password from request body
    const { email, password } = req.body;
 
+   if (!email || !password) {
+      next(httpError(400, 'Email and password are required'));
+   }
+
    // invoke user service, log user in
    userService
       .logUserIn({ email, password })
@@ -43,27 +47,26 @@ router.post('/login', (req, res, next) => {
          res.status(200).send({ id: user._id, token: user.token });
       })
       .catch((err) => {
-         next(httpError(400, err));
+         next(err);
       });
 });
 
 // update user password
-router.patch('/password', auth, async (req, res, next) => {
-   try {
-      // extract old and new passwords from request body
-      const { oldPassword, newPassword } = req.body;
+router.patch('/password', auth, (req, res, next) => {
+   // extract old and new passwords from request body
+   const { oldPassword, newPassword } = req.body;
 
-      if (!oldPassword || !newPassword) {
-         throw new Error('Both old and new password fields are required');
-      }
-
-      // invoke user service, update password
-      await userService.updatePassword(req.user, oldPassword, newPassword);
-
-      res.status(200).send({ message: 'Password updated successfully' });
-   } catch (err) {
-      next(httpError(400, err));
+   if (!oldPassword || !newPassword) {
+      next(httpError(400, 'Old and new passwords are required'));
    }
+
+   // invoke user service, update password
+   userService
+      .updatePassword(req.user, oldPassword, newPassword)
+      .then(() => {
+         res.status(200).send({ message: 'Password updated successfully' });
+      })
+      .catch((err) => next(err));
 });
 
 // user logout
