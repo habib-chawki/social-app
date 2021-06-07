@@ -34,7 +34,7 @@ const userSchema = mongoose.Schema(
             }
          },
       },
-      profile: { type: profileSchema, default: profileSchema },
+      profile: profileSchema,
    },
    {
       timestamps: true,
