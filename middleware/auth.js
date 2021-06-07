@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const createError = require('http-errors');
+const httpError = require('http-errors');
 
 const User = require('../models/user');
 
@@ -11,7 +11,7 @@ async function auth(req, res, next) {
 
       // ensure authorization header is populated
       if (!authorization) {
-         throw new Error('Unauthorized');
+         throw httpError(401, 'Unauthorized');
       }
 
       // extract token from request header
@@ -32,9 +32,9 @@ async function auth(req, res, next) {
       }
 
       // throw an error if token is invalid or user not found
-      throw new Error('Unauthorized');
+      throw httpError(401, 'Unauthorized');
    } catch (err) {
-      next(createError(401, err));
+      next(err);
    }
 }
 
