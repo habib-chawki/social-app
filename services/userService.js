@@ -1,11 +1,14 @@
-const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const httpError = require('http-errors');
+
+const User = require('../models/user');
+const logger = require('../utils/logger');
 
 async function signUserUp(userCredentials) {
    try {
       const { email, password } = userCredentials;
-      return await User.create({ email, password });
+      const user = await User.create({ email, password });
+      return user;
    } catch (err) {
       throw httpError(400, 'Signup failed');
    }
