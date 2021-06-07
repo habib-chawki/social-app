@@ -1,5 +1,6 @@
 const express = require('express');
 const httpError = require('http-errors');
+const isMongoId = require('validator/lib/isMongoId');
 
 const userService = require('../services/userService');
 const User = require('../models/user');
@@ -93,13 +94,17 @@ router.post('/logout', auth, async (req, res, next) => {
 router.delete('/', auth, (req, res, next) => {
    const userId = req.user._id;
 
+   if (!isMongoId(userId)) {
+      next(httpError(400, 'Invalid user id'));
+   }
+
    userService
       .deleteUser(userId)
       .then(() => {
          res.status(200).send({ message: 'User removed successfully' });
       })
       .catch((err) => {
-         next(httpError(500, err));
+         next(err);
       });
 });
 
