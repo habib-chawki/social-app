@@ -52,13 +52,15 @@ async function updatePassword(user, oldPassword, newPassword) {
 }
 
 async function deleteUser(userId) {
-   // remove user
-   const { deletedCount } = await User.deleteOne({
-      _id: userId,
-   });
+   try {
+      const { deletedCount } = await User.deleteOne({
+         _id: userId,
+      });
 
-   if (deletedCount) return deletedCount;
-   else throw new Error('Could not delete user with id: ' + userId);
+      return deletedCount;
+   } catch (err) {
+      throw httpError(500, 'Failed to delete user');
+   }
 }
 
 module.exports = { signUserUp, logUserIn, updatePassword, deleteUser };
