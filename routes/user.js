@@ -3,7 +3,7 @@ const httpError = require('http-errors');
 const isMongoId = require('validator/lib/isMongoId');
 
 const userService = require('../services/userService');
-const User = require('../models/user');
+const logger = require('../utils/logger');
 const profileRouter = require('../routes/profile');
 const auth = require('../middleware/auth');
 
@@ -18,7 +18,13 @@ router.post('/signup', (req, res, next) => {
    const { email, password } = req.body;
 
    if (!email || !password) {
-      next(httpError(400, 'Email and password are required'));
+      logger.error(
+         `Email and password are required ${JSON.stringify({
+            email,
+            password,
+         })}`
+      );
+      return next(httpError(400, 'Email and password are required'));
    }
 
    // invoke user service, create the new user

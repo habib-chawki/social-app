@@ -8,8 +8,12 @@ async function signUserUp(userCredentials) {
    try {
       const { email, password } = userCredentials;
       const user = await User.create({ email, password });
+
+      logger.info(`Signup success ${JSON.stringify({ userId: user._id })}`);
+
       return user;
    } catch (err) {
+      logger.error(`Signup failed ${err}`);
       throw httpError(400, 'Signup failed');
    }
 }
