@@ -71,23 +71,15 @@ router.patch('/password', auth, (req, res, next) => {
 });
 
 // user logout
-router.post('/logout', auth, async (req, res, next) => {
-   try {
-      // remove auth token
-      const { nModified } = await User.updateOne(
-         { _id: req.user._id },
-         { token: null }
-      );
-
-      if (nModified) {
-         return res.sendStatus(200);
-      }
-
-      throw new Error('Logout failed');
-   } catch (err) {
-      // 500 - internal Server Error
-      next(httpError(500, err));
-   }
+router.post('/logout', auth, (req, res, next) => {
+   userService
+      .logUserOut()
+      .then(() => {
+         res.sendStatus(200);
+      })
+      .catch((err) => {
+         next(err);
+      });
 });
 
 // delete user

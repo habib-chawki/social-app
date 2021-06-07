@@ -63,4 +63,24 @@ async function deleteUser(userId) {
    }
 }
 
-module.exports = { signUserUp, logUserIn, updatePassword, deleteUser };
+async function logUserOut() {
+   try {
+      // remove auth token
+      const { nModified } = await User.updateOne(
+         { _id: req.user._id },
+         { token: null }
+      );
+
+      return nModified;
+   } catch (err) {
+      throw httpError(500, 'Logout failed');
+   }
+}
+
+module.exports = {
+   signUserUp,
+   logUserIn,
+   updatePassword,
+   deleteUser,
+   logUserOut,
+};
