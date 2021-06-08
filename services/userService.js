@@ -90,22 +90,28 @@ async function deleteUser(userId) {
          _id: userId,
       });
 
+      logger.info('User removed ' + JSON.stringify({ userId }));
+
       return deletedCount;
    } catch (err) {
+      logger.error('Failed to delete user ' + JSON.stringify({ userId }));
       throw httpError(500, 'Failed to delete user');
    }
 }
 
-async function logUserOut() {
+async function logUserOut(userId) {
    try {
       // remove auth token
       const { nModified } = await User.updateOne(
-         { _id: req.user._id },
+         { _id: userId },
          { token: null }
       );
 
+      logger.info('User logged out ' + JSON.stringify({ userId }));
+
       return nModified;
    } catch (err) {
+      logger.error('Logout failed ' + JSON.stringify({ userId }));
       throw httpError(500, 'Logout failed');
    }
 }
