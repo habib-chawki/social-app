@@ -13,15 +13,14 @@ async function signUserUp(userCredentials) {
 
       return user;
    } catch (err) {
+      // extract email or password validation error message
+      const errorMessage = err.errors['email' || 'password'].message;
+
       logger.error(
-         'Signup failed ' +
-            JSON.stringify({
-               error: err.errors['email' || 'password'].message,
-               email,
-               password,
-            })
+         'Signup failed ' + JSON.stringify({ errorMessage, email, password })
       );
-      throw httpError(400, 'Signup failed');
+
+      throw httpError(400, `Signup failed, ${errorMessage}`);
    }
 }
 
