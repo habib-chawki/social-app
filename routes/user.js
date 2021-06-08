@@ -97,6 +97,7 @@ router.delete('/', auth, (req, res, next) => {
    const userId = req.user._id;
 
    if (!isMongoId(userId)) {
+      logger.error('Invalid user id ' + JSON.stringify({ userId }));
       next(httpError(400, 'Invalid user id'));
    }
 
