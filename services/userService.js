@@ -9,7 +9,9 @@ async function signUserUp(userCredentials) {
    try {
       const user = await User.create({ email, password });
 
-      logger.info('User signup ' + JSON.stringify({ userId: user._id }));
+      logger.info(
+         'User signup success ' + JSON.stringify({ userId: user._id })
+      );
 
       return user;
    } catch (err) {
@@ -29,7 +31,6 @@ async function logUserIn(userCredentials) {
    let user;
 
    try {
-      // find user by email
       user = await User.findOne({ email });
    } catch (err) {
       logger.error(
@@ -43,11 +44,15 @@ async function logUserIn(userCredentials) {
 
    if (match) {
       // send back user
-      logger.info('User login ' + JSON.stringify({ userId: user._id }));
+      logger.info('User login success ' + JSON.stringify({ userId: user._id }));
       return user;
    } else {
-      logger.error('Invalid password ' + JSON.stringify({ password }));
-      throw httpError(400, 'Invalid password');
+      logger.error(
+         'Login failed ' +
+            JSON.stringify({ errorMessage: 'Incorrect password', password })
+      );
+
+      throw httpError(400, 'Incorrect password');
    }
 }
 
@@ -58,12 +63,23 @@ async function updatePassword(user, oldPassword, newPassword) {
    if (match) {
       // new password should not be the same as the old password
       if (oldPassword === newPassword) {
+         logger.error(
+            'Can not use the same password ' +
+               JSON.stringify({ oldPassword, newPassword })
+         );
          throw httpError(400, 'Can not use the same password');
       }
 
       // update password
+      logger.info(
+         'Password updated ' + JSON.stringify({ userId: user._id, newPassword })
+      );
+
       await User.updateOne({ _id: user._id }, { password: newPassword });
    } else {
+      logger.error(
+         'Incorrect password ' + JSON.stringify({ password: oldPassword })
+      );
       throw httpError(403, 'Incorrect password');
    }
 }
