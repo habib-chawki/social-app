@@ -83,7 +83,7 @@ router.patch('/password', auth, (req, res, next) => {
 // user logout
 router.post('/logout', auth, (req, res, next) => {
    userService
-      .logUserOut()
+      .logUserOut(req.user._id)
       .then(() => {
          res.sendStatus(200);
       })
