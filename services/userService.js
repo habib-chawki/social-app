@@ -9,11 +9,14 @@ async function signUserUp(userCredentials) {
       const { email, password } = userCredentials;
       const user = await User.create({ email, password });
 
-      logger.info(`Signup success ${JSON.stringify({ userId: user._id })}`);
+      logger.info('User signup ' + JSON.stringify({ userId: user._id }));
 
       return user;
    } catch (err) {
-      logger.error(`Signup failed ${err}`);
+      logger.error(
+         'Signup failed ' +
+            JSON.stringify({ error: err.errors['email' || 'password'].message })
+      );
       throw httpError(400, 'Signup failed');
    }
 }
@@ -26,6 +29,9 @@ async function logUserIn(userCredentials) {
       // find user by email
       user = await User.findOne({ email });
    } catch (err) {
+      logger.error(
+         'Could not find user by given email ' + JSON.stringify({ email })
+      );
       throw httpError(404, 'Could not find user by given email');
    }
 
@@ -34,9 +40,10 @@ async function logUserIn(userCredentials) {
 
    if (match) {
       // send back user
+      logger.info('User login ' + JSON.stringify({ userId: user._id }));
       return user;
    } else {
-      // in case of invalid password
+      logger.error('Invalid password ' + JSON.stringify({ password }));
       throw httpError(400, 'Invalid password');
    }
 }
