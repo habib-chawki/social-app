@@ -5,8 +5,8 @@ const User = require('../models/user');
 const logger = require('../utils/logger');
 
 async function signUserUp(userCredentials) {
+   const { email, password } = userCredentials;
    try {
-      const { email, password } = userCredentials;
       const user = await User.create({ email, password });
 
       logger.info('User signup ' + JSON.stringify({ userId: user._id }));
@@ -15,7 +15,11 @@ async function signUserUp(userCredentials) {
    } catch (err) {
       logger.error(
          'Signup failed ' +
-            JSON.stringify({ error: err.errors['email' || 'password'].message })
+            JSON.stringify({
+               error: err.errors['email' || 'password'].message,
+               email,
+               password,
+            })
       );
       throw httpError(400, 'Signup failed');
    }

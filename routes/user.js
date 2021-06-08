@@ -64,6 +64,10 @@ router.patch('/password', auth, (req, res, next) => {
    const { oldPassword, newPassword } = req.body;
 
    if (!oldPassword || !newPassword) {
+      logger.error(
+         'Old and new password fields are required ' +
+            JSON.stringify({ oldPassword, newPassword })
+      );
       next(httpError(400, 'Old and new passwords are required'));
    }
 
