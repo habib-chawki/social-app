@@ -19,10 +19,7 @@ router.post('/signup', (req, res, next) => {
 
    if (!email || !password) {
       logger.error(
-         `Email and password are required ${JSON.stringify({
-            email,
-            password,
-         })}`
+         'Required email and password ' + JSON.stringify({ email, password })
       );
       return next(httpError(400, 'Email and password are required'));
    }
@@ -44,6 +41,9 @@ router.post('/login', (req, res, next) => {
    const { email, password } = req.body;
 
    if (!email || !password) {
+      logger.error(
+         'Required email and password ' + JSON.stringify({ email, password })
+      );
       next(httpError(400, 'Email and password are required'));
    }
 
