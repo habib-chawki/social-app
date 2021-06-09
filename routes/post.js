@@ -13,7 +13,7 @@ const router = express.Router();
 router.use(auth);
 
 // create post
-router.post('/', async (req, res, next) => {
+router.post('/', (req, res, next) => {
    const { content } = req.body;
    const { _id: userId } = req.user;
 
@@ -32,7 +32,7 @@ router.post('/', async (req, res, next) => {
 });
 
 // get a single post by id
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', (req, res, next) => {
    // extract post id param
    const postId = req.params.id;
 
@@ -55,7 +55,7 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // get list of posts
-router.get('/', async (req, res, next) => {
+router.get('/', (req, res, next) => {
    // fetch posts of a specific user if 'user' query param is set
    // otherwise fetch all posts
    const query = req.query.user ? { owner: req.query.user } : {};
@@ -71,7 +71,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // update post by id
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', (req, res, next) => {
    const postId = req.params.id;
    const { content } = req.body;
 
@@ -97,7 +97,7 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // delete post by id
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
    const owner = req.user._id;
    const postId = req.params.id;
 
@@ -114,21 +114,13 @@ router.delete('/:id', async (req, res, next) => {
 });
 
 // delete all posts
-router.delete('/', async (req, res, next) => {
-   try {
-      const owner = req.user._id;
+router.delete('/', (req, res, next) => {
+   const owner = req.user._id;
 
-      // remove posts and return number of deleted documents
-      const { deletedCount } = await Post.deleteMany({ owner });
-
-      if (deletedCount) {
-         return res.send({ deletedCount });
-      }
-
-      throw httpError(500, 'Delete posts failed');
-   } catch (err) {
-      next(err);
-   }
+   postService
+      .deletePosts(owner)
+      .then((numOfDeletedPosts) => res.send({ numOfDeletedPosts }))
+      .catch((err) => next(err));
 });
 
 module.exports = router;
