@@ -98,29 +98,19 @@ router.put('/:id', async (req, res, next) => {
 
 // delete post by id
 router.delete('/:id', async (req, res, next) => {
-   try {
-      const owner = req.user._id;
-      const postId = req.params.id;
+   const owner = req.user._id;
+   const postId = req.params.id;
 
-      // validate id
-      if (!validator.isMongoId(postId)) {
-         throw httpError(400, 'Invalid id');
-      }
-
-      const post = await Post.findOneAndDelete({
-         owner,
-         _id: postId,
-      });
-
-      if (post) {
-         return res.status(200).send(post);
-      }
-
-      // post does not exist
-      throw httpError(500, 'Delete post failed');
-   } catch (err) {
-      next(err);
+   // validate id
+   if (!validator.isMongoId(postId)) {
+      logger.error('Invalid post id ' + { postId });
+      next(httpError(400, 'Invalid id'));
    }
+
+   postService
+      .deletePostById(postId, owner)
+      .then((deletedPost) => res.status(200).send(deletedPost))
+      .catch((err) => next(err));
 });
 
 // delete all posts
