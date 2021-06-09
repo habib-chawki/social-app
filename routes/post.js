@@ -57,7 +57,7 @@ router.get('/:id', async (req, res, next) => {
 // get list of posts
 router.get('/', async (req, res, next) => {
    // fetch posts of a specific user if 'user' query param is set
-   // otherwise fetch current user's posts
+   // otherwise fetch all posts
    const query = req.query.user ? { owner: req.query.user } : {};
 
    // limit the number of posts
@@ -78,7 +78,16 @@ router.put('/:id', async (req, res, next) => {
 
       // validate id
       if (!validator.isMongoId(postId)) {
-         throw httpError(400, 'Invalid id');
+         logger.error('Invalid post id ' + JSON.stringify({ postId }));
+         next(httpError(400, 'Invalid id'));
+      }
+
+      if (!content) {
+         logger.error(
+            'Post content should not be empty ' +
+               JSON.stringify({ postId, content })
+         );
+         next(httpError(400, 'Post content should not be empty'));
       }
 
       const post = await Post.findOneAndUpdate(
