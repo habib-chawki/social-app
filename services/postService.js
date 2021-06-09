@@ -75,4 +75,28 @@ async function updatePost(postId, postOwner, postContent) {
    }
 }
 
-module.exports = { createPost, getPostById, getPosts, updatePost };
+async function deletePostById(postId, postOwner) {
+   try {
+      const post = await Post.findOneAndDelete({
+         owner: postOwner,
+         _id: postId,
+      });
+
+      if (post) {
+         return post;
+      }
+
+      throw httpError(500, 'Delete post failed');
+   } catch (err) {
+      logger.error('Delete post failed ' + err);
+      throw httpError(500, 'Delete post failed');
+   }
+}
+
+module.exports = {
+   createPost,
+   getPostById,
+   getPosts,
+   updatePost,
+   deletePostById,
+};
