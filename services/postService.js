@@ -83,6 +83,7 @@ async function deletePostById(postId, postOwner) {
       });
 
       if (post) {
+         logger.info('Post deleted ' + JSON.stringify({ post }));
          return post;
       }
 
@@ -93,10 +94,28 @@ async function deletePostById(postId, postOwner) {
    }
 }
 
+async function deletePosts(postsOwner) {
+   try {
+      // remove posts and return number of deleted documents
+      const { deletedCount } = await Post.deleteMany({ owner: postsOwner });
+
+      if (deletedCount) {
+         logger.info('Deleted posts ' + { numOfDeletedPosts: deletedCount });
+         return deletedCount;
+      }
+
+      throw httpError(500, 'Delete posts failed');
+   } catch (err) {
+      logger.error('Failed to delete posts ' + err);
+      throw httpError(500, 'Delete posts failed');
+   }
+}
+
 module.exports = {
    createPost,
    getPostById,
    getPosts,
    updatePost,
    deletePostById,
+   deletePosts,
 };
