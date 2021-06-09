@@ -1,9 +1,11 @@
 const express = require('express');
 const validator = require('validator');
-const createError = require('http-errors');
+const httpError = require('http-errors');
 
 const Post = require('../models/post');
 const auth = require('../middleware/auth');
+const logger = require('../utils/logger');
+const postService = require('../services/postService');
 
 const router = express.Router();
 
@@ -12,30 +14,25 @@ router.use(auth);
 
 // create post
 router.post('/', async (req, res, next) => {
-   try {
-      const { content } = req.body;
+   const { content } = req.body;
+   const { _id: userId } = req.user;
 
-      if (!content) {
-         throw createError(400, 'Post content is required');
-      }
-
-      const { _id: userId } = req.user;
-
-      // create new post
-      const post = await Post.create({
-         owner: userId,
-         content,
-      });
-
-      // return post when created successfully
-      if (post) {
-         return res.status(201).send(post);
-      }
-
-      throw createError(500, 'Create post failed');
-   } catch (err) {
-      next(err);
+   if (!content) {
+      logger.error(
+         'Post content is required ' +
+            JSON.stringify({ userId, postContent: content })
+      );
+      throw httpError(400, 'Post content is required');
    }
+
+   postService
+      .createPost(userId, content)
+      .then((createdPost) => {
+         return res.status(201).send(createdPost);
+      })
+      .catch((err) => {
+         next(err);
+      });
 });
 
 // get a single post by id
@@ -45,12 +42,12 @@ router.get('/:id', async (req, res, next) => {
       const postId = req.params.id;
 
       if (!postId) {
-         throw createError(400, 'Post id is required');
+         throw httpError(400, 'Post id is required');
       }
 
       // validate id
       if (!validator.isMongoId(postId)) {
-         throw createError(400, 'Invalid id');
+         throw httpError(400, 'Invalid id');
       }
 
       // find post by id
@@ -61,7 +58,7 @@ router.get('/:id', async (req, res, next) => {
          return res.status(200).send(post);
       }
 
-      throw createError(404, 'Post not found');
+      throw httpError(404, 'Post not found');
    } catch (err) {
       next(err);
    }
@@ -91,7 +88,7 @@ router.get('/', async (req, res, next) => {
          return res.status(200).send(posts);
       }
 
-      throw createError(404, 'Posts not found');
+      throw httpError(404, 'Posts not found');
    } catch (err) {
       next(err);
    }
@@ -105,7 +102,7 @@ router.put('/:id', async (req, res, next) => {
 
       // validate id
       if (!validator.isMongoId(postId)) {
-         throw createError(400, 'Invalid id');
+         throw httpError(400, 'Invalid id');
       }
 
       const post = await Post.findOneAndUpdate(
@@ -119,7 +116,7 @@ router.put('/:id', async (req, res, next) => {
       }
 
       // throw an error if post can not be updated
-      throw createError(500, 'Update post failed');
+      throw httpError(500, 'Update post failed');
    } catch (err) {
       next(err);
    }
@@ -133,7 +130,7 @@ router.delete('/:id', async (req, res, next) => {
 
       // validate id
       if (!validator.isMongoId(postId)) {
-         throw createError(400, 'Invalid id');
+         throw httpError(400, 'Invalid id');
       }
 
       const post = await Post.findOneAndDelete({
@@ -146,7 +143,7 @@ router.delete('/:id', async (req, res, next) => {
       }
 
       // post does not exist
-      throw createError(500, 'Delete post failed');
+      throw httpError(500, 'Delete post failed');
    } catch (err) {
       next(err);
    }
@@ -164,7 +161,7 @@ router.delete('/', async (req, res, next) => {
          return res.send({ deletedCount });
       }
 
-      throw createError(500, 'Delete posts failed');
+      throw httpError(500, 'Delete posts failed');
    } catch (err) {
       next(err);
    }
