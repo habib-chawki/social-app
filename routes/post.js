@@ -22,7 +22,7 @@ router.post('/', async (req, res, next) => {
          'Post content is required ' +
             JSON.stringify({ userId, postContent: content })
       );
-      throw httpError(400, 'Post content is required');
+      next(httpError(400, 'Post content is required'));
    }
 
    postService
