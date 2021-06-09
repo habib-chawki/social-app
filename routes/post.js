@@ -27,12 +27,8 @@ router.post('/', async (req, res, next) => {
 
    postService
       .createPost(userId, content)
-      .then((createdPost) => {
-         return res.status(201).send(createdPost);
-      })
-      .catch((err) => {
-         next(err);
-      });
+      .then((createdPost) => res.status(201).send(createdPost))
+      .catch((err) => next(err));
 });
 
 // get a single post by id
@@ -54,42 +50,24 @@ router.get('/:id', async (req, res, next) => {
    // find post by id
    postService
       .getPostById(postId)
-      .then((post) => {
-         return res.status(200).send(post);
-      })
-      .catch((err) => {
-         next(err);
-      });
+      .then((post) => res.status(200).send(post))
+      .catch((err) => next(err));
 });
 
 // get list of posts
 router.get('/', async (req, res, next) => {
-   try {
-      // fetch posts of a specific user if query string is set up
-      // otherwise fetch current user's posts
-      const query = req.query.user ? { owner: req.query.user } : {};
+   // fetch posts of a specific user if 'user' query param is set
+   // otherwise fetch current user's posts
+   const query = req.query.user ? { owner: req.query.user } : {};
 
-      // limit the number of posts
-      const limit = req.query.limit ? req.query.limit : 10;
-      const skip = req.query.skip ? req.query.skip : 0;
+   // limit the number of posts
+   const limit = req.query.limit ? req.query.limit : 10;
+   const skip = req.query.skip ? req.query.skip : 0;
 
-      // limit number of comments
-      const numberOfComments = 5;
-
-      // fetch list of posts
-      const posts = await Post.find(query)
-         .skip(parseInt(skip))
-         .limit(parseInt(limit))
-         .populate({ path: 'comments', perDocumentLimit: numberOfComments });
-
-      if (posts) {
-         return res.status(200).send(posts);
-      }
-
-      throw httpError(404, 'Posts not found');
-   } catch (err) {
-      next(err);
-   }
+   postService
+      .getPosts(query, skip, limit)
+      .then((posts) => res.status(200).send(posts))
+      .catch((err) => next(err));
 });
 
 // update post by id
