@@ -230,7 +230,7 @@ describe('Test with setup and teardown', () => {
             .expect(200);
 
          // number of deleted posts should equal the number of user posts
-         expect(posts.length).toBe(res.body.deletedCount);
+         expect(posts.length).toBe(res.body.numOfDeletedPosts);
 
          // posts should have been deleted
          posts = await Post.find({ owner: user._id });
