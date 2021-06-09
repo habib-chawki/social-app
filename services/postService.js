@@ -55,4 +55,24 @@ async function getPosts(query, skip, limit) {
    }
 }
 
-module.exports = { createPost, getPostById, getPosts };
+async function updatePost(postId, postOwner, postContent) {
+   try {
+      const post = await Post.findOneAndUpdate(
+         { _id: postId, owner: postOwner },
+         { content: postContent },
+         { new: true }
+      );
+
+      if (post) {
+         logger.info('Post updated ' + JSON.stringify(post));
+         return post;
+      }
+
+      throw new Error('Post update failed');
+   } catch (err) {
+      logger.error('Post update failed ' + err);
+      throw httpError(500, 'Post update failed');
+   }
+}
+
+module.exports = { createPost, getPostById, getPosts, updatePost };
