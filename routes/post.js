@@ -37,31 +37,29 @@ router.post('/', async (req, res, next) => {
 
 // get a single post by id
 router.get('/:id', async (req, res, next) => {
-   try {
-      // fetch post id from request params
-      const postId = req.params.id;
+   // extract post id param
+   const postId = req.params.id;
 
-      if (!postId) {
-         throw httpError(400, 'Post id is required');
-      }
-
-      // validate id
-      if (!validator.isMongoId(postId)) {
-         throw httpError(400, 'Invalid id');
-      }
-
-      // find post by id
-      const post = await Post.findById(postId);
-
-      // return post if found
-      if (post) {
-         return res.status(200).send(post);
-      }
-
-      throw httpError(404, 'Post not found');
-   } catch (err) {
-      next(err);
+   if (!postId) {
+      logger.error('Post id is required ' + JSON.stringify({ postId }));
+      next(httpError(400, 'Post id is required'));
    }
+
+   // validate id
+   if (!validator.isMongoId(postId)) {
+      logger.error('Invalid post id ' + JSON.stringify({ postId }));
+      next(httpError(400, 'Invalid id'));
+   }
+
+   // find post by id
+   postService
+      .getPostById(postId)
+      .then((post) => {
+         return res.status(200).send(post);
+      })
+      .catch((err) => {
+         next(err);
+      });
 });
 
 // get list of posts
