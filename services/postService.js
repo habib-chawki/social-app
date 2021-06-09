@@ -22,4 +22,18 @@ async function createPost(userId, postContent) {
    }
 }
 
-module.exports = { createPost };
+async function getPostById(postId) {
+   try {
+      // find post by id
+      const post = await Post.findById(postId);
+
+      // return post if found
+      logger.info('Post found by id ' + JSON.stringify({ post }));
+      return post;
+   } catch (err) {
+      logger.error('Post not found ' + JSON.stringify({ postId }));
+      throw httpError(404, 'Post not found');
+   }
+}
+
+module.exports = { createPost, getPostById };
