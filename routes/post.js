@@ -72,39 +72,28 @@ router.get('/', async (req, res, next) => {
 
 // update post by id
 router.put('/:id', async (req, res, next) => {
-   try {
-      const postId = req.params.id;
-      const { content } = req.body;
+   const postId = req.params.id;
+   const { content } = req.body;
 
-      // validate id
-      if (!validator.isMongoId(postId)) {
-         logger.error('Invalid post id ' + JSON.stringify({ postId }));
-         next(httpError(400, 'Invalid id'));
-      }
-
-      if (!content) {
-         logger.error(
-            'Post content should not be empty ' +
-               JSON.stringify({ postId, content })
-         );
-         next(httpError(400, 'Post content should not be empty'));
-      }
-
-      const post = await Post.findOneAndUpdate(
-         { _id: postId, owner: req.user._id },
-         { content },
-         { new: true }
-      );
-
-      if (post) {
-         return res.status(200).send(post);
-      }
-
-      // throw an error if post can not be updated
-      throw httpError(500, 'Update post failed');
-   } catch (err) {
-      next(err);
+   // validate id
+   if (!validator.isMongoId(postId)) {
+      logger.error('Invalid post id ' + JSON.stringify({ postId }));
+      next(httpError(400, 'Invalid id'));
    }
+
+   // validate post content
+   if (!content) {
+      logger.error(
+         'Post content should not be empty ' +
+            JSON.stringify({ postId, content })
+      );
+      next(httpError(400, 'Post content should not be empty'));
+   }
+
+   postService
+      .updatePost(postId, req.user._id, content)
+      .then((updatedPost) => res.status(200).send(updatedPost))
+      .catch((err) => next(err));
 });
 
 // delete post by id
