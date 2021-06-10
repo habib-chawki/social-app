@@ -62,4 +62,20 @@ async function updateComment(id, owner, post, content) {
    }
 }
 
-module.exports = { createComment, getComments, updateComment };
+async function deleteComment(id, owner, post) {
+   try {
+      const comment = await Comment.findOneAndDelete({ _id: id, owner, post });
+
+      if (comment) {
+         logger.info('Comment deleted ' + JSON.stringify(comment));
+         return comment;
+      }
+
+      throw new Error('Delete comment failed');
+   } catch (err) {
+      logger.error('Delete comment failed ' + err);
+      throw httpError(500, 'Delete comment failed');
+   }
+}
+
+module.exports = { createComment, getComments, updateComment, deleteComment };
