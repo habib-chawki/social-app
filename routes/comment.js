@@ -52,38 +52,30 @@ router.get('/', async (req, res, next) => {
 
 // update a comment by id
 router.put('/:id', async (req, res, next) => {
-   try {
-      const owner = req.user._id;
-      const post = req.query.post;
-      const id = req.params.id;
-      const content = req.body.content;
+   const owner = req.user._id;
+   const post = req.query.post;
+   const id = req.params.id;
+   const content = req.body.content;
 
-      // validate id
-      if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
-         logger.error(
-            'Invalid id ' + JSON.stringify({ postId: post, commentId: id })
-         );
-         next(httpError(400, 'Invalid id'));
-      }
-
-      if (!content) {
-         next(httpError(400, 'Comment content is required'));
-      }
-
-      const comment = await Comment.findOneAndUpdate(
-         { _id: id, owner, post },
-         { content },
-         { new: true }
+   // validate id
+   if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
+      logger.error(
+         'Invalid id ' + JSON.stringify({ postId: post, commentId: id })
       );
-
-      if (comment) {
-         return res.status(200).send(comment);
-      }
-
-      throw httpError(500, 'Update comment failed');
-   } catch (err) {
-      next(err);
+      next(httpError(400, 'Invalid id'));
    }
+
+   if (!content) {
+      logger.error(
+         'Comment content is required ' + JSON.stringify({ content })
+      );
+      next(httpError(400, 'Comment content is required'));
+   }
+
+   commentService
+      .updateComment(id, owner, post, content)
+      .then((updatedComment) => res.status(200).send(updatedComment))
+      .catch((err) => next(err));
 });
 
 // delete a comment by id
