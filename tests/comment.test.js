@@ -64,7 +64,7 @@ describe('Test with a single user', () => {
       });
 
       // test pagination
-      it('Should fetch limited list of comments', async () => {
+      it('Should fetch paginated list of comments', async () => {
          const limit = 2;
 
          const res = await request(app)
