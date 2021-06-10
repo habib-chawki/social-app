@@ -1,9 +1,10 @@
 const express = require('express');
 const validator = require('validator');
-const createError = require('http-errors');
+const httpError = require('http-errors');
 
 const Comment = require('../models/comment');
 const auth = require('../middleware/auth');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.post('/', async (req, res, next) => {
 
       // validate post id
       if (!validator.isMongoId(post)) {
-         throw createError(400, 'Invalid post id');
+         throw httpError(400, 'Invalid post id');
       }
 
       // create comment
@@ -29,7 +30,7 @@ router.post('/', async (req, res, next) => {
          return res.status(201).send(comment);
       }
 
-      throw createError(500, 'Create comment failed');
+      throw httpError(500, 'Create comment failed');
    } catch (err) {
       next(err);
    }
@@ -58,7 +59,7 @@ router.get('/', async (req, res, next) => {
          return res.status(200).send(comments);
       }
 
-      throw createError(404, 'Fetching comments failed');
+      throw httpError(404, 'Fetching comments failed');
    } catch (err) {
       next(err);
    }
@@ -87,7 +88,7 @@ router.put('/:id', async (req, res, next) => {
          return res.status(200).send(comment);
       }
 
-      throw createError(500, 'Update comment failed');
+      throw httpError(500, 'Update comment failed');
    } catch (err) {
       next(err);
    }
@@ -111,7 +112,7 @@ router.delete('/:id', async (req, res, next) => {
          return res.status(200).send(comment);
       }
 
-      throw createError(500, 'Delete comment failed');
+      throw httpError(500, 'Delete comment failed');
    } catch (err) {
       next(err);
    }
