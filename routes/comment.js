@@ -5,7 +5,7 @@ const httpError = require('http-errors');
 const Comment = require('../models/comment');
 const auth = require('../middleware/auth');
 const logger = require('../utils/logger');
-const commentService = require('../services/commentService');
+const commentService = require('../services/comment-service');
 
 const router = express.Router();
 

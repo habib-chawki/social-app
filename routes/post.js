@@ -5,7 +5,7 @@ const httpError = require('http-errors');
 const Post = require('../models/post');
 const auth = require('../middleware/auth');
 const logger = require('../utils/logger');
-const postService = require('../services/postService');
+const postService = require('../services/post-service');
 
 const router = express.Router();
 

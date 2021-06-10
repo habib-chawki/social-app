@@ -2,7 +2,7 @@ const express = require('express');
 const httpError = require('http-errors');
 const isMongoId = require('validator/lib/isMongoId');
 
-const userService = require('../services/userService');
+const userService = require('../services/user-service');
 const logger = require('../utils/logger');
 const profileRouter = require('../routes/profile');
 const auth = require('../middleware/auth');
