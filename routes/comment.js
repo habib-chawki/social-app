@@ -80,26 +80,22 @@ router.put('/:id', async (req, res, next) => {
 
 // delete a comment by id
 router.delete('/:id', async (req, res, next) => {
-   try {
-      const owner = req.user._id;
-      const post = req.query.post;
-      const id = req.params.id;
+   const owner = req.user._id;
+   const post = req.query.post;
+   const id = req.params.id;
 
-      // validate id
-      if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
-         throw crateError(400, 'Invalid id');
-      }
-
-      const comment = await Comment.findOneAndDelete({ _id: id, owner, post });
-
-      if (comment) {
-         return res.status(200).send(comment);
-      }
-
-      throw httpError(500, 'Delete comment failed');
-   } catch (err) {
-      next(err);
+   // validate id
+   if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
+      logger.error(
+         'Invalid id ' + JSON.stringify({ postId: post, commentId: id })
+      );
+      next(httpError(400, 'Invalid id'));
    }
+
+   commentService
+      .deleteComment(id, owner, post)
+      .then((deletedComment) => res.status(200).send(deletedComment))
+      .catch((err) => next(err));
 });
 
 module.exports = router;
