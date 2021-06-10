@@ -21,4 +21,23 @@ async function createComment(owner, post, content) {
    }
 }
 
-module.exports = { createComment };
+async function getComments(post, skip, limit) {
+   try {
+      // fetch paginated list of comments
+      const comments = await Comment.find({ post })
+         .skip(parseInt(skip))
+         .limit(parseInt(limit));
+
+      if (comments) {
+         logger.info('Comments fetched ' + JSON.stringify(comments));
+         return comments;
+      }
+
+      throw new Error('Fetching list of comments failed');
+   } catch (err) {
+      logger.error('Fetching list of comments failed ' + err);
+      throw httpError(404, 'Fetching list of comments failed');
+   }
+}
+
+module.exports = { createComment, getComments };
