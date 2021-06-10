@@ -58,9 +58,14 @@ router.put('/:id', async (req, res, next) => {
    const content = req.body.content;
 
    // validate id
-   if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
+   if (
+      !validator.isMongoId(post) ||
+      !validator.isMongoId(id) ||
+      !validator.isMongoId(owner)
+   ) {
       logger.error(
-         'Invalid id ' + JSON.stringify({ postId: post, commentId: id })
+         'Invalid id ' +
+            JSON.stringify({ ownerId: owner, postId: post, commentId: id })
       );
       next(httpError(400, 'Invalid id'));
    }
@@ -85,9 +90,14 @@ router.delete('/:id', async (req, res, next) => {
    const id = req.params.id;
 
    // validate id
-   if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
+   if (
+      !validator.isMongoId(post) ||
+      !validator.isMongoId(id) ||
+      !validator.isMongoId(owner)
+   ) {
       logger.error(
-         'Invalid id ' + JSON.stringify({ postId: post, commentId: id })
+         'Invalid id ' +
+            JSON.stringify({ ownerId: owner, postId: post, commentId: id })
       );
       next(httpError(400, 'Invalid id'));
    }
