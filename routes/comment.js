@@ -32,31 +32,22 @@ router.post('/', (req, res, next) => {
 
 // get a list of comments
 router.get('/', async (req, res, next) => {
-   try {
-      const post = req.query.post;
+   const post = req.query.post;
 
-      // validate post id
-      if (!validator.isMongoId(post)) {
-         throw crateError(400, 'Invalid post id');
-      }
+   // limit number of comments
+   const limit = req.query.limit ? req.query.limit : 5;
+   const skip = req.query.skip ? req.query.skip : 0;
 
-      // limit number of comments
-      const limit = req.query.limit ? req.query.limit : 5;
-      const skip = req.query.skip ? req.query.skip : 0;
-
-      // fetch and return comments list
-      const comments = await Comment.find({ post })
-         .skip(parseInt(skip))
-         .limit(parseInt(limit));
-
-      if (comments) {
-         return res.status(200).send(comments);
-      }
-
-      throw httpError(404, 'Fetching comments failed');
-   } catch (err) {
-      next(err);
+   // validate post id
+   if (!validator.isMongoId(post)) {
+      logger.error('Invalid post id ' + JSON.stringify({ postId: post }));
+      next(httpError(400, 'Invalid post id'));
    }
+
+   commentService
+      .getComments(post, skip, limit)
+      .then((comments) => res.status(200).send(comments))
+      .catch((err) => next(err));
 });
 
 // update a comment by id
