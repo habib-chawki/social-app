@@ -34,7 +34,7 @@ router.post('/', (req, res, next) => {
 router.get('/', async (req, res, next) => {
    const post = req.query.post;
 
-   // limit number of comments
+   // set pagination params, limit the number of comments
    const limit = req.query.limit ? req.query.limit : 5;
    const skip = req.query.skip ? req.query.skip : 0;
 
@@ -60,7 +60,14 @@ router.put('/:id', async (req, res, next) => {
 
       // validate id
       if (!validator.isMongoId(post) || !validator.isMongoId(id)) {
-         throw crateError(400, 'Invalid id');
+         logger.error(
+            'Invalid id ' + JSON.stringify({ postId: post, commentId: id })
+         );
+         next(httpError(400, 'Invalid id'));
+      }
+
+      if (!content) {
+         next(httpError(400, 'Comment content is required'));
       }
 
       const comment = await Comment.findOneAndUpdate(
