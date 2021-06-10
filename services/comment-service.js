@@ -40,4 +40,26 @@ async function getComments(post, skip, limit) {
    }
 }
 
-module.exports = { createComment, getComments };
+async function updateComment(id, owner, post, content) {
+   try {
+      const comment = await Comment.findOneAndUpdate(
+         { _id: id, owner, post },
+         { content },
+         { new: true }
+      );
+
+      if (comment) {
+         logger.info('Comment updated ' + JSON.stringify(comment));
+         return comment;
+      }
+
+      throw new Error('Update comment failed');
+   } catch (err) {
+      logger.error(
+         'Update comment failed ' + JSON.stringify({ id, owner, post, content })
+      );
+      throw httpError(500, 'Update comment failed');
+   }
+}
+
+module.exports = { createComment, getComments, updateComment };
