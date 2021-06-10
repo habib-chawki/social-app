@@ -5,6 +5,7 @@ const httpError = require('http-errors');
 const Comment = require('../models/comment');
 const auth = require('../middleware/auth');
 const logger = require('../utils/logger');
+const commentService = require('../services/commentService');
 
 const router = express.Router();
 
@@ -12,28 +13,21 @@ const router = express.Router();
 router.use(auth);
 
 // create a comment
-router.post('/', async (req, res, next) => {
-   try {
-      const owner = req.user._id;
-      const post = req.query.post;
-      const content = req.body.content;
+router.post('/', (req, res, next) => {
+   const owner = req.user._id;
+   const post = req.query.post;
+   const content = req.body.content;
 
-      // validate post id
-      if (!validator.isMongoId(post)) {
-         throw httpError(400, 'Invalid post id');
-      }
-
-      // create comment
-      const comment = await Comment.create({ owner, post, content });
-
-      if (comment) {
-         return res.status(201).send(comment);
-      }
-
-      throw httpError(500, 'Create comment failed');
-   } catch (err) {
-      next(err);
+   // validate post id
+   if (!validator.isMongoId(post)) {
+      logger.error('Invalid post id ' + JSON.stringify({ postId: post }));
+      next(httpError(400, 'Invalid post id'));
    }
+
+   commentService
+      .createComment(owner, post, content)
+      .then((createdComment) => res.status(201).send(createdComment))
+      .catch((err) => next(err));
 });
 
 // get a list of comments
