@@ -1,11 +1,12 @@
 const express = require('express');
 const multer = require('multer');
 const validator = require('validator');
-const createError = require('http-errors');
+const httpError = require('http-errors');
 
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 const profileService = require('../services/profile-service');
+const logger = require('../utils/logger');
 
 // preserve the req.params values from the parent router (userRouter)
 const router = express.Router({ mergeParams: true });
@@ -15,25 +16,19 @@ router.use(auth);
 
 // get user profile by user id
 router.get('/', async (req, res, next) => {
-   try {
-      // retrieve user id from request url
-      const userId = req.params.userId;
+   // extract user id from request url
+   const userId = req.params.userId;
 
-      // check user id validity
-      if (!validator.isMongoId(userId)) {
-         throw createError(400, 'Invalid id');
-      }
-
-      const user = await User.findById(userId);
-
-      if (user) {
-         return res.status(200).send(user.profile);
-      }
-
-      throw createError(404, 'Profile not found');
-   } catch (err) {
-      next(err);
+   // check user id validity
+   if (!validator.isMongoId(userId)) {
+      logger.error('Invalid user id ' + JSON.stringify({ userId }));
+      next(httpError(400, 'Invalid id'));
    }
+
+   profileService
+      .getProfile(userId)
+      .then((profile) => res.status(200).send(profile))
+      .catch((err) => next(err));
 });
 
 // update user profile
@@ -44,7 +39,7 @@ router.put('/', async (req, res, next) => {
 
       // check user id validity
       if (!validator.isMongoId(userId)) {
-         throw createError(400, 'Invalid id');
+         throw httpError(400, 'Invalid id');
       }
 
       // replace profile with updated version
@@ -59,7 +54,7 @@ router.put('/', async (req, res, next) => {
             .send({ message: 'Profile updated successfully' });
       }
 
-      throw createError(500, 'Profile update failed');
+      throw httpError(500, 'Profile update failed');
    } catch (err) {
       next(err);
    }
@@ -76,7 +71,7 @@ router.post('/avatar', upload.single('avatar'), async (req, res, next) => {
 
       // check user id validity
       if (!validator.isMongoId(userId)) {
-         throw createError(400, 'Invalid id');
+         throw httpError(400, 'Invalid id');
       }
 
       // retrieve user profile
@@ -92,7 +87,7 @@ router.post('/avatar', upload.single('avatar'), async (req, res, next) => {
             .send({ message: 'Avatar uploaded successfuly' });
       }
 
-      throw createError(500, 'Avatar upload failed');
+      throw httpError(500, 'Avatar upload failed');
    } catch (err) {
       next(err);
    }
