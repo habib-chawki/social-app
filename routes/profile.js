@@ -15,7 +15,7 @@ const router = express.Router({ mergeParams: true });
 router.use(auth);
 
 // get user profile by user id
-router.get('/', async (req, res, next) => {
+router.get('/', (req, res, next) => {
    // extract user id from request url
    const userId = req.params.userId;
 
@@ -33,31 +33,29 @@ router.get('/', async (req, res, next) => {
 
 // update user profile
 router.put('/', async (req, res, next) => {
-   try {
-      // retrieve user id
-      const userId = req.params.userId;
+   const userId = req.params.userId;
+   const newProfile = req.body;
 
-      // check user id validity
-      if (!validator.isMongoId(userId)) {
-         throw httpError(400, 'Invalid id');
-      }
-
-      // replace profile with updated version
-      const response = await User.findByIdAndUpdate(userId, {
-         $set: { profile: req.body },
-      });
-
-      // nModified: number of documents modified
-      if (response.nModified === 1) {
-         return res
-            .status(200)
-            .send({ message: 'Profile updated successfully' });
-      }
-
-      throw httpError(500, 'Profile update failed');
-   } catch (err) {
-      next(err);
+   // validate user id
+   if (!validator.isMongoId(userId)) {
+      logger.error('Invalid user id ' + JSON.stringify({ userId }));
+      next(httpError(400, 'Invalid id'));
    }
+
+   // validate new profile
+   if (!newProfile) {
+      logger.error(
+         'New profile is required ' + JSON.stringify({ userId, newProfile })
+      );
+      next(httpError(400, 'New profile is required'));
+   }
+
+   profileService
+      .updateProfile(userId, newProfile)
+      .then(() =>
+         res.status(200).send({ message: 'Profile updated successfully' })
+      )
+      .catch((err) => next(err));
 });
 
 // set up multer middleware for file upload
