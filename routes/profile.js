@@ -5,6 +5,7 @@ const createError = require('http-errors');
 
 const User = require('../models/user');
 const auth = require('../middleware/auth');
+const profileService = require('../services/profile-service');
 
 // preserve the req.params values from the parent router (userRouter)
 const router = express.Router({ mergeParams: true });
