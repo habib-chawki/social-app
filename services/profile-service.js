@@ -54,13 +54,11 @@ async function uploadAvatar(userId, avatar) {
       );
 
       if (user.profile.avatar) {
-         logger.info('Avatar uploaded ' + JSON.stringify({ userId, avatar }));
+         logger.info('Avatar uploaded ' + JSON.stringify({ userId }));
          return user.profile.avatar;
       }
 
-      throw new Error(
-         'Avatar upload failed ' + JSON.stringify({ userId, avatar })
-      );
+      throw new Error('Avatar upload failed ' + JSON.stringify({ userId }));
    } catch (err) {
       logger.error('Avatar upload failed ' + err);
       throw httpError(404, 'Avatar upload failed');

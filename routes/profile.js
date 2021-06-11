@@ -32,7 +32,7 @@ router.get('/', (req, res, next) => {
 });
 
 // update user profile
-router.put('/', async (req, res, next) => {
+router.put('/', (req, res, next) => {
    const userId = req.params.userId;
    const newProfile = req.body;
 
@@ -62,7 +62,7 @@ router.put('/', async (req, res, next) => {
 const upload = multer();
 
 // upload an avatar
-router.post('/avatar', upload.single('avatar'), async (req, res, next) => {
+router.post('/avatar', upload.single('avatar'), (req, res, next) => {
    // extract user id and avatar
    const userId = req.params.userId;
    const avatar = req.file.buffer;
