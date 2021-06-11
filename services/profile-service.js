@@ -32,9 +32,7 @@ async function updateProfile(userId, newProfile) {
          logger.info(
             'Profile updated ' + JSON.stringify({ userId, newProfile })
          );
-         return res
-            .status(200)
-            .send({ message: 'Profile updated successfully' });
+         return newProfile;
       }
 
       throw new Error(
@@ -46,4 +44,27 @@ async function updateProfile(userId, newProfile) {
    }
 }
 
-module.exports = { getProfile, updateProfile };
+async function uploadAvatar(userId, avatar) {
+   try {
+      // retrieve user profile
+      const user = await User.findByIdAndUpdate(
+         userId,
+         { 'profile.avatar': avatar },
+         { new: true }
+      );
+
+      if (user.profile.avatar) {
+         logger.info('Avatar uploaded ' + JSON.stringify({ userId, avatar }));
+         return user.profile.avatar;
+      }
+
+      throw new Error(
+         'Avatar upload failed ' + JSON.stringify({ userId, avatar })
+      );
+   } catch (err) {
+      logger.error('Avatar upload failed ' + err);
+      throw httpError(404, 'Avatar upload failed');
+   }
+}
+
+module.exports = { getProfile, updateProfile, updateProfile, uploadAvatar };
