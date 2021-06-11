@@ -61,7 +61,7 @@ router.put('/:id', async (req, res, next) => {
    if (
       !validator.isMongoId(post) ||
       !validator.isMongoId(id) ||
-      !validator.isMongoId(owner)
+      !validator.isMongoId(owner.toString())
    ) {
       logger.error(
          'Invalid id ' +
@@ -93,7 +93,7 @@ router.delete('/:id', async (req, res, next) => {
    if (
       !validator.isMongoId(post) ||
       !validator.isMongoId(id) ||
-      !validator.isMongoId(owner)
+      !validator.isMongoId(owner.toString())
    ) {
       logger.error(
          'Invalid id ' +
