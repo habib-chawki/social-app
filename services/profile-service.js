@@ -20,4 +20,30 @@ async function getProfile(userId) {
    }
 }
 
-module.exports = { getProfile };
+async function updateProfile(userId, newProfile) {
+   try {
+      // replace profile with updated version
+      const response = await User.findByIdAndUpdate(userId, {
+         $set: { profile: newProfile },
+      });
+
+      // nModified: number of documents modified
+      if (response.nModified === 1) {
+         logger.info(
+            'Profile updated ' + JSON.stringify({ userId, newProfile })
+         );
+         return res
+            .status(200)
+            .send({ message: 'Profile updated successfully' });
+      }
+
+      throw new Error(
+         'Profile update failed ' + JSON.stringify({ userId, newProfile })
+      );
+   } catch (err) {
+      logger.error('Profile update failed ' + err);
+      throw httpError(404, 'Profile update failed');
+   }
+}
+
+module.exports = { getProfile, updateProfile };
