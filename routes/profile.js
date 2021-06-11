@@ -67,9 +67,10 @@ router.post('/avatar', upload.single('avatar'), async (req, res, next) => {
       // retrieve user id
       const userId = req.params.userId;
 
-      // check user id validity
+      // validate user id
       if (!validator.isMongoId(userId)) {
-         throw httpError(400, 'Invalid id');
+         logger.error('Invalid user id ' + JSON.stringify({ userId }));
+         next(httpError(400, 'Invalid id'));
       }
 
       // retrieve user profile
