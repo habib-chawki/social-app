@@ -75,7 +75,9 @@ router.post('/avatar', upload.single('avatar'), (req, res, next) => {
 
    profileService
       .uploadAvatar(userId, avatar)
-      .then(() => send({ message: 'Avatar uploaded successfuly' }))
+      .then(() =>
+         res.status(200).send({ message: 'Avatar uploaded successfuly' })
+      )
       .catch((err) => next(err));
 });
 
