@@ -1,3 +1,5 @@
+const httpError = require('http-errors');
+
 const User = require('../models/user');
 const logger = require('../utils/logger');
 
