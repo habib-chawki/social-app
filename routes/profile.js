@@ -3,7 +3,6 @@ const multer = require('multer');
 const validator = require('validator');
 const httpError = require('http-errors');
 
-const User = require('../models/user');
 const auth = require('../middleware/auth');
 const profileService = require('../services/profile-service');
 const logger = require('../utils/logger');

@@ -2,10 +2,9 @@ const express = require('express');
 const validator = require('validator');
 const httpError = require('http-errors');
 
-const Comment = require('../models/comment');
 const auth = require('../middleware/auth');
-const logger = require('../utils/logger');
 const commentService = require('../services/comment-service');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 

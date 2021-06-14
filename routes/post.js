@@ -2,10 +2,9 @@ const express = require('express');
 const validator = require('validator');
 const httpError = require('http-errors');
 
-const Post = require('../models/post');
 const auth = require('../middleware/auth');
-const logger = require('../utils/logger');
 const postService = require('../services/post-service');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
