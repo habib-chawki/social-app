@@ -8,21 +8,18 @@ const profileSchema = mongoose.Schema(
       },
       firstName: {
          type: String,
-         minLength: 3,
          maxLength: 30,
          trim: true,
          default: '',
       },
       middleName: {
          type: String,
-         minLength: 3,
          maxLength: 30,
          trim: true,
          default: '',
       },
       lastName: {
          type: String,
-         minLength: 3,
          maxLength: 30,
          trim: true,
          default: '',
