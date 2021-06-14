@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const validator = require('validator');
+const isMongoId = require('validator/lib/isMongoId');
 const httpError = require('http-errors');
 
 const auth = require('../middleware/auth');
@@ -19,7 +19,7 @@ router.get('/', (req, res, next) => {
    const userId = req.params.userId;
 
    // check user id validity
-   if (!validator.isMongoId(userId)) {
+   if (!isMongoId(userId.toString())) {
       logger.error('Invalid user id ' + JSON.stringify({ userId }));
       next(httpError(400, 'Invalid id'));
    }
@@ -36,7 +36,7 @@ router.put('/', (req, res, next) => {
    const newProfile = req.body;
 
    // validate user id
-   if (!validator.isMongoId(userId)) {
+   if (!isMongoId(userId)) {
       logger.error('Invalid user id ' + JSON.stringify({ userId }));
       next(httpError(400, 'Invalid id'));
    }
@@ -67,7 +67,7 @@ router.post('/avatar', upload.single('avatar'), (req, res, next) => {
    const avatar = req.file.buffer;
 
    // validate user id
-   if (!validator.isMongoId(userId)) {
+   if (!isMongoId(userId)) {
       logger.error('Invalid user id ' + JSON.stringify({ userId }));
       next(httpError(400, 'Invalid id'));
    }
