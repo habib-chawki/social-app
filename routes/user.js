@@ -27,12 +27,8 @@ router.post('/signup', (req, res, next) => {
    // invoke user service, create the new user
    userService
       .signUserUp({ email, password })
-      .then((user) => {
-         res.status(201).send({ id: user._id, token: user.token });
-      })
-      .catch((err) => {
-         next(err);
-      });
+      .then((user) => res.status(201).send({ id: user._id, token: user.token }))
+      .catch((err) => next(err));
 });
 
 // user login
