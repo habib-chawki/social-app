@@ -46,12 +46,8 @@ router.post('/login', (req, res, next) => {
    // invoke user service, log user in
    userService
       .logUserIn({ email, password })
-      .then((user) => {
-         res.status(200).send({ id: user._id, token: user.token });
-      })
-      .catch((err) => {
-         next(err);
-      });
+      .then((user) => res.status(200).send({ id: user._id, token: user.token }))
+      .catch((err) => next(err));
 });
 
 // update user password
