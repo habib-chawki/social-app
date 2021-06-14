@@ -16,7 +16,9 @@ async function signUserUp(userCredentials) {
       return user;
    } catch (err) {
       // extract email or password validation error message
-      const errorMessage = err.errors['email' || 'password'].message;
+      const errorMessage = err.errors['email']
+         ? err.errors['email'].message
+         : err.errors['password'].message;
 
       logger.error(
          'Signup failed ' + JSON.stringify({ errorMessage, email, password })
