@@ -88,19 +88,17 @@ router.post('/logout', auth, (req, res, next) => {
 router.delete('/', auth, (req, res, next) => {
    const userId = req.user._id;
 
-   if (!isMongoId(userId)) {
+   if (!isMongoId(userId.toString())) {
       logger.error('Invalid user id ' + JSON.stringify({ userId }));
       next(httpError(400, 'Invalid user id'));
    }
 
    userService
       .deleteUser(userId)
-      .then(() => {
-         res.status(200).send({ message: 'User removed successfully' });
-      })
-      .catch((err) => {
-         next(err);
-      });
+      .then(() =>
+         res.status(200).send({ message: 'User removed successfully' })
+      )
+      .catch((err) => next(err));
 });
 
 module.exports = router;
