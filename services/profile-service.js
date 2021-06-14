@@ -25,12 +25,16 @@ async function getProfile(userId) {
 async function updateProfile(userId, newProfile) {
    try {
       // replace profile with updated version
-      const response = await User.findByIdAndUpdate(userId, {
-         $set: { profile: newProfile },
-      });
+      const response = await User.findByIdAndUpdate(
+         userId,
+         {
+            $set: { profile: newProfile },
+         },
+         { new: true }
+      );
 
       // nModified: number of documents modified
-      if (response.nModified === 1) {
+      if (response) {
          logger.info(
             'Profile updated ' + JSON.stringify({ userId, newProfile })
          );
