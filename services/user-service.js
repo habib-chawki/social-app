@@ -30,31 +30,32 @@ async function signUserUp(userCredentials) {
 
 async function logUserIn(userCredentials) {
    const { email, password } = userCredentials;
-   let user;
 
-   try {
-      user = await User.findOne({ email });
-   } catch (err) {
+   const user = await User.findOne({ email });
+
+   if (user) {
+      // check password validity
+      const match = await bcrypt.compare(password, user.password);
+
+      if (match) {
+         // send back user
+         logger.info(
+            'User login success ' + JSON.stringify({ userId: user._id })
+         );
+         return user;
+      } else {
+         logger.error(
+            'Login failed ' +
+               JSON.stringify({ errorMessage: 'Incorrect password', password })
+         );
+
+         throw httpError(400, 'Incorrect password');
+      }
+   } else {
       logger.error(
          'Could not find user by given email ' + JSON.stringify({ email })
       );
-      throw httpError(404, 'Could not find user by given email');
-   }
-
-   // check password validity
-   const match = await bcrypt.compare(password, user.password);
-
-   if (match) {
-      // send back user
-      logger.info('User login success ' + JSON.stringify({ userId: user._id }));
-      return user;
-   } else {
-      logger.error(
-         'Login failed ' +
-            JSON.stringify({ errorMessage: 'Incorrect password', password })
-      );
-
-      throw httpError(400, 'Incorrect password');
+      throw httpError(400, 'Could not find user by given email');
    }
 }
 
