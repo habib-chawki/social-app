@@ -73,12 +73,15 @@ async function updatePassword(user, oldPassword, newPassword) {
          throw httpError(400, 'Can not use the same password');
       }
 
+      // hash password
+      newPassword = await bcrypt.hash(newPassword, 8);
+
       // update password
+      await User.updateOne({ _id: user._id }, { password: newPassword });
+
       logger.info(
          'Password updated ' + JSON.stringify({ userId: user._id, newPassword })
       );
-
-      await User.updateOne({ _id: user._id }, { password: newPassword });
    } else {
       logger.error(
          'Incorrect password ' + JSON.stringify({ password: oldPassword })
