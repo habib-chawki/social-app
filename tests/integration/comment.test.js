@@ -1,9 +1,9 @@
 const request = require('supertest');
 
-const app = require('../src/app');
-const User = require('../models/user');
-const Post = require('../models/post');
-const Comment = require('../models/comment');
+const app = require('../../src/app');
+const User = require('../../models/user');
+const Post = require('../../models/post');
+const Comment = require('../../models/comment');
 
 const baseUrl = '/comments';
 
