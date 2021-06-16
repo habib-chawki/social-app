@@ -1,7 +1,7 @@
 const request = require('supertest');
 
-const app = require('../src/app');
-const User = require('../models/user');
+const app = require('../../src/app');
+const User = require('../../models/user');
 
 const credentials = {
    email: 'habib@email.com',
