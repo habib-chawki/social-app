@@ -2,8 +2,8 @@ const request = require('supertest');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 
-const app = require('../src/app');
-const User = require('../models/user');
+const app = require('../../src/app');
+const User = require('../../models/user');
 
 const baseUrl = '/users';
 
