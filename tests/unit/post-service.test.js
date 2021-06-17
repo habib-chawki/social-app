@@ -21,4 +21,10 @@ fit('should create post', () => {
    });
 });
 
-fit('should get post by id', () => {});
+fit('should get post by id', async () => {
+   // given the get post
+   Post.findById.mockResolvedValue(post);
+
+   const fetchedPost = await postService.getPostById(post._id);
+   expect(fetchedPost).toBe(post);
+});
