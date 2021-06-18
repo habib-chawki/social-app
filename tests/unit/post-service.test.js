@@ -23,7 +23,7 @@ fit('should create post', async () => {
    const createdPost = await postService.createPost(post.owner, post.content);
 
    // then expect the post to have been created
-   expect(createdPost).toBe(post);
+   expect(createdPost).toEqual(post);
 });
 
 fit('should get post by id', async () => {
@@ -34,7 +34,7 @@ fit('should get post by id', async () => {
    const fetchedPost = await postService.getPostById(post._id);
 
    // then expect the post to have been fetched successfully
-   expect(fetchedPost).toBe(post);
+   expect(fetchedPost).toEqual(post);
 });
 
 fit('should get posts', async () => {
