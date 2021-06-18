@@ -36,13 +36,13 @@ async function getPostById(postId) {
    }
 }
 
-async function getPosts(query, skip, limit) {
+async function getPosts(userId, skip, limit) {
    try {
       // limit number of comments
       const numberOfComments = 5;
 
       // fetch list of posts
-      const posts = await Post.find(query)
+      const posts = await Post.find(userId)
          .skip(parseInt(skip))
          .limit(parseInt(limit))
          .populate({ path: 'comments', perDocumentLimit: numberOfComments });
