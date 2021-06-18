@@ -1,8 +1,6 @@
 const postService = require('../../services/post-service');
 const Post = require('../../models/post');
 
-jest.mock('../../models/post');
-
 const post = {
    _id: '507f1f77bcf86cd799439010',
    owner: '507f1f77bcf86cd799439020',
@@ -19,7 +17,7 @@ const post2 = {
 
 fit('should create post', async () => {
    // given the post model create() response
-   Post.create.mockResolvedValue(post);
+   Post.create = jest.fn().mockReturnValue(post);
 
    // when createPost() is invoked
    const createdPost = await postService.createPost(post.owner, post.content);
@@ -30,7 +28,7 @@ fit('should create post', async () => {
 
 fit('should get post by id', async () => {
    // given the post model findById() response
-   Post.findById.mockResolvedValue(post);
+   Post.findById = jest.fn().mockReturnValue(post);
 
    // when a request to get the post by id is made
    const fetchedPost = await postService.getPostById(post._id);
