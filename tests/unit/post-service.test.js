@@ -5,8 +5,15 @@ jest.mock('../../models/post');
 
 const post = {
    _id: '507f1f77bcf86cd799439010',
-   owner: '507f1f77bcf86cd799439011',
+   owner: '507f1f77bcf86cd799439020',
    content: 'This is a post',
+   comments: [],
+};
+
+const post2 = {
+   _id: '507f1f77bcf86cd799439011',
+   owner: '507f1f77bcf86cd799439020',
+   content: 'This is another post',
    comments: [],
 };
 
@@ -30,4 +37,18 @@ fit('should get post by id', async () => {
 
    // then expect the post to have been fetched successfully
    expect(fetchedPost).toBe(post);
+});
+
+fit('should get posts', async () => {
+   Post.find = jest.fn(() => ({
+      skip: jest.fn(() => ({
+         limit: jest.fn(() => ({
+            populate: jest.fn().mockReturnValue([post, post2]),
+         })),
+      })),
+   }));
+
+   const fetchedPosts = await postService.getPosts(post.owner, 0, 10);
+
+   expect(fetchedPosts).toEqual([post, post2]);
 });
