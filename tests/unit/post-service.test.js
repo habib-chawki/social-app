@@ -18,7 +18,7 @@ const post2 = {
 };
 
 fit('should create post', async () => {
-   // given the post model create method response
+   // given the post model create() response
    Post.create.mockResolvedValue(post);
 
    // when createPost() is invoked
@@ -29,7 +29,7 @@ fit('should create post', async () => {
 });
 
 fit('should get post by id', async () => {
-   // given the get post
+   // given the post model findById() response
    Post.findById.mockResolvedValue(post);
 
    // when a request to get the post by id is made
@@ -40,6 +40,7 @@ fit('should get post by id', async () => {
 });
 
 fit('should get posts', async () => {
+   // given the post model find() response
    Post.find = jest.fn(() => ({
       skip: jest.fn(() => ({
          limit: jest.fn(() => ({
@@ -48,7 +49,9 @@ fit('should get posts', async () => {
       })),
    }));
 
+   // when a request to get a user's list of posts
    const fetchedPosts = await postService.getPosts(post.owner, 0, 10);
 
+   // then expect the posts to have been fetched
    expect(fetchedPosts).toEqual([post, post2]);
 });
