@@ -55,16 +55,20 @@ fit('should get posts', async () => {
 });
 
 fit('should update post', async () => {
+   // given the updated post content
    const updatedContent = 'updated content';
    const updatedPost = { ...post, content: updatedContent };
 
+   // given the update response
    Post.findOneAndUpdate = jest.fn().mockReturnValue(updatedPost);
 
+   // when an update request is made
    const response = await postService.updatePost(
       post._id,
       post.owner,
       updatedContent
    );
 
+   // then expect the post to have been updated successfuly
    expect(response).toEqual(updatedPost);
 });
