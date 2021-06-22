@@ -100,11 +100,13 @@ fit('should delete post by id', async () => {
 });
 
 fit('should delete posts', async () => {
+   // given the delete many response
    const posts = [post, post2];
-
    Post.deleteMany = jest.fn().mockReturnValue({ deletedCount: posts.length });
 
+   // when a delete posts request is made
    const response = await postService.deletePosts(post.owner);
 
+   // then expect all the posts to have been deleted
    expect(response).toBe(posts.length);
 });
