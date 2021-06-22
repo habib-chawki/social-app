@@ -83,9 +83,18 @@ fit('should update post', async () => {
 });
 
 fit('should delete post by id', async () => {
+   // given the delete post response
    Post.findOneAndDelete = jest.fn().mockReturnValue(post);
 
+   // when a request to delete a post by id is made
    const response = await postService.deletePostById(post._id, post.owner);
 
+   // then expect the post to have been deleted
    expect(response).toEqual(post);
+
+   // expect the delete function to have been called with the proper arguments
+   expect(Post.findOneAndDelete.mock.calls[0][0]).toEqual({
+      owner: post.owner,
+      _id: post._id,
+   });
 });
