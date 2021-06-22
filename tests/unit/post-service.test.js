@@ -15,7 +15,7 @@ const post2 = {
    comments: [],
 };
 
-fit('should create post', async () => {
+it('should create post', async () => {
    // given the post model create() response
    Post.create = jest.fn().mockReturnValue(post);
 
@@ -26,7 +26,7 @@ fit('should create post', async () => {
    expect(createdPost).toEqual(post);
 });
 
-fit('should get post by id', async () => {
+it('should get post by id', async () => {
    // given the post model findById() response
    Post.findById = jest.fn().mockReturnValue(post);
 
@@ -37,7 +37,7 @@ fit('should get post by id', async () => {
    expect(fetchedPost).toEqual(post);
 });
 
-fit('should get posts', async () => {
+it('should get posts', async () => {
    // given the post model find() response
    Post.find = jest.fn(() => ({
       skip: jest.fn(() => ({
@@ -54,7 +54,7 @@ fit('should get posts', async () => {
    expect(fetchedPosts).toEqual([post, post2]);
 });
 
-fit('should update post', async () => {
+it('should update post', async () => {
    // given the updated post content
    const updatedContent = 'updated content';
    const updatedPost = { ...post, content: updatedContent };
@@ -82,7 +82,7 @@ fit('should update post', async () => {
    });
 });
 
-fit('should delete post by id', async () => {
+it('should delete post by id', async () => {
    // given the delete post response
    Post.findOneAndDelete = jest.fn().mockReturnValue(post);
 
@@ -99,7 +99,7 @@ fit('should delete post by id', async () => {
    });
 });
 
-fit('should delete posts', async () => {
+it('should delete posts', async () => {
    // given the delete many response
    const posts = [post, post2];
    Post.deleteMany = jest.fn().mockReturnValue({ deletedCount: posts.length });
@@ -109,4 +109,5 @@ fit('should delete posts', async () => {
 
    // then expect all the posts to have been deleted
    expect(response).toBe(posts.length);
+   expect(Post.deleteMany.mock.calls[0][0]).toEqual({ owner: post.owner });
 });
