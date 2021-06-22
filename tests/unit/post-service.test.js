@@ -71,4 +71,8 @@ fit('should update post', async () => {
 
    // then expect the post to have been updated successfuly
    expect(response).toEqual(updatedPost);
+   expect(Post.findOneAndUpdate.mock.calls[0][0]).toEqual({
+      _id: post._id,
+      owner: post.owner,
+   });
 });
