@@ -98,3 +98,13 @@ fit('should delete post by id', async () => {
       _id: post._id,
    });
 });
+
+fit('should delete posts', async () => {
+   const posts = [post, post2];
+
+   Post.deleteMany = jest.fn().mockReturnValue({ deletedCount: posts.length });
+
+   const response = await postService.deletePosts(post.owner);
+
+   expect(response).toBe(posts.length);
+});
