@@ -30,4 +30,7 @@ it('should log user out', async () => {
 
    // then the user should be logged out successfully
    expect(response).toEqual(1);
+
+   expect(User.updateOne.mock.calls[0][0]).toEqual({ _id: user._id });
+   expect(User.updateOne.mock.calls[0][1]).toEqual({ token: null });
 });
