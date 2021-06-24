@@ -15,8 +15,10 @@ it('should sign user up', async () => {
    const { _id, ...userCredentials } = user;
 
    // when a request to create a new user is made
-   const response = await userService.signUserUp({ userCredentials });
+   const response = await userService.signUserUp(userCredentials);
 
    // then expect the user to have been created successfully
    expect(response).toEqual(user);
 });
+
+it('should log user in', async () => {});
