@@ -21,4 +21,10 @@ it('should sign user up', async () => {
    expect(response).toEqual(user);
 });
 
-it('should log user in', async () => {});
+it('should log user out', async () => {
+   User.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
+
+   const response = await userService.logUserOut(user._id);
+
+   expect(response).toEqual(1);
+});
