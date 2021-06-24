@@ -37,13 +37,14 @@ it('should delete user by id', async () => {
 
 it('should log user out', async () => {
    // given the log out function response
-   User.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
+   const nModified = 1;
+   User.updateOne = jest.fn().mockReturnValue({ nModified });
 
    // when a request to log a user out by id
    const response = await userService.logUserOut(user._id);
 
    // then the user should be logged out successfully
-   expect(response).toEqual(1);
+   expect(response).toEqual(nModified);
 
    expect(User.updateOne.mock.calls[0][0]).toEqual({ _id: user._id });
    expect(User.updateOne.mock.calls[0][1]).toEqual({ token: null });
