@@ -23,6 +23,15 @@ it('should sign user up', async () => {
    expect(User.create.mock.calls[0][0]).toEqual(userCredentials);
 });
 
+it('should delete user by id', async () => {
+   const deletedCount = 1;
+   User.deleteOne = jest.fn().mockReturnValue({ deletedCount });
+
+   const response = await userService.deleteUser({ _id: user._id });
+
+   expect(response).toEqual(deletedCount);
+});
+
 it('should log user out', async () => {
    // given the log out function response
    User.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
