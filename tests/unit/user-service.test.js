@@ -24,11 +24,14 @@ it('should sign user up', async () => {
 });
 
 it('should delete user by id', async () => {
+   // given the delete user function response
    const deletedCount = 1;
    User.deleteOne = jest.fn().mockReturnValue({ deletedCount });
 
+   // when a request to delete the user by id is made
    const response = await userService.deleteUser({ _id: user._id });
 
+   // then the user should be deleted successfully
    expect(response).toEqual(deletedCount);
 });
 
