@@ -19,6 +19,8 @@ it('should sign user up', async () => {
 
    // then expect the user to have been created successfully
    expect(response).toEqual(user);
+
+   expect(User.create.mock.calls[0][0]).toEqual(userCredentials);
 });
 
 it('should log user out', async () => {
