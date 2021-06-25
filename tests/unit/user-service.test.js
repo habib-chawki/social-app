@@ -1,5 +1,9 @@
+const bcrypt = require('bcrypt');
+
 const userService = require('../../services/user-service.js');
 const User = require('../../models/user.js');
+
+jest.mock('bcrypt');
 
 const user = {
    _id: '507f1f77bcf86cd799439030',
@@ -21,6 +25,10 @@ it('should sign user up', async () => {
    expect(response).toEqual(user);
 
    expect(User.create.mock.calls[0][0]).toEqual(userCredentials);
+});
+
+it('should log user in', async () => {
+   bcrypt.compare().mockResolvedValue();
 });
 
 it('should delete user by id', async () => {
