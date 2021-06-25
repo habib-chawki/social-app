@@ -44,6 +44,15 @@ it('should log user in', async () => {
    });
 });
 
+it('should update password', async () => {
+   const newPassword = 'new password!';
+
+   bcrypt.compare.mockResolvedValue(true);
+   bcrypt.hash.mockResolvedValue(
+      '$2y$08$TGTtJpb9zP4ZDdCHRnuixuTa1kAa7HuhHsoPKPi4r1ng9/UjXqQge '
+   );
+});
+
 it('should delete user by id', async () => {
    // given the delete user function response
    const deletedCount = 1;
