@@ -28,7 +28,17 @@ it('should sign user up', async () => {
 });
 
 it('should log user in', async () => {
-   bcrypt.compare().mockResolvedValue();
+   bcrypt.compare.mockResolvedValue(true);
+   User.findOne = jest.fn().mockReturnValue(user);
+
+   // given user credentials
+   const { _id, ...userCredentials } = user;
+
+   // when a request to log the user in
+   const response = await userService.logUserIn(userCredentials);
+
+   // then expect the user to be logged in successfully
+   expect(response).toEqual(user);
 });
 
 it('should delete user by id', async () => {
