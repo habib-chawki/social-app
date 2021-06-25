@@ -45,17 +45,22 @@ it('should log user in', async () => {
 });
 
 it('should update password', async () => {
+   // given the updated password and its hash
    const newPassword = 'new password!';
    const newPasswordHash =
       '$2y$08$TGTtJpb9zP4ZDdCHRnuixuTa1kAa7HuhHsoPKPi4r1ng9/UjXqQge';
 
+   // given bcrypt
    bcrypt.compare.mockResolvedValue(true);
    bcrypt.hash.mockResolvedValue(newPasswordHash);
 
    User.updateOne = jest.fn();
 
+   // when a request to update the password is made
    await userService.updatePassword(user, user.password, newPassword);
 
+   // then expect the password to have been updated succefully
+   expect(User.updateOne.mock.calls[0][0]).toEqual({ _id: user._id });
    expect(User.updateOne.mock.calls[0][1]).toEqual({
       password: newPasswordHash,
    });
