@@ -39,6 +39,9 @@ it('should log user in', async () => {
 
    // then expect the user to be logged in successfully
    expect(response).toEqual(user);
+   expect(User.findOne.mock.calls[0][0]).toEqual({
+      email: userCredentials.email,
+   });
 });
 
 it('should delete user by id', async () => {
