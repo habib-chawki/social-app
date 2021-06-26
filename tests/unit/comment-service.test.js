@@ -28,6 +28,20 @@ it('should create comment', async () => {
    });
 });
 
+it('should update comment', async () => {
+   const newComment = { ...comment, content: 'updated content' };
+   Comment.findOneAndUpdate = jest.fn().mockReturnValue(newComment);
+
+   const response = await commentService.updateComment(
+      comment._id,
+      comment.owner,
+      comment.post,
+      comment.content
+   );
+
+   expect(response).toStrictEqual(newComment);
+});
+
 it('should delete comment by id', async () => {
    Comment.findOneAndDelete = jest.fn().mockReturnValue(comment);
 
