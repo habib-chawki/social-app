@@ -31,11 +31,18 @@ it('should create comment', async () => {
 it('should delete comment by id', async () => {
    Comment.findOneAndDelete = jest.fn().mockReturnValue(comment);
 
+   // when the service is invoked to delete a comment by id
    const response = await commentService.deleteComment(
       comment._id,
       comment.owner,
       comment.post
    );
 
+   // then expect the comment to have been deleted successfully
    expect(response).toEqual(comment);
+   expect(Comment.findOneAndDelete.mock.calls[0][0]).toEqual({
+      _id: comment._id,
+      owner: comment.owner,
+      post: comment.post,
+   });
 });
