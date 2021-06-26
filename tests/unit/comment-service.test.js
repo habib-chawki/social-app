@@ -8,6 +8,13 @@ const comment = {
    content: 'This is a comment',
 };
 
+const comment2 = {
+   _id: '507f1f77bcf86cd799439040',
+   owner: '507f1f77bcf86cd799439050',
+   post: '507f1f77bcf86cd799439030',
+   content: 'This is another comment',
+};
+
 it('should create comment', async () => {
    // given the create comment function
    Comment.create = jest.fn().mockReturnValue(comment);
@@ -26,6 +33,18 @@ it('should create comment', async () => {
       post: comment.post,
       content: comment.content,
    });
+});
+
+it('should get post comments', async () => {
+   const skip = 0;
+   const limit = 5;
+   Comment.find = jest.fn(() => ({
+      skip: jest.fn(() => ({
+         limit: jest.fn().mockReturnValue([comment, comment2]),
+      })),
+   }));
+
+   const response = await commentService.getComments(comment.post, skip, limit);
 });
 
 it('should update comment', async () => {
