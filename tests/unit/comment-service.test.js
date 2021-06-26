@@ -29,21 +29,27 @@ it('should create comment', async () => {
 });
 
 it('should update comment', async () => {
+   // given the new comment content
    const newComment = { ...comment, content: 'updated content' };
    Comment.findOneAndUpdate = jest.fn().mockReturnValue(newComment);
 
+   // when the service is invoked to update the comment
    const response = await commentService.updateComment(
       comment._id,
       comment.owner,
       comment.post,
-      comment.content
+      newComment.content
    );
 
+   // then expect the comment to have been updated
    expect(response).toStrictEqual(newComment);
    expect(Comment.findOneAndUpdate.mock.calls[0][0]).toEqual({
       _id: comment._id,
       owner: comment.owner,
       post: comment.post,
+   });
+   expect(Comment.findOneAndUpdate.mock.calls[0][1]).toEqual({
+      content: newComment.content,
    });
 });
 
