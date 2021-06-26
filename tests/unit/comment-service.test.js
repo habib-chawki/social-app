@@ -12,7 +12,7 @@ it('should create comment', async () => {
    // given the create comment function
    Comment.create = jest.fn().mockReturnValue(comment);
 
-   // when a request to create a comment is made
+   // when the service is invoked to create a comment
    const response = await commentService.createComment(
       comment.owner,
       comment.post,
@@ -26,4 +26,16 @@ it('should create comment', async () => {
       post: comment.post,
       content: comment.content,
    });
+});
+
+it('should delete comment by id', async () => {
+   Comment.findOneAndDelete = jest.fn().mockReturnValue(comment);
+
+   const response = await commentService.deleteComment(
+      comment._id,
+      comment.owner,
+      comment.post
+   );
+
+   expect(response).toEqual(comment);
 });
