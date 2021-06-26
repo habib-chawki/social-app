@@ -38,14 +38,17 @@ it('should create comment', async () => {
 it('should get post comments', async () => {
    const skip = 0;
    const limit = 5;
+
    Comment.find = jest.fn(() => ({
       skip: jest.fn(() => ({
          limit: jest.fn().mockReturnValue([comment, comment2]),
       })),
    }));
 
+   // when the service is invoked to get a post's list of comments
    const response = await commentService.getComments(comment.post, skip, limit);
 
+   // then expect the list of comments to be returned
    expect(response).toEqual([comment, comment2]);
 });
 
