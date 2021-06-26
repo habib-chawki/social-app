@@ -45,6 +45,8 @@ it('should get post comments', async () => {
    }));
 
    const response = await commentService.getComments(comment.post, skip, limit);
+
+   expect(response).toEqual([comment, comment2]);
 });
 
 it('should update comment', async () => {
