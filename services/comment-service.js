@@ -40,11 +40,11 @@ async function getComments(post, skip, limit) {
    }
 }
 
-async function updateComment(id, owner, post, content) {
+async function updateComment(id, owner, post, newContent) {
    try {
       const comment = await Comment.findOneAndUpdate(
          { _id: id, owner, post },
-         { content },
+         { content: newContent },
          { new: true }
       );
 

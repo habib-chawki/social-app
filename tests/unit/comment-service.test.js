@@ -40,6 +40,11 @@ it('should update comment', async () => {
    );
 
    expect(response).toStrictEqual(newComment);
+   expect(Comment.findOneAndUpdate.mock.calls[0][0]).toEqual({
+      _id: comment._id,
+      owner: comment.owner,
+      post: comment.post,
+   });
 });
 
 it('should delete comment by id', async () => {
