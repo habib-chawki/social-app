@@ -42,6 +42,7 @@ it('should get user profile', async () => {
 });
 
 it('should update user profile', async () => {
+   // given the updated profile
    const updatedProfile = {
       ...profile,
       bio: 'Updated bio',
@@ -50,10 +51,12 @@ it('should update user profile', async () => {
 
    User.findByIdAndUpdate = jest.fn().mockReturnValue(updatedProfile);
 
+   // when the profile service is invoked to update the profile
    const response = await profileService.updateProfile(
       user._id,
       updatedProfile
    );
 
+   // then expect the profile to have been updated successfuly
    expect(response).toEqual(updatedProfile);
 });
