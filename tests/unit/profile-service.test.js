@@ -33,7 +33,10 @@ it('should get user profile', async () => {
    // given the user found by id
    User.findById = jest.fn().mockReturnValue(user);
 
+   // when the profile service is invoked to get the user profile
    const response = await profileService.getProfile(user._id);
 
+   // then expect the profile to have been fetched successfully
    expect(response).toEqual(user.profile);
+   expect(User.findById).toHaveBeenCalledWith(user._id);
 });
