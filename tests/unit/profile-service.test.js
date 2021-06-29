@@ -40,3 +40,20 @@ it('should get user profile', async () => {
    expect(response).toEqual(user.profile);
    expect(User.findById).toHaveBeenCalledWith(user._id);
 });
+
+it('should update user profile', async () => {
+   const updatedProfile = {
+      ...profile,
+      bio: 'Updated bio',
+      languages: [...profile.languages, 'Dutch'],
+   };
+
+   User.findByIdAndUpdate = jest.fn().mockReturnValue(updatedProfile);
+
+   const response = await profileService.updateProfile(
+      user._id,
+      updatedProfile
+   );
+
+   expect(response).toEqual(updatedProfile);
+});
