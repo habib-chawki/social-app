@@ -13,10 +13,16 @@ async function createPost(userId, postContent) {
       );
 
       // create new post
-      const post = await Post.create({
+      const createdPost = await Post.create({
          owner: userId,
          content: postContent,
       });
+
+      // associate post with owner
+      const post = {
+         ...createdPost,
+         owner: postOwner,
+      };
 
       // return post when created successfully
       logger.info('Post created ' + JSON.stringify({ userId, postContent }));
