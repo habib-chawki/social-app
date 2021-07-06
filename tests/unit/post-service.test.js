@@ -26,7 +26,7 @@ const postOwner = {
    },
 };
 
-fit('should create post', async () => {
+it('should create post', async () => {
    // given the post model create() response
    Post.create = jest.fn().mockReturnValue(post);
 

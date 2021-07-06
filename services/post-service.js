@@ -21,7 +21,11 @@ async function createPost(userId, postContent) {
       // associate post with owner
       const post = {
          ...createdPost,
-         owner: postOwner,
+         owner: {
+            id: postOwner._id,
+            avatar: postOwner.avatar,
+            ...postOwner.profile,
+         },
       };
 
       // return post when created successfully
