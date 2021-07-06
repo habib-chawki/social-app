@@ -64,13 +64,14 @@ describe('Test with setup and teardown', () => {
       // test authenticaion route (login)
       describe('POST /users/login', () => {
          // successful login
-         it('Should log in user', async () => {
+         it('Should log user in', async () => {
             const res = await request(app)
                .post(`${baseUrl}/login`)
                .send(credentials)
                .expect(200);
 
             // retrieve token and verify its validity
+            expect(res.body.token).not.toBeNull();
             expect(validator.isJWT(res.body.token)).toBe(true);
          });
 
