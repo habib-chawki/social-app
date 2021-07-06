@@ -95,7 +95,11 @@ describe('Test with setup and teardown', () => {
                .expect(200);
 
             // expect to get list of all posts
-            const userPosts = await Post.find({});
+            const userPosts = await Post.find({}).populate(
+               'owner',
+               'avatar profile.firstName profile.middleName profile.lastName'
+            );
+
             expect(JSON.stringify(res.body)).toEqual(JSON.stringify(userPosts));
 
             // expect list of posts to contain at least post 1
