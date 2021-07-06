@@ -34,11 +34,14 @@ fit('should create post', async () => {
       select: jest.fn().mockReturnValue(postOwner),
    }));
 
+   // given the expected response
+   const expectedResponse = { ...post, owner: postOwner };
+
    // when createPost() is invoked
-   const createdPost = await postService.createPost(post.owner, post.content);
+   const response = await postService.createPost(post.owner, post.content);
 
    // then expect the post to have been created
-   expect(createdPost).toEqual(post);
+   expect(response).toEqual(expectedResponse);
 });
 
 it('should get post by id', async () => {
