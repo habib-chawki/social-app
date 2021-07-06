@@ -1,9 +1,11 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jwt');
 
 const userService = require('../../services/user-service.js');
 const User = require('../../models/user.js');
 
 jest.mock('bcrypt');
+jest.mock('jwt');
 
 const user = {
    _id: '507f1f77bcf86cd799439030',
