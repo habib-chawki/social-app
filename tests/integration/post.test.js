@@ -126,7 +126,10 @@ describe('Test with setup and teardown', () => {
 
       describe('GET /posts/?user=userId', () => {
          it('Should get list of posts of a specific user', async () => {
-            const posts = await Post.find({ owner: user._id });
+            const posts = await Post.find({ owner: user._id }).populate(
+               'owner',
+               'avatar profile.firstName profile.middleName profile.lastName'
+            );
 
             const res = await request(app)
                .get(`${baseUrl}/?user=${user._id}`)
