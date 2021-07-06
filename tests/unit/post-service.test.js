@@ -1,5 +1,7 @@
 const postService = require('../../services/post-service');
+
 const Post = require('../../models/post');
+const User = require('../../models/user');
 
 const post = {
    _id: '507f1f77bcf86cd799439010',
@@ -15,9 +17,22 @@ const post2 = {
    comments: [],
 };
 
-it('should create post', async () => {
+const postOwner = {
+   _id: '507f1f77bcf86cd799439020',
+   profile: {
+      firstName: 'first',
+      middleName: 'mid',
+      lastName: 'last',
+   },
+};
+
+fit('should create post', async () => {
    // given the post model create() response
    Post.create = jest.fn().mockReturnValue(post);
+
+   User.findById = jest.fn(() => ({
+      select: jest.fn().mockReturnValue(postOwner),
+   }));
 
    // when createPost() is invoked
    const createdPost = await postService.createPost(post.owner, post.content);
