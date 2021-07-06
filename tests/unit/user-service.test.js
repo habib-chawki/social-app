@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jwt');
+const jwt = require('jsonwebtoken');
 
 const userService = require('../../services/user-service.js');
 const User = require('../../models/user.js');
 
 jest.mock('bcrypt');
-jest.mock('jwt');
+jest.mock('jsonwebtoken');
 
 const user = {
    _id: '507f1f77bcf86cd799439030',
@@ -30,7 +30,12 @@ it('should sign user up', async () => {
 });
 
 it('should log user in', async () => {
+   const jwtToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpZCI6InNvbWVfaWQifQ.IYMdjwh5ZbDl4wDhaULP5lsy8DGerl8MtIt1E-pZHY8';
+
    bcrypt.compare.mockResolvedValue(true);
+   jwt.sign.mockResolvedValue(jwtToken);
+
    User.findOne = jest.fn().mockReturnValue(user);
 
    // given user credentials
