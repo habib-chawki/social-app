@@ -1,10 +1,17 @@
 const httpError = require('http-errors');
 
 const Post = require('../models/post');
+const User = require('../models/user');
+
 const logger = require('../utils/logger');
 
 async function createPost(userId, postContent) {
    try {
+      // fetch post owner
+      const postOwner = await User.findById(userId).select(
+         'avatar profile.firstName profile.middleName profile.lastName '
+      );
+
       // create new post
       const post = await Post.create({
          owner: userId,
