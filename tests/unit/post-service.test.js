@@ -26,7 +26,7 @@ const postOwner = {
    },
 };
 
-it('should create post', async () => {
+fit('should create post', async () => {
    // given the post model create() response
    Post.create = jest.fn().mockReturnValue(post);
 
@@ -35,7 +35,14 @@ it('should create post', async () => {
    }));
 
    // given the expected response
-   const expectedResponse = { ...post, owner: postOwner };
+   const expectedResponse = {
+      ...post,
+      owner: {
+         id: postOwner._id,
+         avatar: postOwner.avatar,
+         ...postOwner.profile,
+      },
+   };
 
    // when createPost() is invoked
    const response = await postService.createPost(post.owner, post.content);
