@@ -67,7 +67,9 @@ it('should get posts', async () => {
    Post.find = jest.fn(() => ({
       skip: jest.fn(() => ({
          limit: jest.fn(() => ({
-            populate: jest.fn().mockReturnValue([post, post2]),
+            populate: jest.fn(() => ({
+               populate: jest.fn().mockReturnValue([post, post2]),
+            })),
          })),
       })),
    }));
