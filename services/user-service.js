@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const httpError = require('http-errors');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 const logger = require('../utils/logger');
@@ -42,6 +43,10 @@ async function logUserIn(userCredentials) {
          logger.info(
             'User login success ' + JSON.stringify({ userId: user._id })
          );
+
+         // generate auth token
+         user.token = await jwt.sign({ id: user._id }, process.env.SECRET_KEY);
+
          return user;
       } else {
          logger.error(
