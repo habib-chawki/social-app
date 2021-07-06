@@ -30,11 +30,11 @@ it('should sign user up', async () => {
 });
 
 it('should log user in', async () => {
-   const jwtToken =
+   const token =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpZCI6InNvbWVfaWQifQ.IYMdjwh5ZbDl4wDhaULP5lsy8DGerl8MtIt1E-pZHY8';
 
    bcrypt.compare.mockResolvedValue(true);
-   jwt.sign.mockResolvedValue(jwtToken);
+   jwt.sign.mockResolvedValue(token);
 
    User.findOne = jest.fn().mockReturnValue(user);
 
@@ -46,6 +46,8 @@ it('should log user in', async () => {
 
    // then expect the user to be logged in successfully
    expect(response).toEqual(user);
+   expect(response.token).toBe(token);
+
    expect(User.findOne.mock.calls[0][0]).toEqual({
       email: userCredentials.email,
    });
