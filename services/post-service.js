@@ -9,7 +9,7 @@ async function createPost(userId, postContent) {
    try {
       // fetch post owner
       const postOwner = await User.findById(userId).select(
-         'avatar profile.firstName profile.middleName profile.lastName '
+         'avatar profile.firstName profile.middleName profile.lastName'
       );
 
       // create new post
@@ -62,6 +62,10 @@ async function getPosts(userId, skip, limit) {
       const posts = await Post.find(userId)
          .skip(parseInt(skip))
          .limit(parseInt(limit))
+         .populate(
+            'owner',
+            'avatar profile.firstName profile.middleName profile.lastName'
+         )
          .populate({ path: 'comments', perDocumentLimit: numberOfComments });
 
       logger.info('Fetched posts ' + JSON.stringify(posts));
