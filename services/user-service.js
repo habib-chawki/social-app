@@ -39,14 +39,14 @@ async function logUserIn(userCredentials) {
       const match = await bcrypt.compare(password, user.password);
 
       if (match) {
-         // send back user
+         // generate auth token
+         user.token = await jwt.sign({ id: user._id }, process.env.SECRET_KEY);
+
          logger.info(
             'User login success ' + JSON.stringify({ userId: user._id })
          );
 
-         // generate auth token
-         user.token = await jwt.sign({ id: user._id }, process.env.SECRET_KEY);
-
+         // send back user
          return user;
       } else {
          logger.error(
