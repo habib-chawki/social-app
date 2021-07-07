@@ -37,11 +37,7 @@ it('should create post', async () => {
    // given the expected response
    const expectedResponse = {
       ...post,
-      owner: {
-         id: postOwner._id,
-         avatar: postOwner.avatar,
-         ...postOwner.profile,
-      },
+      owner: postOwner,
    };
 
    // when createPost() is invoked
