@@ -20,12 +20,12 @@ async function createPost(userId, postContent) {
 
       // associate post with owner
       const post = {
-         ...createdPost,
+         ...createdPost.toObject(),
          owner: postOwner,
       };
 
       // return post when created successfully
-      logger.info('Post created ' + JSON.stringify({ userId, postContent }));
+      logger.info('Post created ' + JSON.stringify(post));
       return post;
    } catch (err) {
       logger.error(
